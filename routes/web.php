@@ -3,11 +3,10 @@
 use Illuminate\Support\Facades\Route;
 
 
-// Route dashboard admin
-Route::get('/dashboard', function () {
+// Route untuk halaman utama, langsung diarahkan ke dashboard admin
+Route::get('/', function () {
     return redirect()->route('admin.dashboard');
 });
-
 // Mengelompokkan semua route yang hanya bisa diakses oleh Admin
 Route::prefix('admin')->name('admin.')->group(function () {
 
