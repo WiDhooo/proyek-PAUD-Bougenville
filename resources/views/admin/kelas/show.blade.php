@@ -6,10 +6,7 @@
 <div class="container-fluid" x-data="classDetailManager()">
     <!-- Pesan Sukses -->
     @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+        {{-- Notifikasi Toast akan menangani ini --}}
     @endif
 
     <!-- Header -->
@@ -24,7 +21,6 @@
         <div class="card-body">
             <!-- Header Card: Filter & Tombol Aksi -->
             <div class="d-flex justify-content-between align-items-center mb-4">
-                {{-- Bagian Filter --}}
                 <div class="d-flex align-items-center gap-2">
                     <label for="filterGender" class="form-label mb-0">Filter:</label>
                     <select class="form-select form-select-sm" id="filterGender" x-model="filterGender" style="width: 200px;">
@@ -33,9 +29,8 @@
                         <option value="Perempuan">Perempuan</option>
                     </select>
                 </div>
-                {{-- Bagian Pencarian dan Tombol Tambah --}}
                 <div class="d-flex">
-                    <div class="me-2">
+                    <div class="input-group me-2">
                         <input class="form-control" type="search" placeholder="Cari nama murid..." x-model.debounce.300ms="searchQuery">
                     </div>
                     <button type="button" class="btn btn-outline-success flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalTambahMuridKeKelas">
@@ -51,15 +46,20 @@
                         <tr>
                             <th>No</th>
                             <th>NIS</th>
-                            <th>Nama Murid</th>
+                            {{-- KOLOM NAMA SEKARANG BISA DI-SORT --}}
+                            <th @click="sortBy('nama')" style="cursor: pointer;">
+                                Nama Murid
+                                <span x-show="sortColumn === 'nama'"><i :class="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i></span>
+                            </th>
                             <th>Jenis Kelamin</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <template x-for="(murid, index) in filteredStudents" :key="murid.id">
+                        {{-- LOOPING SEKARANG MENGGUNAKAN PAGINATED ITEMS --}}
+                        <template x-for="(murid, index) in paginatedItems" :key="murid.id">
                             <tr>
-                                <td x-text="index + 1"></td>
+                                <td x-text="(currentPage - 1) * itemsPerPage + index + 1"></td>
                                 <td x-text="murid.nis"></td>
                                 <td x-text="murid.nama"></td>
                                 <td x-text="murid.jenis_kelamin"></td>
@@ -71,7 +71,7 @@
                                             deleteName = murid.nama;
                                             deleteUrl = `/admin/kelas/{{ $kelas['id'] }}/unassign-murid/${murid.id}`;
                                         ">
-                                        Hapus
+                                        <i class="bi bi-trash-fill"></i>
                                     </button>
                                 </td>
                             </tr>
@@ -82,10 +82,22 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- BLOK PAGINATION DITAMBAHKAN DI SINI -->
+            <nav x-show="totalPages > 1" class="d-flex justify-content-end mt-3">
+                <ul class="pagination">
+                    <li class="page-item" :class="{ 'disabled': currentPage === 1 }"><a class="page-link" href="#" @click.prevent="currentPage--">Previous</a></li>
+                    <template x-for="page in totalPages" :key="page">
+                        <li class="page-item" :class="{ 'active': currentPage === page }"><a class="page-link" href="#" @click.prevent="currentPage = page" x-text="page"></a></li>
+                    </template>
+                    <li class="page-item" :class="{ 'disabled': currentPage === totalPages }"><a class="page-link" href="#" @click.prevent="currentPage++">Next</a></li>
+                </ul>
+            </nav>
+
         </div>
     </div>
 
-    {{-- KODE MODAL TETAP SAMA --}}
+    {{-- KODE MODAL LAMA ANDA --}}
     <!-- Modal Tambah Murid ke Kelas -->
     <div class="modal fade" id="modalTambahMuridKeKelas" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -140,36 +152,65 @@
 <script>
     function classDetailManager() {
         return {
-            // Variabel untuk modal
             deleteName: '',
             deleteUrl: '',
-            
-            // Variabel untuk filter & search
             filterGender: 'semua',
-            searchQuery: '', // <-- Tambahkan ini
+            searchQuery: '',
 
-            // Data mentah dari Laravel
+            // VARIABEL BARU UNTUK SORT & PAGINATION
+            sortColumn: '',
+            sortDirection: 'asc',
+            currentPage: 1,
+            itemsPerPage: 5, // Ubah angka ini sesuai kebutuhan
+
             studentsInClass: @json($murid_di_kelas),
-            
-            // Logika untuk menampilkan data yang sudah difilter dan dicari
-            get filteredStudents() {
-                let students = this.studentsInClass;
 
-                // 1. Terapkan filter PENCARIAN
+            sortBy(column) {
+                if (this.sortColumn === column) {
+                    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    this.sortColumn = column;
+                    this.sortDirection = 'asc';
+                }
+            },
+            
+            get filteredStudents() {
+                let students = [...this.studentsInClass];
+
                 if (this.searchQuery) {
                     students = students.filter(
                         student => student.nama.toLowerCase().includes(this.searchQuery.toLowerCase())
                     );
                 }
 
-                // 2. Terapkan filter JENIS KELAMIN
                 if (this.filterGender !== 'semua') {
                     students = students.filter(
                         student => student.jenis_kelamin === this.filterGender
                     );
                 }
                 
+                if (this.sortColumn) {
+                    students.sort((a, b) => {
+                        const valA = a[this.sortColumn] || '';
+                        const valB = b[this.sortColumn] || '';
+                        return this.sortDirection === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                    });
+                }
+                
                 return students;
+            },
+
+            // LOGIKA PAGINATION DITAMBAHKAN
+            get totalPages() {
+                return Math.ceil(this.filteredStudents.length / this.itemsPerPage);
+            },
+            get paginatedItems() {
+                if (this.totalPages > 0 && this.currentPage > this.totalPages) {
+                    this.currentPage = 1;
+                }
+                const start = (this.currentPage - 1) * this.itemsPerPage;
+                const end = start + this.itemsPerPage;
+                return this.filteredStudents.slice(start, end);
             }
         }
     }
