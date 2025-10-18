@@ -2,14 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-*/
 
 // Route untuk halaman utama, langsung diarahkan ke dashboard admin
-Route::get('/', function () {
+Route::get('/dashboard', function () {
     return redirect()->route('admin.dashboard');
 });
 
