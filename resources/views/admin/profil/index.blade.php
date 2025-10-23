@@ -15,7 +15,7 @@
                 <div class="card-body text-center p-4">
                     <i class="bi bi-person-vcard fs-1 text-primary mb-3"></i>
                     <h4 class="card-title">Kelola Profil Sekolah</h4>
-                    <p class="card-text text-muted">Ubah Visi, Misi, Sejarah, dan informasi kontak sekolah.</p>
+                    <p class="card-text text-muted">Ubah Tentang Sekolah dan visi misi</p>
                 </div>
             </a>
         </div>

@@ -25,16 +25,12 @@
             <form action="{{ route('admin.profil.update') }}" method="POST">
                 @csrf
                 <div class="mb-3">
-                    <label for="visi" class="form-label fw-bold">Visi Sekolah</label>
+                    <label for="visi" class="form-label fw-bold">Tentang Sekolah</label>
                     <textarea class="form-control" id="visi" name="visi" rows="3" required>{{ $profil['visi'] }}</textarea>
                 </div>
                 <div class="mb-3">
-                    <label for="misi" class="form-label fw-bold">Misi Sekolah</label>
+                    <label for="misi" class="form-label fw-bold">Visi Misi Sekolah</label>
                     <textarea class="form-control" id="misi" name="misi" rows="5" required>{{ $profil['misi'] }}</textarea>
-                </div>
-                <div class="mb-3">
-                    <label for="sejarah" class="form-label fw-bold">Sejarah Singkat</label>
-                    <textarea class="form-control" id="sejarah" name="sejarah" rows="5" required>{{ $profil['sejarah'] }}</textarea>
                 </div>
                 <div class="d-flex justify-content-end mt-4">
                     <button type="submit" class="btn btn-primary">Simpan Perubahan</button>

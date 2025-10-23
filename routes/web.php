@@ -2,20 +2,43 @@
 
 use Illuminate\Support\Facades\Route;
 
-
-// Route untuk halaman utama, langsung diarahkan ke dashboard admin
+/*
+|--------------------------------------------------------------------------
+| ROUTE UNTUK PENGUNJUNG (COMPANY PROFILE)
+|--------------------------------------------------------------------------
+*/
+// Halaman Beranda
 Route::get('/', function () {
-    return redirect()->route('admin.dashboard');
+    return view('beranda');
 });
-// Mengelompokkan semua route yang hanya bisa diakses oleh Admin
+
+// Halaman Tentang Kami
+Route::get('/tentang', function () {
+    return view('tentang');
+});
+
+// Halaman Kegiatan
+Route::get('/kegiatan', function () {
+    return view('kegiatan');
+});
+
+// Halaman Kontak
+Route::get('/kontak', function () {
+    return view('kontak');
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| ROUTE UNTUK ADMIN
+|--------------------------------------------------------------------------
+*/
 Route::prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard Admin
     Route::get('/dashboard', function () {
         $dashboardData = [
-            'total_murid' => 57,
-            'total_guru' => 12,
-            'total_kelas' => 3,
+            'total_murid' => 57, 'total_guru' => 12, 'total_kelas' => 3,
             'jadwal' => [
                 'Senin' => ['Mandiri - A' => 'Galar Widodo', 'Ceria - B' => 'Xanana Megantara', 'Kreatif - A' => 'Gaman Maras Saputra'],
                 'Selasa' => ['Mandiri - A' => 'Qori Usada M.Pd', 'Ceria - B' => 'Zalindra Rahayu', 'Kreatif - A' => 'Bakti Jarwadi S. M.T.'],
@@ -91,20 +114,46 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::post('/galeri', function () { return redirect()->route('admin.galeri.index')->with('success', 'Foto baru berhasil ditambahkan!'); })->name('galeri.store');
 });
 
-// ================= ROUTE UNTUK GURU =================
+
+/*
+|--------------------------------------------------------------------------
+| ROUTE UNTUK GURU
+|--------------------------------------------------------------------------
+*/
 Route::prefix('guru')->name('guru.')->group(function () {
     
     // Halaman Dashboard Guru
     Route::get('/dashboard', function() {
-        // Data jadwal palsu untuk satu guru
-        $jadwal_guru = [
-            'Senin' => ['08:00 - 09:30', 'Kelas Mandiri - A'],
-            'Selasa' => ['10:00 - 11:30', 'Kelas Kreatif - A'],
-            'Rabu' => ['08:00 - 09:30', 'Kelas Mandiri - A'],
-            'Kamis' => ['10:00 - 11:30', 'Kelas Kreatif - A'],
-            'Jumat' => ['08:00 - 09:30', 'Kelas Ceria - B'],
+        // Data jadwal lengkap, sama seperti di dashboard admin
+        $jadwal_lengkap = [
+            'Senin' => [
+                'Mandiri - A' => 'Galar Widodo',
+                'Ceria - B' => 'Xanana Megantara',
+                'Kreatif - A' => 'Gaman Maras Saputra',
+            ],
+            'Selasa' => [
+                'Mandiri - A' => 'Qori Usada M.Pd',
+                'Ceria - B' => 'Zalindra Rahayu',
+                'Kreatif - A' => 'Bakti Jarwadi S. M.T.',
+            ],
+            'Rabu' => [
+                'Mandiri - A' => 'Caraka Sabar Waskita S.E.I',
+                'Ceria - B' => 'Sari Kuswandari',
+                'Kreatif - A' => 'Pardi Prasetya S.Kom',
+            ],
+            'Kamis' => [
+                'Mandiri - A' => 'Yulia Andriani S.Ked',
+                'Ceria - B' => 'Dipa Cakra Buana',
+                'Kreatif - A' => 'Taufan Habibi M.T.I.',
+            ],
+            'Jumat' => [
+                'Mandiri - A' => 'Galar Widodo',
+                'Ceria - B' => 'Sari Kuswandari',
+                'Kreatif - A' => 'Cahyadi Bahuraksa D.',
+            ],
         ];
-        return view('guru.dashboard', ['jadwal' => $jadwal_guru]);
+        // Kirim data dengan nama variabel 'jadwal'
+        return view('guru.dashboard', ['jadwal' => $jadwal_lengkap]);
     })->name('dashboard');
 
     // Halaman Data Siswa
@@ -116,7 +165,7 @@ Route::prefix('guru')->name('guru.')->group(function () {
             ['id' => 3, 'nis' => '2526530037', 'nama' => 'Tiara Yulianti', 'jenis_kelamin' => 'Laki-Laki'],
         ];
         return view('guru.data_siswa', ['murid' => $murid_kelas_ini]);
-    })->name('data_siswa'); // Pastikan namanya persis 'data_siswa'
+    })->name('data_siswa');
 
     Route::get('/nilai-absensi', function() {
         // Data palsu murid yang sama seperti di halaman data siswa
@@ -129,4 +178,3 @@ Route::prefix('guru')->name('guru.')->group(function () {
     })->name('nilai_absensi');
 
 });
-

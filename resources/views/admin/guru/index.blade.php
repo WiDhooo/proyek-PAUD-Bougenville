@@ -1,33 +1,22 @@
 @extends('layouts.app')
 
-{{-- Ganti Judul Halaman --}}
 @section('title', 'Manajemen Guru')
 
 @section('content')
-<div class="container-fluid">
+<div class="container-fluid" x-data="manager()">
     @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
+        {{-- Notifikasi Toast akan menangani ini --}}
     @endif
-    <div class="card" x-data="{ 
-        deleteName: '', 
-        deleteUrl: '',
-        editUrl: '',
-        editData: {}
-    }">
+    <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h5 class="card-title mb-0">Data Guru</h5>
-            {{-- Tombol dan Pencarian --}}
-            <div class="d-flex">
-                <form class="d-flex me-2">
-                    <input class="form-control me-2" type="search" placeholder="Cari nama guru" aria-label="Search">
-                    <button class="btn btn-primary" type="submit">Cari</button>
-                </form>
-                <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalTambahGuru">
+            <div class="d-flex align-items-center">
+                <div class="input-group me-2">
+                     <input type="search" class="form-control" placeholder="Cari Nama Guru..." x-model.debounce.300ms="searchQuery">
+                </div>
+                <button type="button" class="btn btn-outline-success flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalTambahGuru">
                     <i class="bi bi-plus-lg"></i> Tambah Guru
-                </a>
+                </button>
             </div>
         </div>
         <div class="card-body">
@@ -35,129 +24,77 @@
                 <table class="table table-hover">
                     <thead class="table-light">
                         <tr>
-                            <th scope="col">Nama Guru</th>
-                            <th scope="col">Jabatan</th>
-                            <th scope="col">Alamat</th>
-                            <th scope="col">Pendidikan</th>
-                            <th scope="col">Aksi</th>
+                            <th @click="sortBy('nama')" style="cursor: pointer;">
+                                Nama Guru
+                                <span x-show="sortColumn === 'nama'"><i :class="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i></span>
+                            </th>
+                            <th @click="sortBy('jabatan')" style="cursor: pointer;">
+                                Jabatan
+                                <span x-show="sortColumn === 'jabatan'"><i :class="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i></span>
+                            </th>
+                            <th>Alamat</th>
+                            <th>Pendidikan</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {{-- Looping Data Guru dari Route --}}
-                        @forelse ($guru as $item)
+                        <template x-for="item in paginatedItems" :key="item.id">
                             <tr>
-                                <td>{{ $item['nama'] }}</td>
-                                <td>{{ $item['jabatan'] }}</td>
-                                <td>{{ $item['alamat'] }}</td>
-                                <td>{{ $item['pendidikan'] }}</td>
+                                <td x-text="item.nama"></td>
+                                <td x-text="item.jabatan"></td>
+                                <td x-text="item.alamat"></td>
+                                <td x-text="item.pendidikan"></td>
                                 <td>
-                                <button type="button" class="btn btn-warning btn-sm"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalEditGuru"
-                                    @click="
-                                        editUrl = '{{ route('admin.guru.update', ['id' => $loop->iteration]) }}';
-                                        editData = {{ json_encode($item) }};
-                                    ">
-                                    <i class="bi bi-pencil-fill"></i>
-                                </button>
+                                    <button type="button" class="btn btn-warning btn-sm"
+                                        data-bs-toggle="modal" data-bs-target="#modalEditGuru"
+                                        @click="editData = item; editUrl = `/admin/guru/${item.id}`">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </button>
                                     <button type="button" class="btn btn-danger btn-sm"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#modalHapusGuru"
-                                        @click="
-                                            deleteName = '{{ $item['nama'] }}';
-                                            deleteUrl = '{{ route('admin.guru.destroy', ['id' => $loop->iteration]) }}';
-                                        ">
+                                        data-bs-toggle="modal" data-bs-target="#modalHapusGuru"
+                                        @click="deleteName = item.nama_guru; deleteUrl = `/admin/guru/${item.id}`">
                                         <i class="bi bi-trash-fill"></i>
                                     </button>
                                 </td>
                             </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="text-center">
-                                    Data guru tidak ditemukan.
-                                </td>
-                            </tr>
-                        @endforelse
+                        </template>
+                        <tr x-show="filteredItems.length === 0">
+                            <td colspan="5" class="text-center">Data tidak ditemukan.</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
 
-            {{-- Nanti kita akan tambahkan pagination di sini --}}
+            <!-- BLOK PAGINATION DITAMBAHKAN DI SINI -->
+            <nav x-show="totalPages > 1" class="d-flex justify-content-end mt-3">
+                <ul class="pagination">
+                    <li class="page-item" :class="{ 'disabled': currentPage === 1 }"><a class="page-link" href="#" @click.prevent="currentPage--">Previous</a></li>
+                    <template x-for="page in totalPages" :key="page">
+                        <li class="page-item" :class="{ 'active': currentPage === page }"><a class="page-link" href="#" @click.prevent="currentPage = page" x-text="page"></a></li>
+                    </template>
+                    <li class="page-item" :class="{ 'disabled': currentPage === totalPages }"><a class="page-link" href="#" @click.prevent="currentPage++">Next</a></li>
+                </ul>
+            </nav>
+
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="modalTambahGuru" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalTambahGuruLabel" aria-hidden="true">
+
+<div class="modal fade" id="modalTambahGuru" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="modalTambahGuruLabel">Tambah Guru Baru</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <h1 class="modal-title fs-5">Tambah Guru Baru</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
-                {{-- Form akan mengirim data ke route 'admin.guru.store' --}}
                 <form action="{{ route('admin.guru.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-
-                    <div class="mb-4 text-center" x-data="{
-                        imageData: '{{ asset('images/dashboard/blankImage.jpg') }}',
-                        previewImage(event) {
-                            const reader = new FileReader();
-                            reader.onload = (e) => {
-                                this.imageData = e.target.result;
-                            };
-                            reader.readAsDataURL(event.target.files[0]);
-                        }
-                    }">
-                        <img :src="imageData" class="img-thumbnail mb-3" alt="preview" style="width: 200px; height: 200px; object-fit: cover;">
-                        <input type="file" class="form-control" name="image" @change="previewImage">
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="username" class="form-label fw-bold">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" placeholder="Masukkan username" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="nama" class="form-label fw-bold">Nama Guru</label>
-                            <input type="text" class="form-control" id="nama" name="nama" placeholder="Masukkan nama lengkap" required>
-                        </div>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="email" class="form-label fw-bold">Email Guru</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="Masukkan email" required>
-                    </div>
-
-                    <div class="row">
-                         <div class="col-md-6 mb-3">
-                            <label for="jabatan" class="form-label fw-bold">Jabatan</label>
-                            <select name="jabatan" class="form-select" required>
-                                <option value="" selected>Pilih Jabatan</option>
-                                <option value="Ketua Yayasan">Ketua Yayasan</option>
-                                <option value="Kepala Sekolah">Kepala Sekolah</option>
-                                <option value="Guru">Guru</option>
-                                <option value="Staff">Staff</option>
-                            </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="pendidikan" class="form-label fw-bold">Pendidikan</label>
-                            <select name="pendidikan" class="form-select" required>
-                                <option value="" selected>Pilih Pendidikan</option>
-                                <option value="SMA">SMA</option>
-                                <option value="D3">D3</option>
-                                <option value="D4">D4</option>
-                                <option value="S1">S1</option>
-                                <option value="S2">S2</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="alamat" class="form-label fw-bold">Alamat</label>
-                        <textarea class="form-control" id="alamat" name="alamat" rows="3"></textarea>
-                    </div>
-
+                    <div class="mb-3"><label class="form-label fw-bold">Nama Guru</label><input type="text" class="form-control" name="nama" required></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Jabatan</label><input type="text" class="form-control" name="jabatan" required></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Alamat</label><textarea class="form-control" name="alamat" rows="3"></textarea></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Pendidikan</label><input type="text" class="form-control" name="pendidikan"></div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                         <button type="submit" class="btn btn-primary">Simpan</button>
@@ -168,19 +105,34 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalHapusGuru" tabindex="-1" aria-labelledby="modalHapusGuruLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<div class="modal fade" id="modalEditGuru" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="modalHapusGuruLabel">Konfirmasi Hapus</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
+            <div class="modal-header"><h1 class="modal-title fs-5">Edit Data Guru</h1><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
-                <p>Apakah Anda yakin ingin menghapus guru bernama <strong x-text="deleteName"></strong>?</p>
-                <p class="text-danger">Tindakan ini tidak dapat dibatalkan.</p>
+                <form x-bind:action="editUrl" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <div class="mb-3"><label class="form-label fw-bold">Nama Guru</label><input type="text" class="form-control" name="nama" x-model="editData.nama" required></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Jabatan</label><input type="text" class="form-control" name="jabatan" x-model="editData.jabatan" required></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Alamat</label><textarea class="form-control" name="alamat" rows="3" x-model="editData.alamat"></textarea></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Pendidikan</label><input type="text" class="form-control" name="pendidikan" x-model="editData.pendidikan"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                    </div>
+                </form>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalHapusGuru" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+<div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header"><h5 class="modal-title">Konfirmasi Hapus</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body"><p>Apakah Anda yakin ingin menghapus murid bernama <strong x-text="deleteName"></strong>?</p></div>
             <div class="modal-footer">
-                {{-- Form ini akan diisi action-nya secara dinamis oleh Alpine.js --}}
                 <form x-bind:action="deleteUrl" method="POST">
                     @csrf
                     @method('DELETE')
@@ -192,46 +144,60 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalEditGuru" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalEditGuruLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="modalEditGuruLabel">Edit Data Guru</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                {{-- Form ini action-nya akan diisi secara dinamis oleh Alpine.js --}}
-                <form x-bind:action="editUrl" method="POST">
-                    @csrf
-                    @method('PUT') {{-- Wajib untuk route PUT di Laravel --}}
 
-                    <div class="mb-3">
-                        <label for="edit_nama" class="form-label fw-bold">Nama Guru</label>
-                        <input type="text" class="form-control" id="edit_nama" name="nama" x-model="editData.nama" required>
-                    </div>
+<script>
+    function manager() {
+        return {
+            searchQuery: '',
+            deleteName: '',
+            deleteUrl: '',
+            editUrl: '',
+            editData: {},
+            items: @json($guru),
+            sortColumn: '',
+            sortDirection: 'asc',
+            currentPage: 1, // <-- DITAMBAHKAN
+            itemsPerPage: 5, // <-- DITAMBAHKAN
 
-                    <div class="mb-3">
-                        <label for="edit_jabatan" class="form-label fw-bold">Jabatan</label>
-                        <input type="text" class="form-control" id="edit_jabatan" name="jabatan" x-model="editData.jabatan" required>
-                    </div>
+            sortBy(column) {
+                if (this.sortColumn === column) {
+                    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
+                } else {
+                    this.sortColumn = column;
+                    this.sortDirection = 'asc';
+                }
+            },
 
-                    <div class="mb-3">
-                        <label for="edit_alamat" class="form-label fw-bold">Alamat</label>
-                        <textarea class="form-control" id="edit_alamat" name="alamat" rows="3" x-model="editData.alamat"></textarea>
-                    </div>
-
-                    <div class="mb-3">
-                        <label for="edit_pendidikan" class="form-label fw-bold">Pendidikan</label>
-                        <input type="text" class="form-control" id="edit_pendidikan" name="pendidikan" x-model="editData.pendidikan">
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+            get filteredItems() {
+                let filtered = [...this.items];
+                if (this.searchQuery) {
+                    filtered = filtered.filter(item =>
+                        item.nama.toLowerCase().includes(this.searchQuery.toLowerCase())
+                    );
+                }
+                if (this.sortColumn) {
+                    filtered.sort((a, b) => {
+                        const valA = a[this.sortColumn] || '';
+                        const valB = b[this.sortColumn] || '';
+                        return this.sortDirection === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                    });
+                }
+                return filtered;
+            },
+            
+            // LOGIKA PAGINATION DITAMBAHKAN DI SINI
+            get totalPages() {
+                return Math.ceil(this.filteredItems.length / this.itemsPerPage);
+            },
+            get paginatedItems() {
+                if (this.totalPages > 0 && this.currentPage > this.totalPages) {
+                    this.currentPage = 1;
+                }
+                const start = (this.currentPage - 1) * this.itemsPerPage;
+                const end = start + this.itemsPerPage;
+                return this.filteredItems.slice(start, end);
+            }
+        }
+    }
+</script>
 @endsection

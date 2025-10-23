@@ -65,7 +65,7 @@
         <div x-data="{ open: {{ request()->is('admin/guru*') || request()->is('admin/kelas*') || request()->is('admin/murid*') ? 'true' : 'false' }} }">
             <ul class="nav flex-column gap-2">
                 <li class="nav-item">
-                <a class="nav-link d-flex align-items-center {{ request()->is('/') ? 'active' : '' }}" href="{{ url('/') }}">
+                    <a class="nav-link d-flex align-items-center {{ request()->is('admin/dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
                         <i class="bi bi-grid-fill"></i>
                         Dashboard
                     </a>
@@ -117,5 +117,24 @@
             @yield('content')
         </div>
     </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            @if (Session::has('success'))
+                toastr.success("{{ Session::get('success') }}");
+            @endif
+
+            @if (Session::has('error'))
+                toastr.error("{{ Session::get('error') }}");
+            @endif
+
+            @if (Session::has('info'))
+                toastr.info("{{ Session::get('info') }}");
+            @endif
+
+            @if (Session::has('warning'))
+                toastr.warning("{{ Session::get('warning') }}");
+            @endif
+        });
+    </script>
     </body>
 </html>

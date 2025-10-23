@@ -30,11 +30,6 @@
                     <i class="bi bi-people-fill"></i> Data Siswa
                 </a>
             </li>
-            <li class="nav-item">
-                <a class="nav-link d-flex align-items-center {{ request()->is('guru/nilai-absensi*') ? 'active' : '' }}" href="{{ route('guru.nilai_absensi') }}">
-                    <i class="bi bi-journal-check"></i> Nilai & Absensi
-                </a>
-            </li>
         </ul>
     </aside>
     <main class="main-content">
@@ -46,5 +41,24 @@
             @yield('content')
         </div>
     </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            @if (Session::has('success'))
+                toastr.success("{{ Session::get('success') }}");
+            @endif
+
+            @if (Session::has('error'))
+                toastr.error("{{ Session::get('error') }}");
+            @endif
+
+            @if (Session::has('info'))
+                toastr.info("{{ Session::get('info') }}");
+            @endif
+
+            @if (Session::has('warning'))
+                toastr.warning("{{ Session::get('warning') }}");
+            @endif
+        });
+    </script>
 </body>
 </html>
