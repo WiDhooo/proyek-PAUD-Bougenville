@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,17 +7,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-    >
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         body {
             font-family: 'Poppins', sans-serif;
         }
 
-        /* Animasi Fade In */
         .fade-in {
             opacity: 0;
             transform: translateY(40px);
@@ -104,18 +100,47 @@
                 <h1 class="text-3xl md:text-6xl font-bold drop-shadow-lg leading-tight">Selamat Datang di</h1>
                 <h1 class="text-3xl md:text-6xl font-bold drop-shadow-lg leading-tight mt-3">PAUD Bougenville</h1>
                 <p class="mt-6 text-lg md:text-xl drop-shadow-md">Langkah Kecil Menuju Masa Depan Gemilang</p>
+                <div class="mt-8 flex gap-4">
+                   <a href="{{ url('/tentang') }}" class="border-2 border-white text-white px-6 py-3 rounded-full font-semibold hover:bg-white hover:text-blue-600 transition duration-300">
+                        Jelajahi Sekolah
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistik Prestasi -->
+    <section class="py-16 bg-white fade-in">
+        <div class="container mx-auto px-8 md:px-32">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+                <div class="p-6">
+                    <div class="text-3xl md:text-4xl font-bold text-blue-600 mb-2">50+</div>
+                    <div class="text-gray-600">Siswa Aktif</div>
+                </div>
+                <div class="p-6">
+                    <div class="text-3xl md:text-4xl font-bold text-orange-500 mb-2">15+</div>
+                    <div class="text-gray-600">Guru Berpengalaman</div>
+                </div>
+                <div class="p-6">
+                    <div class="text-3xl md:text-4xl font-bold text-green-500 mb-2">8</div>
+                    <div class="text-gray-600">Kelas Unggulan</div>
+                </div>
+                <div class="p-6">
+                    <div class="text-3xl md:text-4xl font-bold text-purple-500 mb-2">5+</div>
+                    <div class="text-gray-600">Tahun Berpengalaman</div>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Sambutan -->
-    <section class="mt-32 px-8 md:px-32 fade-in bg-[#FFFDF5] py-16">
-        <h2 class="text-2xl font-bold mb-8 text-blue-500">
+    <section class="py-16 px-8 md:px-32 fade-in bg-[#FFFDF5]">
+        <h2 class="text-2xl font-bold mb-8 text-blue-500 text-center">
             Sambutan <span class="text-[#FF9900]">Kepala Sekolah</span>
         </h2>
 
-        <div class="flex flex-col md:flex-row gap-10 items-start">
-            <div class="flex-shrink-0">
+        <div class="flex flex-col md:flex-row gap-10 items-start max-w-6xl mx-auto">
+            <div class="flex-shrink-0 mx-auto md:mx-0">
                 <img 
                     src="{{ asset('images/kepsek.png') }}" 
                     alt="Foto Kepala Sekolah" 
@@ -124,66 +149,181 @@
             </div>
 
             <div class="bg-blue-500 text-white p-8 rounded-lg shadow-md text-justify leading-relaxed flex-1">
-                <p>Assalamu’alaikum warahmatullahi wabarakatuh.</p><br>
+                <p class="font-semibold text-lg mb-4">Assalamu'alaikum warahmatullahi wabarakatuh</p>
+                <p class="mb-4">
+                    Puji syukur kehadirat Allah SWT atas rahmat dan karunia-Nya sehingga kita semua masih diberi kesempatan untuk berperan dalam mendidik generasi penerus bangsa. Selamat datang di website resmi PAUD Bougenville.
+                </p>
                 <p>
-                    Puji syukur kehadirat Allah SWT atas rahmat dan karunia-Nya sehingga kita semua masih diberi kesempatan untuk berperan dalam mendidik generasi penerus bangsa. Selamat datang di website resmi PAUD Bougenville. Website ini kami hadirkan sebagai sarana informasi dan komunikasi antara pihak sekolah, orang tua, dan masyarakat. PAUD Bougenville berkomitmen untuk menciptakan lingkungan belajar yang menyenangkan, penuh kasih sayang, serta menumbuhkan karakter, kreativitas, dan kemandirian anak sejak dini. Melalui website ini, kami berharap masyarakat dapat mengenal lebih dekat visi, misi, dan kegiatan pembelajaran yang kami kembangkan di PAUD Bougenville.
+                    Website ini kami hadirkan sebagai sarana informasi dan komunikasi antara pihak sekolah, orang tua, dan masyarakat. PAUD Bougenville berkomitmen untuk menciptakan lingkungan belajar yang menyenangkan, penuh kasih sayang, serta menumbuhkan karakter, kreativitas, dan kemandirian anak sejak dini.
                 </p>
             </div>
         </div>
     </section>
 
     <!-- Program Unggulan -->
-    <section class="mt-32 px-8 md:px-32 text-center bg-[#FFFDF5] fade-in py-16">
+    <section class="py-16 bg-white fade-in">
+        <div class="container mx-auto px-8 md:px-32">
+            <h2 class="text-2xl font-bold mb-3 text-blue-500 text-center">
+                Program <span class="text-[#FF9900]">Unggulan</span>
+            </h2>
+            <p class="text-gray-600 mb-10 text-center max-w-2xl mx-auto">Program pembelajaran untuk mengoptimalkan potensi dan bakat setiap anak</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-[#FFFDF5] p-6 rounded-lg shadow-md border border-gray-100 text-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-palette text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-blue-600 mb-3">Kreativitas Seni</h3>
+                    <p class="text-gray-600 text-sm">Mengembangkan imajinasi dan ekspresi melalui berbagai media seni dan kerajinan</p>
+                </div>
+
+                <div class="bg-[#FFFDF5] p-6 rounded-lg shadow-md border border-gray-100 text-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-seedling text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-green-600 mb-3">Eksplorasi Alam</h3>
+                    <p class="text-gray-600 text-sm">Belajar mengenal lingkungan dan alam sekitar melalui pengalaman langsung</p>
+                </div>
+
+                <div class="bg-[#FFFDF5] p-6 rounded-lg shadow-md border border-gray-100 text-center">
+                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-book text-orange-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-orange-600 mb-3">Literasi Dini</h3>
+                    <p class="text-gray-600 text-sm">Membangun fondasi membaca dan berhitung dengan metode yang menyenangkan</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ruang Belajar -->
+    <!-- Alternatif dengan background putih dan border berwarna -->
+    <section class="py-16 px-8 md:px-32 text-center bg-[#FFFDF5] fade-in">
         <h2 class="text-2xl font-bold mb-3 text-blue-500">
-            Program <span class="text-[#FF9900]">Unggulan</span>
+            Ruang<span class="text-[#FF9900]"> Belajar</span>
         </h2>
-        <p class="text-gray-600 mb-10">Dokumentasi berbagai kegiatan dan program unggulan yang telah kami selenggarakan.</p>
+        <p class="text-gray-600 mb-10">Ruang belajar yang nyaman dan menyenangkan untuk mendukung petualangan belajar si kecil.</p>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
-            @foreach (['Pesantren Kilat', 'Kajian Islami', 'Buka Puasa Bersama'] as $program)
-                <div class="border border-gray-200 shadow-md rounded-lg overflow-hidden w-80 transform hover:scale-105 transition bg-blue-500/10">
-                    <img src="{{ asset('images/photo1.png') }}" alt="Program" class="w-full h-48 object-cover">
-                    <div class="p-5">
-                        <h3 class="text-lg font-semibold text-blue-600 mb-2">{{ $program }}</h3>
-                        <p class="text-sm text-gray-700 mb-4">Kegiatan {{ $program }} bertujuan membentuk karakter anak yang beriman, berakhlak, dan ceria.</p>
-                        <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md w-full transition">Selengkapnya</button>
+            @foreach ([
+                ['title' => 'Area Bermain Edukatif', 'image' => 'area-bermain.jpg', 'color' => 'blue', 'icon' => 'fa-gamepad'],
+                ['title' => 'Rak Buku Warna-Warni', 'image' => 'rak.jpeg', 'color' => 'green', 'icon' => 'fa-book'],
+                ['title' => 'Pojok Literasi', 'image' => 'literasi.jpeg', 'color' => 'orange', 'icon' => 'fa-readme']
+            ] as $item)
+                <div class="bg-white border-l-4 border-{{ $item['color'] }}-400 shadow-lg rounded-lg overflow-hidden w-80 transform hover:scale-105 hover:shadow-xl transition-all duration-300 group cursor-pointer">
+                    <div class="relative">
+                        <img src="{{ asset('images/' . $item['image']) }}" alt="{{ $item['title'] }}" class="w-full h-48 object-cover group-hover:scale-110 transition duration-500">
+                        <div class="absolute top-4 left-4 w-10 h-10 bg-{{ $item['color'] }}-500 rounded-full flex items-center justify-center">
+                            <i class="fas {{ $item['icon'] }} text-white text-sm"></i>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-3 group-hover:text-{{ $item['color'] }}-600 transition">{{ $item['title'] }}</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">
+                            @if($item['title'] == 'Area Bermain Edukatif')
+                                Area bermain edukatif untuk mengembangkan motorik dan kreativitas anak.
+                            @elseif($item['title'] == 'Rak Buku Warna-Warni')
+                                Rak buku cerita dengan desain warna cerah, membantu menumbuhkan minat baca anak sejak dini dengan suasana yang menyenangkan.
+                            @else
+                                Pojok Literasi adalah tempat baca yang nyaman, di mana anak-anak bisa mengenal banyak cerita seru dan belajar mencintai buku sejak dini.
+                            @endif
+                        </p>
                     </div>
                 </div>
             @endforeach
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-blue-600 text-white py-10 fade-in">
-        <div class="container mx-auto px-10 grid grid-cols-1 md:grid-cols-3 gap-10">
-            <div>
-                <h3 class="font-bold text-lg mb-3">Tentang PAUD Bougenville</h3>
-                <p class="text-sm leading-relaxed">Lembaga pendidikan anak usia dini yang fokus membangun karakter, kreativitas, dan keceriaan anak-anak dengan penuh kasih sayang.</p>
+  <!-- Footer -->
+<footer class="bg-blue-600 text-white py-12 fade-in">
+    <div class="container mx-auto px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+            <!-- Tentang -->
+            <div class="space-y-4">
+                <div class="flex items-center mb-4">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-school text-white text-sm"></i>
+                    </div>
+                    <h3 class="font-bold text-lg">Tentang PAUD Bougenville</h3>
+                </div>
+                <p class="text-blue-100 leading-relaxed text-sm">
+                    Lembaga pendidikan anak usia dini yang fokus membangun karakter, kreativitas, dan keceriaan anak-anak dengan penuh kasih sayang.
+                </p>
             </div>
 
-            <div>
-                <h3 class="font-bold text-lg mb-3">Quick Links</h3>
-                <ul class="space-y-2 text-sm">
-                    <li><a href="{{ url('/') }}" class="hover:underline">Beranda</a></li>
-                    <li><a href="{{ url('/tentang') }}" class="hover:underline">Tentang Kami</a></li>
-                    <li><a href="{{ url('/kegiatan') }}" class="hover:underline">Kegiatan</a></li>
-                    <li><a href="{{ url('/kontak') }}" class="hover:underline">Kontak</a></li>
+            <!-- Quick Links -->
+            <div class="space-y-4">
+                <div class="flex items-center mb-4">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-link text-white text-sm"></i>
+                    </div>
+                    <h3 class="font-bold text-lg">Quick Links</h3>
+                </div>
+                <ul class="space-y-3">
+                    <li>
+                        <a href="{{ url('/') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+                            Beranda
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/tentang') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+                            Tentang Kami
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/kegiatan') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+                            Kegiatan
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url('/kontak') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+                            Kontak
+                        </a>
+                    </li>
                 </ul>
             </div>
 
-            <div>
-                <h3 class="font-bold text-lg mb-3">Kontak Kami</h3>
-                <p class="text-sm">Alamat: Jl. Pinang Barat, Jakarta Timur</p>
-                <p class="text-sm">Email: info@paudbougenville.com</p>
-                <p class="text-sm">Telp: +62 812 3456 7890</p>
-                <p class="text-sm mt-1">Jam Operasional: Senin - Jumat, 08.00 - 16.00 WIB</p>
+            <!-- Kontak -->
+            <div class="space-y-4">
+                <div class="flex items-center mb-4">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-phone text-white text-sm"></i>
+                    </div>
+                    <h3 class="font-bold text-lg">Kontak Kami</h3>
+                </div>
+                <div class="space-y-3 text-blue-100">
+                    <div class="flex items-start">
+                        <i class="fas fa-map-marker-alt mt-1 mr-3 text-sm w-4"></i>
+                        <span class="text-sm">Jl. Pinang Barat, Jakarta Timur</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-envelope mr-3 text-sm w-4"></i>
+                        <span class="text-sm">info@paudbougenville.com</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="fas fa-phone mr-3 text-sm w-4"></i>
+                        <span class="text-sm">+62 812 3456 7890</span>
+                    </div>
+                    <div class="flex items-start">
+                        <i class="fas fa-clock mt-1 mr-3 text-sm w-4"></i>
+                        <span class="text-sm">Senin - Jumat, 08.00 - 16.00 WIB</span>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="text-center text-xs text-gray-100 mt-10">
-            &copy; 2025 PAUD Bougenville. Semua Hak Dilindungi.
+        <!-- Copyright -->
+        <div class="border-t border-blue-500/30 mt-8 pt-8 text-center">
+            <div class="text-blue-100 text-sm">
+                &copy; 2025 PAUD Bougenville. Semua Hak Dilindungi.
+            </div>
         </div>
-    </footer>
+    </div>
+</footer>
 
     <script>
         // Animasi scroll
