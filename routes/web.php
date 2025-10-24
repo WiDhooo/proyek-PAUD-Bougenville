@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GuruController;
 
 /*
 |--------------------------------------------------------------------------
@@ -121,6 +122,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::prefix('guru')->name('guru.')->group(function () {
+<<<<<<< HEAD
     
     // Halaman Dashboard Guru
     Route::get('/dashboard', function() {
@@ -178,3 +180,19 @@ Route::prefix('guru')->name('guru.')->group(function () {
     })->name('nilai_absensi');
 
 });
+=======
+    Route::get('/dashboard', [GuruController::class, 'dashboard'])->name('dashboard');
+    Route::get('/data-siswa', [GuruController::class, 'dataSiswa'])->name('data_siswa');
+
+    // Pilih Kelas sebelum input nilai & absensi
+    Route::get('/nilai-absensi/pilih-kelas', [GuruController::class, 'pilihKelas'])->name('nilai_absensi.pilih_kelas');
+
+    // Nilai & Absensi
+    Route::get('/nilai-absensi', [GuruController::class, 'pilihKelas'])->name('nilai_absensi');
+    Route::get('/nilai-absensi/{kelas}', [GuruController::class, 'nilaiAbsensi'])->name('nilai_absensi.kelas');
+    Route::post('/nilai-absensi/{kelas}/simpan', [GuruController::class, 'simpanNilaiAbsensi'])->name('nilai_absensi.simpan');
+});
+
+
+
+>>>>>>> ce5e812 (Update untuk GURU di bagian dashboard, data siswa, tambah model & migration)
