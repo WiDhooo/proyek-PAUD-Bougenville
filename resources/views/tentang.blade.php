@@ -113,9 +113,9 @@
         <div class="flex flex-col md:flex-row gap-10 items-start max-w-6xl mx-auto">
             <div class="flex-shrink-0 mx-auto md:mx-0">
                 <img 
-                    src="{{ asset('images/sekolah.jpg') }}" 
+                    src="{{ asset('images/gbr4.jpg') }}" 
                     alt="Gedung PAUD Bougenville" 
-                    class="w-64 h-80 object-cover rounded-lg shadow-lg"
+                    class="w-80 h-110 object-cover rounded-lg shadow-lg"
                 >
             </div>
 
@@ -149,8 +149,7 @@
                 <div class="bg-blue-500 text-white p-8 rounded-lg shadow-md">
                     <h3 class="font-semibold text-lg mb-4 text-center">Visi</h3>
                     <p class="text-center leading-relaxed">
-                        Menjadi lembaga pendidikan anak usia dini terdepan yang menumbuhkan generasi beriman, berakhlak mulia, 
-                        kreatif, mandiri, dan siap menghadapi masa depan.
+                       Mensosialisasikan, meningkatkan mutu, minat, bermain dan belajar anak usia dini dilingkungan sekitar khususnya dan luar pada umumnya
                     </p>
                 </div>
 
@@ -158,11 +157,11 @@
                 <div class="bg-blue-500 text-white p-8 rounded-lg shadow-md">
                     <h3 class="font-semibold text-lg mb-4 text-center">Misi</h3>
                     <ul class="list-disc list-inside space-y-2 text-sm leading-relaxed">
-                        <li>Menyelenggarakan pembelajaran berbasis bermain dan pengalaman langsung</li>
-                        <li>Menanamkan nilai agama dan moral sejak dini</li>
-                        <li>Mengembangkan potensi anak melalui kegiatan kreatif dan inovatif</li>
-                        <li>Menjalin kerja sama antara sekolah, orang tua, dan masyarakat</li>
-                        <li>Menciptakan lingkungan belajar yang aman, bersih, dan ramah anak</li>
+                        <li>Mengembangkan potensi anak didik </li>
+                        <li>Menjadikan anak yang sehat, cerdas,ceria </li>
+                        <li>Menjadikan anak untuk kreatif dan mandiri </li>
+                        <li>Menjadikan anak yang bertaqwa kepada Tuhan YME</li>
+                        <li>Menjadikan anak yang berkarakter </li>
                     </ul>
                 </div>
             </div>
@@ -177,74 +176,153 @@
             </h2>
             <p class="text-gray-600 mb-10 text-center max-w-2xl mx-auto">Guru-guru berpengalaman yang siap mendampingi tumbuh kembang anak Anda</p>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 justify-items-center">
+            <!-- Card Kepala Sekolah (Compact Design) -->
+<div class="flex justify-center mb-12">
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden w-full max-w-2xl transform hover:scale-[1.02] transition-all duration-300 group border border-blue-100">
+        <div class="flex flex-col lg:flex-row">
+            <!-- Foto Section -->
+            <div class="lg:w-2/5 relative overflow-hidden bg-gradient-to-br from-blue-50 to-orange-50">
+                <div class="absolute inset-0 bg-gradient-to-br from-blue-600/10 to-orange-400/10 z-10"></div>
+                <img 
+                    src="{{ asset('images/1.png') }}" 
+                    alt="Ibu Endang Sulistiawati S.Pd - Kepala Sekolah"
+                    class="w-full h-48 lg:h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-500"
+                >
+                <!-- Decorative Elements -->
+                <div class="absolute top-3 left-3 w-6 h-6 border-2 border-white rounded-full"></div>
+                <div class="absolute bottom-3 right-3 w-4 h-4 border-2 border-white rounded-full"></div>
+            </div>
+            
+            <!-- Content Section -->
+            <div class="lg:w-3/5 p-6">
+                <div class="flex items-center mb-3">
+                    <div class="w-2 h-6 bg-orange-400 rounded-full mr-2"></div>
+                    <span class="text-xs font-semibold text-blue-600 uppercase tracking-wide">Kepala Sekolah</span>
+                </div>
+                
+                <h3 class="text-xl font-bold text-gray-800 mb-1">Ibu Endang Sulistiawati S.Pd.</h3>
+                <p class="text-blue-500 text-sm mb-3">Memimpin dengan Hati dan Dedikasi</p>
+                
+                <p class="text-gray-600 text-sm leading-relaxed mb-4">
+                    Dengan pengalaman lebih dari 10 tahun di bidang pendidikan anak usia dini, 
+                    berkomitmen menciptakan lingkungan belajar yang aman, nyaman, dan penuh 
+                    kasih sayang bagi setiap anak.
+                </p>
+                
+                <div class="flex flex-wrap gap-1 mb-4">
+                    <span class="px-2 py-1 bg-blue-100 text-blue-600 rounded-full text-xs">Pendidikan Karakter</span>
+                    <span class="px-2 py-1 bg-orange-100 text-orange-600 rounded-full text-xs">Manajemen</span>
+                    <span class="px-2 py-1 bg-green-100 text-green-600 rounded-full text-xs">Psikologi Anak</span>
+                </div>
+                
+                <div class="flex space-x-3">
+                    <div class="text-center">
+                        <div class="text-base font-bold text-blue-600">10+</div>
+                        <div class="text-xs text-gray-500">Tahun</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-base font-bold text-orange-500">80+</div>
+                        <div class="text-xs text-gray-500">Siswa</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-base font-bold text-green-500">25+</div>
+                        <div class="text-xs text-gray-500">Pelatihan</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+            <!-- Card Guru dengan Foto Bulat Besar -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach ([
-                    ['nama' => 'Bu Rina, S.Pd', 'jabatan' => 'Kepala Sekolah'],
-                    ['nama' => 'Bu Siti, S.Pd', 'jabatan' => 'Guru Kelas A'],
-                    ['nama' => 'Bu Wati, S.Pd.AUD', 'jabatan' => 'Guru Kelas B'],
-                    ['nama' => 'Bu Nur, S.Psi', 'jabatan' => 'Guru Psikologi'],
-                    ['nama' => 'Bu Dewi, S.Pd', 'jabatan' => 'Guru Seni & Kreativitas'],
-                    ['nama' => 'Bu Lilis, S.Pd', 'jabatan' => 'Guru Bahasa']
+                    ['nama' => 'Bu Ecin Kuraesin, S.Pd', 'jabatan' => 'Bendahara', 'foto' => '2.png'],
+                    ['nama' => 'Bu Wiwin Charyani', 'jabatan' => 'Sekretaris/Tenaga Pendidik', 'foto' => '3.png'],
+                    ['nama' => 'Bu Sukarsih', 'jabatan' => 'Tenaga Pendidik', 'foto' => '4.png'],
+                    ['nama' => 'Bu Yeany Maritha, S.Pd', 'jabatan' => 'Tenaga Pendidik', 'foto' => '5.png'],
+                    ['nama' => 'Bu Kowiyah', 'jabatan' => 'Tenaga Pendidik', 'foto' => '6.png'],
+                    ['nama' => 'Bu Nina Yuanti', 'jabatan' => 'Tenaga Pendidik', 'foto' => '7.png']
                 ] as $guru)
-                    <div class="bg-white border border-gray-200 shadow-md rounded-lg overflow-hidden w-80 transform hover:scale-105 transition-all duration-300">
-                        <div class="h-32 bg-blue-500 flex items-center justify-center">
-                            <i class="fas fa-user-graduate text-white text-4xl"></i>
+                    <div class="bg-white rounded-2xl shadow-lg overflow-hidden transform hover:scale-105 transition-all duration-300 group hover:shadow-xl border border-gray-100">
+                        <!-- Header dengan Foto Bulat Besar -->
+                        <div class="relative h-48 bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center pt-8">
+                            <!-- Background Pattern -->
+                            <div class="absolute inset-0 opacity-10">
+                                <div class="absolute top-4 left-4 w-8 h-8 border-2 border-white rounded-full"></div>
+                                <div class="absolute bottom-4 right-4 w-6 h-6 border-2 border-white rounded-full"></div>
+                                <div class="absolute top-1/2 left-1/4 w-4 h-4 border-2 border-white rounded-full"></div>
+                            </div>
+                            
+                            <!-- Foto Bulat Besar -->
+                            <div class="relative z-10">
+                                <div class="w-32 h-32 rounded-full border-4 border-white shadow-lg overflow-hidden transform group-hover:scale-110 transition-transform duration-300">
+                                    <img 
+                                        src="{{ asset('images/' . $guru['foto']) }}" 
+                                        alt="{{ $guru['nama'] }}"
+                                        class="w-full h-full object-cover"
+                                    >
+                                </div>
+                            </div>
                         </div>
+                        
+                        <!-- Content -->
                         <div class="p-6 text-center">
-                            <h3 class="text-lg font-semibold text-blue-600 mb-2">{{ $guru['nama'] }}</h3>
-                            <p class="text-gray-600 text-sm">{{ $guru['jabatan'] }}</p>
+                            <!-- Nama dan Jabatan -->
+                            <div>
+                                <h3 class="text-lg font-bold text-gray-800 mb-2">{{ $guru['nama'] }}</h3>
+                                <p class="text-blue-500 font-medium">{{ $guru['jabatan'] }}</p>
+                            </div>
                         </div>
                     </div>
                 @endforeach
             </div>
         </div>
     </section>
-
-    <!-- Footer -->
+<!-- Footer -->
 <footer class="bg-blue-600 text-white py-12 fade-in">
     <div class="container mx-auto px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
             <!-- Tentang -->
-            <div class="space-y-4">
-                <div class="flex items-center mb-4">
+            <div class="space-y-4 text-center md:text-left">
+                <div class="flex items-center justify-center md:justify-start mb-4">
                     <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
                         <i class="fas fa-school text-white text-sm"></i>
                     </div>
                     <h3 class="font-bold text-lg">Tentang PAUD Bougenville</h3>
                 </div>
-                <p class="text-blue-100 leading-relaxed text-sm">
+                <p class="text-blue-100 leading-relaxed text-sm max-w-md mx-auto md:mx-0">
                     Lembaga pendidikan anak usia dini yang fokus membangun karakter, kreativitas, dan keceriaan anak-anak dengan penuh kasih sayang.
                 </p>
             </div>
 
             <!-- Quick Links -->
-            <div class="space-y-4">
-                <div class="flex items-center mb-4">
+            <div class="space-y-4 text-center md:text-left">
+                <div class="flex items-center justify-center md:justify-start mb-4">
                     <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
                         <i class="fas fa-link text-white text-sm"></i>
                     </div>
                     <h3 class="font-bold text-lg">Quick Links</h3>
                 </div>
                 <ul class="space-y-3">
-                    <li>
+                    <li class="flex justify-center md:justify-start">
                         <a href="{{ url('/') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
                             <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
                             Beranda
                         </a>
                     </li>
-                    <li>
+                    <li class="flex justify-center md:justify-start">
                         <a href="{{ url('/tentang') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
                             <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
                             Tentang Kami
                         </a>
                     </li>
-                    <li>
+                    <li class="flex justify-center md:justify-start">
                         <a href="{{ url('/kegiatan') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
                             <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
                             Kegiatan
                         </a>
                     </li>
-                    <li>
+                    <li class="flex justify-center md:justify-start">
                         <a href="{{ url('/kontak') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
                             <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
                             Kontak
@@ -254,27 +332,29 @@
             </div>
 
             <!-- Kontak -->
-            <div class="space-y-4">
-                <div class="flex items-center mb-4">
+            <div class="space-y-4 text-center md:text-left">
+                <div class="flex items-center justify-center md:justify-start mb-4">
                     <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
                         <i class="fas fa-phone text-white text-sm"></i>
                     </div>
                     <h3 class="font-bold text-lg">Kontak Kami</h3>
                 </div>
                 <div class="space-y-3 text-blue-100">
-                    <div class="flex items-start">
-                        <i class="fas fa-map-marker-alt mt-1 mr-3 text-sm w-4"></i>
-                        <span class="text-sm">Jl. Pinang Barat, Jakarta Timur</span>
+                    <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                        <div class="flex items-start mb-2">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-sm w-4"></i>
+                            <span class="text-sm">Jl. Kelapa Sawit V Kelapa Rt 03 Rw 10<br>Kel. Utan Kayu Selatan, Matraman<br>Jakarta Timur (13120)</span>
+                        </div>
                     </div>
-                    <div class="flex items-center">
+                    <div class="flex items-center justify-center md:justify-start">
                         <i class="fas fa-envelope mr-3 text-sm w-4"></i>
-                        <span class="text-sm">info@paudbougenville.com</span>
+                        <span class="text-sm font-medium">bougenvilleuks@gmail.com</span>
                     </div>
-                    <div class="flex items-center">
+                    <div class="flex items-center justify-center md:justify-start">
                         <i class="fas fa-phone mr-3 text-sm w-4"></i>
-                        <span class="text-sm">+62 812 3456 7890</span>
+                        <span class="text-sm font-medium">081513747681</span>
                     </div>
-                    <div class="flex items-start">
+                    <div class="flex items-center justify-center md:justify-start">
                         <i class="fas fa-clock mt-1 mr-3 text-sm w-4"></i>
                         <span class="text-sm">Senin - Jumat, 08.00 - 16.00 WIB</span>
                     </div>

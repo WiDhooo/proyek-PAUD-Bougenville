@@ -58,7 +58,7 @@
             </ul>
 
             <!-- Tombol -->
-            <a href="#" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
+            <a href="https://wa.me/6281513747681?text=Halo,%20saya%20ingin%20mendaftar%20di%20PAUD%20Bougenville" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
                 Daftar Sekarang
             </a>
 
@@ -76,7 +76,7 @@
             <a href="{{ url('/tentang') }}" class="text-gray-700 hover:text-blue-500">Tentang Kami</a>
             <a href="{{ url('/kegiatan') }}" class="text-gray-700 hover:text-blue-500">Kegiatan</a>
             <a href="{{ url('/kontak') }}" class="text-gray-700 hover:text-blue-500">Kontak</a>
-            <a href="#" class="px-4 py-2 border-2 border-blue-500 text-blue-500 rounded-full hover:bg-blue-500 hover:text-white transition">
+            <a href="https://wa.me/6281513747681?text=Halo,%20saya%20ingin%20mendaftar%20di%20PAUD%20Bougenville" class="px-4 py-2 border-2 border-blue-500 text-blue-500 rounded-full hover:bg-blue-500 hover:text-white transition">
                 Daftar Sekarang
             </a>
         </div>
@@ -114,19 +114,19 @@
         <div class="container mx-auto px-8 md:px-32">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
                 <div class="p-6">
-                    <div class="text-3xl md:text-4xl font-bold text-blue-600 mb-2">50+</div>
+                    <div class="text-3xl md:text-4xl font-bold text-blue-600 mb-2">80+</div>
                     <div class="text-gray-600">Siswa Aktif</div>
                 </div>
                 <div class="p-6">
-                    <div class="text-3xl md:text-4xl font-bold text-orange-500 mb-2">15+</div>
+                    <div class="text-3xl md:text-4xl font-bold text-orange-500 mb-2">7+</div>
                     <div class="text-gray-600">Guru Berpengalaman</div>
                 </div>
                 <div class="p-6">
-                    <div class="text-3xl md:text-4xl font-bold text-green-500 mb-2">8</div>
+                    <div class="text-3xl md:text-4xl font-bold text-green-500 mb-2">3</div>
                     <div class="text-gray-600">Kelas Unggulan</div>
                 </div>
                 <div class="p-6">
-                    <div class="text-3xl md:text-4xl font-bold text-purple-500 mb-2">5+</div>
+                    <div class="text-3xl md:text-4xl font-bold text-purple-500 mb-2">10+</div>
                     <div class="text-gray-600">Tahun Berpengalaman</div>
                 </div>
             </div>
@@ -142,7 +142,7 @@
         <div class="flex flex-col md:flex-row gap-10 items-start max-w-6xl mx-auto">
             <div class="flex-shrink-0 mx-auto md:mx-0">
                 <img 
-                    src="{{ asset('images/kepsek.png') }}" 
+                    src="{{ asset('images/1.png') }}" 
                     alt="Foto Kepala Sekolah" 
                     class="w-64 h-80 object-cover rounded-lg shadow-lg"
                 >
@@ -197,7 +197,6 @@
     </section>
 
     <!-- Ruang Belajar -->
-    <!-- Alternatif dengan background putih dan border berwarna -->
     <section class="py-16 px-8 md:px-32 text-center bg-[#FFFDF5] fade-in">
         <h2 class="text-2xl font-bold mb-3 text-blue-500">
             Ruang<span class="text-[#FF9900]"> Belajar</span>
@@ -206,7 +205,7 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
             @foreach ([
-                ['title' => 'Area Bermain Edukatif', 'image' => 'area-bermain.jpg', 'color' => 'blue', 'icon' => 'fa-gamepad'],
+                ['title' => 'Ruang Belajar Edukatif', 'image' => 'ruangbelajar.png', 'color' => 'blue', 'icon' => 'fa-gamepad'],
                 ['title' => 'Rak Buku Warna-Warni', 'image' => 'rak.jpeg', 'color' => 'green', 'icon' => 'fa-book'],
                 ['title' => 'Pojok Literasi', 'image' => 'literasi.jpeg', 'color' => 'orange', 'icon' => 'fa-readme']
             ] as $item)
@@ -220,8 +219,8 @@
                     <div class="p-6">
                         <h3 class="text-lg font-semibold text-gray-800 mb-3 group-hover:text-{{ $item['color'] }}-600 transition">{{ $item['title'] }}</h3>
                         <p class="text-sm text-gray-600 leading-relaxed">
-                            @if($item['title'] == 'Area Bermain Edukatif')
-                                Area bermain edukatif untuk mengembangkan motorik dan kreativitas anak.
+                            @if($item['title'] == 'Ruang Belajar Edukatif')
+                                Area belajar edukatif untuk mengembangkan motorik dan kreativitas anak.
                             @elseif($item['title'] == 'Rak Buku Warna-Warni')
                                 Rak buku cerita dengan desain warna cerah, membantu menumbuhkan minat baca anak sejak dini dengan suasana yang menyenangkan.
                             @else
@@ -234,51 +233,51 @@
         </div>
     </section>
 
-  <!-- Footer -->
+<!-- Footer -->
 <footer class="bg-blue-600 text-white py-12 fade-in">
     <div class="container mx-auto px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
             <!-- Tentang -->
-            <div class="space-y-4">
-                <div class="flex items-center mb-4">
+            <div class="space-y-4 text-center md:text-left">
+                <div class="flex items-center justify-center md:justify-start mb-4">
                     <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
                         <i class="fas fa-school text-white text-sm"></i>
                     </div>
                     <h3 class="font-bold text-lg">Tentang PAUD Bougenville</h3>
                 </div>
-                <p class="text-blue-100 leading-relaxed text-sm">
+                <p class="text-blue-100 leading-relaxed text-sm max-w-md mx-auto md:mx-0">
                     Lembaga pendidikan anak usia dini yang fokus membangun karakter, kreativitas, dan keceriaan anak-anak dengan penuh kasih sayang.
                 </p>
             </div>
 
             <!-- Quick Links -->
-            <div class="space-y-4">
-                <div class="flex items-center mb-4">
+            <div class="space-y-4 text-center md:text-left">
+                <div class="flex items-center justify-center md:justify-start mb-4">
                     <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
                         <i class="fas fa-link text-white text-sm"></i>
                     </div>
                     <h3 class="font-bold text-lg">Quick Links</h3>
                 </div>
                 <ul class="space-y-3">
-                    <li>
+                    <li class="flex justify-center md:justify-start">
                         <a href="{{ url('/') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
                             <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
                             Beranda
                         </a>
                     </li>
-                    <li>
+                    <li class="flex justify-center md:justify-start">
                         <a href="{{ url('/tentang') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
                             <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
                             Tentang Kami
                         </a>
                     </li>
-                    <li>
+                    <li class="flex justify-center md:justify-start">
                         <a href="{{ url('/kegiatan') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
                             <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
                             Kegiatan
                         </a>
                     </li>
-                    <li>
+                    <li class="flex justify-center md:justify-start">
                         <a href="{{ url('/kontak') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
                             <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
                             Kontak
@@ -288,27 +287,29 @@
             </div>
 
             <!-- Kontak -->
-            <div class="space-y-4">
-                <div class="flex items-center mb-4">
+            <div class="space-y-4 text-center md:text-left">
+                <div class="flex items-center justify-center md:justify-start mb-4">
                     <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
                         <i class="fas fa-phone text-white text-sm"></i>
                     </div>
                     <h3 class="font-bold text-lg">Kontak Kami</h3>
                 </div>
                 <div class="space-y-3 text-blue-100">
-                    <div class="flex items-start">
-                        <i class="fas fa-map-marker-alt mt-1 mr-3 text-sm w-4"></i>
-                        <span class="text-sm">Jl. Pinang Barat, Jakarta Timur</span>
+                    <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                        <div class="flex items-start mb-2">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-sm w-4"></i>
+                            <span class="text-sm">Jl. Kelapa Sawit V Kelapa Rt 03 Rw 10<br>Kel. Utan Kayu Selatan, Matraman<br>Jakarta Timur (13120)</span>
+                        </div>
                     </div>
-                    <div class="flex items-center">
+                    <div class="flex items-center justify-center md:justify-start">
                         <i class="fas fa-envelope mr-3 text-sm w-4"></i>
-                        <span class="text-sm">info@paudbougenville.com</span>
+                        <span class="text-sm font-medium">bougenvilleuks@gmail.com</span>
                     </div>
-                    <div class="flex items-center">
+                    <div class="flex items-center justify-center md:justify-start">
                         <i class="fas fa-phone mr-3 text-sm w-4"></i>
-                        <span class="text-sm">+62 812 3456 7890</span>
+                        <span class="text-sm font-medium">081513747681</span>
                     </div>
-                    <div class="flex items-start">
+                    <div class="flex items-center justify-center md:justify-start">
                         <i class="fas fa-clock mt-1 mr-3 text-sm w-4"></i>
                         <span class="text-sm">Senin - Jumat, 08.00 - 16.00 WIB</span>
                     </div>

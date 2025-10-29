@@ -115,13 +115,24 @@
             <!-- Grid Kegiatan -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 px-4 sm:px-0">
                 @foreach ([
-                    ['img' => 'literasi.jpeg', 'title' => 'Belajar di Alam Terbuka', 'desc' => 'Anak-anak belajar mengenal alam sekitar'],
-                    ['img' => 'literasi.jpeg', 'title' => 'Seni dan Kreativitas', 'desc' => 'Mengembangkan imajinasi melalui karya seni'],
-                    ['img' => 'literasi.jpeg', 'title' => 'Olahraga Pagi', 'desc' => 'Melatih motorik dan kesehatan fisik'],
-                    ['img' => 'rak.jpeg', 'title' => 'Bermain Peran', 'desc' => 'Mengembangkan kemampuan sosial dan komunikasi'],
-                    ['img' => 'rak.jpeg', 'title' => 'Kegiatan Memasak', 'desc' => 'Belajar sains dan kehidupan sehari-hari'],
-                    ['img' => 'rak.jpeg', 'title' => 'Peringatan Hari Besar', 'desc' => 'Merayakan momen spesial bersama']
-                ] as $kegiatan)
+                    ['img' => 'gbr1.png', 'title' => 'Melatih Kreativitas Anak', 
+                    'desc' => 'Anak-anak diajak mengekspresikan ide dan imajinasi melalui berbagai kegiatan seni seperti membuat kerajinan.'],
+
+                    ['img' => 'gbr2.png', 'title' => 'Makan Siang Bersama', 
+                    'desc' => 'Suasana makan siang yang menyenangkan, di mana anak-anak belajar makan mandiri bersama teman-teman.'],
+
+                    ['img' => 'gbr3.png', 'title' => 'Latihan Marching Band', 
+                    'desc' => 'Melatih koordinasi, motorik, serta kekompakan anak melalui latihan musik  marching band dan gerak ritmis.'],
+
+                    ['img' => 'gbr3.jpg', 'title' => 'Sarapan Bersama Teman', 
+                    'desc' => 'Menumbuhkan kebiasaan hidup sehat serta kemampuan sosial anak melalui kegiatan sarapan bersama teman-teman.'],
+
+                    ['img' => 'gbr1.jpg', 'title' => 'Persiapan Mengikuti Pawai', 
+                    'desc' => 'Foto bersama sebelum melakukan pawai, anak-anak belajar bekerja sama dan menyiapkan atribut pawai.'],
+
+                    ['img' => 'gbr2.jpg', 'title' => 'Kegiatan Olahraga Bersama', 
+                    'desc' => 'Kegiatan olahraga yang dilakukan setiap hari jumat untuk memperkuat tubuh, dan rasa kebersamaan.']
+                    ] as $kegiatan)
                     <div class="bg-white border border-gray-200 shadow-md rounded-lg overflow-hidden transform hover:scale-105 transition-all duration-300 group cursor-pointer fade-in">
                         <div class="relative overflow-hidden">
                             <img src="{{ asset('images/' . $kegiatan['img']) }}" alt="{{ $kegiatan['title'] }}" class="w-full h-48 md:h-56 object-cover group-hover:scale-110 transition duration-500">
@@ -137,96 +148,98 @@
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-blue-600 text-white py-12 fade-in">
-        <div class="container mx-auto px-6 lg:px-8">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-                <!-- Tentang -->
-                <div class="space-y-4">
-                    <div class="flex items-center mb-4">
-                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
-                            <i class="fas fa-school text-white text-sm"></i>
-                        </div>
-                        <h3 class="font-bold text-lg">Tentang PAUD Bougenville</h3>
+<!-- Footer -->
+<footer class="bg-blue-600 text-white py-12 fade-in">
+    <div class="container mx-auto px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+            <!-- Tentang -->
+            <div class="space-y-4 text-center md:text-left">
+                <div class="flex items-center justify-center md:justify-start mb-4">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-school text-white text-sm"></i>
                     </div>
-                    <p class="text-blue-100 leading-relaxed text-sm">
-                        Lembaga pendidikan anak usia dini yang fokus membangun karakter, kreativitas, dan keceriaan anak-anak dengan penuh kasih sayang.
-                    </p>
+                    <h3 class="font-bold text-lg">Tentang PAUD Bougenville</h3>
                 </div>
-
-                <!-- Quick Links -->
-                <div class="space-y-4">
-                    <div class="flex items-center mb-4">
-                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
-                            <i class="fas fa-link text-white text-sm"></i>
-                        </div>
-                        <h3 class="font-bold text-lg">Quick Links</h3>
-                    </div>
-                    <ul class="space-y-3">
-                        <li>
-                            <a href="{{ url('/') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
-                                <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                Beranda
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ url('/tentang') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
-                                <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                Tentang Kami
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ url('/kegiatan') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
-                                <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                Kegiatan
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ url('/kontak') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
-                                <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
-                                Kontak
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-
-                <!-- Kontak -->
-                <div class="space-y-4">
-                    <div class="flex items-center mb-4">
-                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
-                            <i class="fas fa-phone text-white text-sm"></i>
-                        </div>
-                        <h3 class="font-bold text-lg">Kontak Kami</h3>
-                    </div>
-                    <div class="space-y-3 text-blue-100">
-                        <div class="flex items-start">
-                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-sm w-4"></i>
-                            <span class="text-sm">Jl. Pinang Barat, Jakarta Timur</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-envelope mr-3 text-sm w-4"></i>
-                            <span class="text-sm">info@paudbougenville.com</span>
-                        </div>
-                        <div class="flex items-center">
-                            <i class="fas fa-phone mr-3 text-sm w-4"></i>
-                            <span class="text-sm">+62 812 3456 7890</span>
-                        </div>
-                        <div class="flex items-start">
-                            <i class="fas fa-clock mt-1 mr-3 text-sm w-4"></i>
-                            <span class="text-sm">Senin - Jumat, 08.00 - 16.00 WIB</span>
-                        </div>
-                    </div>
-                </div>
+                <p class="text-blue-100 leading-relaxed text-sm max-w-md mx-auto md:mx-0">
+                    Lembaga pendidikan anak usia dini yang fokus membangun karakter, kreativitas, dan keceriaan anak-anak dengan penuh kasih sayang.
+                </p>
             </div>
 
-            <!-- Copyright -->
-            <div class="border-t border-blue-500/30 mt-8 pt-8 text-center">
-                <div class="text-blue-100 text-sm">
-                    &copy; 2025 PAUD Bougenville. Semua Hak Dilindungi.
+            <!-- Quick Links -->
+            <div class="space-y-4 text-center md:text-left">
+                <div class="flex items-center justify-center md:justify-start mb-4">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-link text-white text-sm"></i>
+                    </div>
+                    <h3 class="font-bold text-lg">Quick Links</h3>
+                </div>
+                <ul class="space-y-3">
+                    <li class="flex justify-center md:justify-start">
+                        <a href="{{ url('/') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+                            Beranda
+                        </a>
+                    </li>
+                    <li class="flex justify-center md:justify-start">
+                        <a href="{{ url('/tentang') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+                            Tentang Kami
+                        </a>
+                    </li>
+                    <li class="flex justify-center md:justify-start">
+                        <a href="{{ url('/kegiatan') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+                            Kegiatan
+                        </a>
+                    </li>
+                    <li class="flex justify-center md:justify-start">
+                        <a href="{{ url('/kontak') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
+                            <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+                            Kontak
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Kontak -->
+            <div class="space-y-4 text-center md:text-left">
+                <div class="flex items-center justify-center md:justify-start mb-4">
+                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                        <i class="fas fa-phone text-white text-sm"></i>
+                    </div>
+                    <h3 class="font-bold text-lg">Kontak Kami</h3>
+                </div>
+                <div class="space-y-3 text-blue-100">
+                    <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                        <div class="flex items-start mb-2">
+                            <i class="fas fa-map-marker-alt mt-1 mr-3 text-sm w-4"></i>
+                            <span class="text-sm">Jl. Kelapa Sawit V Kelapa Rt 03 Rw 10<br>Kel. Utan Kayu Selatan, Matraman<br>Jakarta Timur (13120)</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center md:justify-start">
+                        <i class="fas fa-envelope mr-3 text-sm w-4"></i>
+                        <span class="text-sm font-medium">bougenvilleuks@gmail.com</span>
+                    </div>
+                    <div class="flex items-center justify-center md:justify-start">
+                        <i class="fas fa-phone mr-3 text-sm w-4"></i>
+                        <span class="text-sm font-medium">081513747681</span>
+                    </div>
+                    <div class="flex items-center justify-center md:justify-start">
+                        <i class="fas fa-clock mt-1 mr-3 text-sm w-4"></i>
+                        <span class="text-sm">Senin - Jumat, 08.00 - 16.00 WIB</span>
+                    </div>
                 </div>
             </div>
         </div>
-    </footer>
+
+        <!-- Copyright -->
+        <div class="border-t border-blue-500/30 mt-8 pt-8 text-center">
+            <div class="text-blue-100 text-sm">
+                &copy; 2025 PAUD Bougenville. Semua Hak Dilindungi.
+            </div>
+        </div>
+    </div>
+</footer>
 
     <script>
         // Animasi scroll

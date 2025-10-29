@@ -118,7 +118,7 @@
                         <i class="fas fa-phone text-blue-600 text-2xl"></i>
                     </div>
                     <h3 class="text-lg font-semibold text-blue-600 mb-3">Telepon</h3>
-                    <p class="text-gray-600 text-sm mb-2">+62 877-1537-3102</p>
+                    <p class="text-gray-600 text-sm mb-2 font-medium">081513747681</p>
                     <p class="text-gray-500 text-xs">Senin - Jumat, 08.00 - 16.00 WIB</p>
                 </div>
 
@@ -127,7 +127,7 @@
                         <i class="fas fa-envelope text-green-600 text-2xl"></i>
                     </div>
                     <h3 class="text-lg font-semibold text-green-600 mb-3">Email</h3>
-                    <p class="text-gray-600 text-sm">paudbougenville@gmail.com</p>
+                    <p class="text-gray-600 text-sm font-medium">bougenvilleuks@gmail.com</p>
                 </div>
 
                 <div class="bg-[#FFFDF5] p-6 rounded-lg shadow-md border border-gray-100 text-center transform hover:scale-105 transition duration-300">
@@ -135,7 +135,7 @@
                         <i class="fas fa-map-marker-alt text-orange-600 text-2xl"></i>
                     </div>
                     <h3 class="text-lg font-semibold text-orange-600 mb-3">Alamat</h3>
-                    <p class="text-gray-600 text-sm">Jl. Pinang Barat, Jakarta Timur</p>
+                    <p class="text-gray-600 text-sm">Jl. Kelapa Sawit V Kelapa<br>Kel. Utan Kayu Selatan, Matraman<br>Jakarta Timur (13120)</p>
                 </div>
             </div>
         </div>
@@ -187,7 +187,7 @@
                     <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
                         <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
                             <iframe 
-                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.212020654405!2d106.85777497498952!3d-6.233406161027171!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f33ab9a5f431%3A0x3f882c49751508cf!2sJl.%20Pinang%20Barat%2C%20Jakarta%20Timur!5e0!3m2!1sid!2sid!4v1713241946208!5m2!1sid!2sid"
+                                src="https://www.google.com/maps/embed?pb=!1m12!1m8!1m3!1d63462.634054902526!2d106.8676109!3d-6.2089159!3m2!1i1024!2i768!4f13.1!2m1!1ssekretariat%20rw%2010%20utan%20kayu%20selatan!5e0!3m2!1sen!2sid!4v1761732823672!5m2!1sen!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
                                 width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"
                                 referrerpolicy="no-referrer-when-downgrade" class="rounded-lg">
                             </iframe>
@@ -197,7 +197,11 @@
                                 <i class="fas fa-map-marker-alt text-blue-500 mt-1 mr-3"></i>
                                 <div>
                                     <h4 class="font-semibold text-blue-600">Alamat Lengkap</h4>
-                                    <p class="text-gray-600 text-sm">Jl. Pinang Barat, RT/RW 001/002, Kec. Duren Sawit, Jakarta Timur, 13420</p>
+                                    <p class="text-gray-600 text-sm">
+                                        Jl. Kelapa Sawit V Kelapa Rt 03 Rw 10<br>
+                                        Kel. Utan Kayu Selatan, Matraman<br>
+                                        Jakarta Timur (13120)
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -207,96 +211,98 @@
         </div>
     </section>
 
-   <!-- Footer -->
-<footer class="bg-blue-600 text-white py-12 fade-in">
-    <div class="container mx-auto px-6 lg:px-8">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
-            <!-- Tentang -->
-            <div class="space-y-4">
-                <div class="flex items-center mb-4">
-                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-school text-white text-sm"></i>
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white py-12 fade-in">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+                <!-- Tentang -->
+                <div class="space-y-4 text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start mb-4">
+                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-school text-white text-sm"></i>
+                        </div>
+                        <h3 class="font-bold text-lg">Tentang PAUD Bougenville</h3>
                     </div>
-                    <h3 class="font-bold text-lg">Tentang PAUD Bougenville</h3>
+                    <p class="text-blue-100 leading-relaxed text-sm max-w-md mx-auto md:mx-0">
+                        Lembaga pendidikan anak usia dini yang fokus membangun karakter, kreativitas, dan keceriaan anak-anak dengan penuh kasih sayang.
+                    </p>
                 </div>
-                <p class="text-blue-100 leading-relaxed text-sm">
-                    Lembaga pendidikan anak usia dini yang fokus membangun karakter, kreativitas, dan keceriaan anak-anak dengan penuh kasih sayang.
-                </p>
+
+                <!-- Quick Links -->
+                <div class="space-y-4 text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start mb-4">
+                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-link text-white text-sm"></i>
+                        </div>
+                        <h3 class="font-bold text-lg">Quick Links</h3>
+                    </div>
+                    <ul class="space-y-3">
+                        <li class="flex justify-center md:justify-start">
+                            <a href="{{ url('/') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
+                                <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                Beranda
+                            </a>
+                        </li>
+                        <li class="flex justify-center md:justify-start">
+                            <a href="{{ url('/tentang') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
+                                <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                Tentang Kami
+                            </a>
+                        </li>
+                        <li class="flex justify-center md:justify-start">
+                            <a href="{{ url('/kegiatan') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
+                                <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                Kegiatan
+                            </a>
+                        </li>
+                        <li class="flex justify-center md:justify-start">
+                            <a href="{{ url('/kontak') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
+                                <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                Kontak
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Kontak -->
+                <div class="space-y-4 text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start mb-4">
+                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-phone text-white text-sm"></i>
+                        </div>
+                        <h3 class="font-bold text-lg">Kontak Kami</h3>
+                    </div>
+                    <div class="space-y-3 text-blue-100">
+                        <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                            <div class="flex items-start mb-2">
+                                <i class="fas fa-map-marker-alt mt-1 mr-3 text-sm w-4"></i>
+                                <span class="text-sm">Jl. Kelapa Sawit V Kelapa Rt 03 Rw 10<br>Kel. Utan Kayu Selatan, Matraman<br>Jakarta Timur (13120)</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-center md:justify-start">
+                            <i class="fas fa-envelope mr-3 text-sm w-4"></i>
+                            <span class="text-sm font-medium">bougenvilleuks@gmail.com</span>
+                        </div>
+                        <div class="flex items-center justify-center md:justify-start">
+                            <i class="fas fa-phone mr-3 text-sm w-4"></i>
+                            <span class="text-sm font-medium">081513747681</span>
+                        </div>
+                        <div class="flex items-center justify-center md:justify-start">
+                            <i class="fas fa-clock mt-1 mr-3 text-sm w-4"></i>
+                            <span class="text-sm">Senin - Jumat, 08.00 - 16.00 WIB</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Quick Links -->
-            <div class="space-y-4">
-                <div class="flex items-center mb-4">
-                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-link text-white text-sm"></i>
-                    </div>
-                    <h3 class="font-bold text-lg">Quick Links</h3>
-                </div>
-                <ul class="space-y-3">
-                    <li>
-                        <a href="{{ url('/') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
-                            <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
-                            Beranda
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url('/tentang') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
-                            <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
-                            Tentang Kami
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url('/kegiatan') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
-                            <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
-                            Kegiatan
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ url('/kontak') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
-                            <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
-                            Kontak
-                        </a>
-                    </li>
-                </ul>
-            </div>
-
-            <!-- Kontak -->
-            <div class="space-y-4">
-                <div class="flex items-center mb-4">
-                    <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
-                        <i class="fas fa-phone text-white text-sm"></i>
-                    </div>
-                    <h3 class="font-bold text-lg">Kontak Kami</h3>
-                </div>
-                <div class="space-y-3 text-blue-100">
-                    <div class="flex items-start">
-                        <i class="fas fa-map-marker-alt mt-1 mr-3 text-sm w-4"></i>
-                        <span class="text-sm">Jl. Pinang Barat, Jakarta Timur</span>
-                    </div>
-                    <div class="flex items-center">
-                        <i class="fas fa-envelope mr-3 text-sm w-4"></i>
-                        <span class="text-sm">info@paudbougenville.com</span>
-                    </div>
-                    <div class="flex items-center">
-                        <i class="fas fa-phone mr-3 text-sm w-4"></i>
-                        <span class="text-sm">+62 812 3456 7890</span>
-                    </div>
-                    <div class="flex items-start">
-                        <i class="fas fa-clock mt-1 mr-3 text-sm w-4"></i>
-                        <span class="text-sm">Senin - Jumat, 08.00 - 16.00 WIB</span>
-                    </div>
+            <!-- Copyright -->
+            <div class="border-t border-blue-500/30 mt-8 pt-8 text-center">
+                <div class="text-blue-100 text-sm">
+                    &copy; 2025 PAUD Bougenville. Semua Hak Dilindungi.
                 </div>
             </div>
         </div>
-
-        <!-- Copyright -->
-        <div class="border-t border-blue-500/30 mt-8 pt-8 text-center">
-            <div class="text-blue-100 text-sm">
-                &copy; 2025 PAUD Bougenville. Semua Hak Dilindungi.
-            </div>
-        </div>
-    </div>
-</footer>
+    </footer>
 
     <script>
         // Animasi scroll
