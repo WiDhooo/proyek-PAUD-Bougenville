@@ -28,6 +28,27 @@ Route::get('/kontak', function () {
     return view('kontak');
 });
 
+/*
+|--------------------------------------------------------------------------
+| ROUTE UNTUK AUTENTIKASI (LOGIN & LOGOUT)
+|--------------------------------------------------------------------------
+*/
+Route::get('/login', function () {
+    // Rute ini untuk MENAMPILKAN halaman login
+    return view('auth.login');
+})->name('login');
+
+Route::post('/login', function () {
+    // Rute ini untuk MEMPROSES login (nanti diisi Back-End)
+    // Kita simulasikan login sukses sebagai Admin
+    return redirect()->route('admin.dashboard')->with('success', 'Selamat datang kembali!');
+})->name('login.attempt');
+
+Route::post('/logout', function () {
+    // Rute ini untuk MEMPROSES logout (nanti diisi Back-End)
+    // Kita simulasikan logout sukses
+    return redirect()->route('login')->with('success', 'Anda berhasil logout.');
+})->name('logout');
 
 /*
 |--------------------------------------------------------------------------
@@ -122,65 +143,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::prefix('guru')->name('guru.')->group(function () {
-<<<<<<< HEAD
-    
-    // Halaman Dashboard Guru
-    Route::get('/dashboard', function() {
-        // Data jadwal lengkap, sama seperti di dashboard admin
-        $jadwal_lengkap = [
-            'Senin' => [
-                'Mandiri - A' => 'Galar Widodo',
-                'Ceria - B' => 'Xanana Megantara',
-                'Kreatif - A' => 'Gaman Maras Saputra',
-            ],
-            'Selasa' => [
-                'Mandiri - A' => 'Qori Usada M.Pd',
-                'Ceria - B' => 'Zalindra Rahayu',
-                'Kreatif - A' => 'Bakti Jarwadi S. M.T.',
-            ],
-            'Rabu' => [
-                'Mandiri - A' => 'Caraka Sabar Waskita S.E.I',
-                'Ceria - B' => 'Sari Kuswandari',
-                'Kreatif - A' => 'Pardi Prasetya S.Kom',
-            ],
-            'Kamis' => [
-                'Mandiri - A' => 'Yulia Andriani S.Ked',
-                'Ceria - B' => 'Dipa Cakra Buana',
-                'Kreatif - A' => 'Taufan Habibi M.T.I.',
-            ],
-            'Jumat' => [
-                'Mandiri - A' => 'Galar Widodo',
-                'Ceria - B' => 'Sari Kuswandari',
-                'Kreatif - A' => 'Cahyadi Bahuraksa D.',
-            ],
-        ];
-        // Kirim data dengan nama variabel 'jadwal'
-        return view('guru.dashboard', ['jadwal' => $jadwal_lengkap]);
-    })->name('dashboard');
-
-    // Halaman Data Siswa
-    Route::get('/data-siswa', function() {
-        // Data palsu murid yang diajar oleh guru ini
-        $murid_kelas_ini = [
-            ['id' => 1, 'nis' => '2526530201', 'nama' => 'Danu Purnawati', 'jenis_kelamin' => 'Perempuan'],
-            ['id' => 2, 'nis' => '2526530142', 'nama' => 'Farah Utama', 'jenis_kelamin' => 'Laki-Laki'],
-            ['id' => 3, 'nis' => '2526530037', 'nama' => 'Tiara Yulianti', 'jenis_kelamin' => 'Laki-Laki'],
-        ];
-        return view('guru.data_siswa', ['murid' => $murid_kelas_ini]);
-    })->name('data_siswa');
-
-    Route::get('/nilai-absensi', function() {
-        // Data palsu murid yang sama seperti di halaman data siswa
-        $murid_kelas_ini = [
-            ['id' => 1, 'nis' => '2526530201', 'nama' => 'Danu Purnawati'],
-            ['id' => 2, 'nis' => '2526530142', 'nama' => 'Farah Utama'],
-            ['id' => 3, 'nis' => '2526530037', 'nama' => 'Tiara Yulianti'],
-        ];
-        return view('guru.nilai_absensi', ['murid' => $murid_kelas_ini]);
-    })->name('nilai_absensi');
-
-});
-=======
     Route::get('/dashboard', [GuruController::class, 'dashboard'])->name('dashboard');
     Route::get('/data-siswa', [GuruController::class, 'dataSiswa'])->name('data_siswa');
 
@@ -195,4 +157,3 @@ Route::prefix('guru')->name('guru.')->group(function () {
 
 
 
->>>>>>> ce5e812 (Update untuk GURU di bagian dashboard, data siswa, tambah model & migration)

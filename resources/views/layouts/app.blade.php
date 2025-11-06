@@ -106,12 +106,32 @@
         </div>
     </aside>
     <main class="main-content">
-        <header class="header d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">@yield('title', 'Dashboard')</h4>
-            <div>
-                <span>Nama User</span>
-            </div>
-        </header>
+    <header class="header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">@yield('title', 'Dashboard')</h4>
+
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-person-circle fs-4 me-2"></i>
+                <span class="fw-bold">Nama User</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                <li>
+                    {{-- Pastikan ID form ini unik --}}
+                    <form action="{{ route('logout') }}" method="POST" class="dropdown-item p-0" id="guru-logout-form">
+                        @csrf
+                        <a href="#" 
+                        onclick="event.preventDefault(); document.getElementById('guru-logout-form').submit();" 
+                        class="d-flex align-items-center text-danger p-2" 
+                        style="text-decoration: none;">
+                            <i class="bi bi-box-arrow-left me-2" style="font-size: 1.1rem;"></i>
+                            Keluar
+                        </a>
+                    </form>
+                </li>
+            </ul>
+        </div>
+
+    </header>
 
         <div>
             @yield('content')
