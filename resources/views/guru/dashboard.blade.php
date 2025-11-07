@@ -6,35 +6,6 @@
 <div class="container-fluid">
     <!-- Judul dan deskripsi -->
     <div class="mb-4">
-<<<<<<< HEAD
-        <h3>Selamat Datang, Nama Guru! 👋</h3>
-        <p class="text-muted">Berikut adalah jadwal mengajar keseluruhan pekan ini.</p>
-    </div>
-
-    <div class="card border-0 shadow-sm">
-        <div class="card-body">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h5 class="card-title mb-0">Jadwal Mengajar</h5>
-                {{-- Tombol CRUD sengaja dihilangkan untuk guru --}}
-            </div>
-            <div class="table-responsive">
-                <table class="table table-bordered text-center align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th style="width: 10%;">Hari</th>
-                            <th>Mandiri - A</th>
-                            <th>Ceria - B</th>
-                            <th>Kreatif - A</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($jadwal as $hari => $kelas)
-                        <tr>
-                            <td class="fw-bold">{{ $hari }}</td>
-                            <td>{{ $kelas['Mandiri - A'] ?? '-' }}</td>
-                            <td>{{ $kelas['Ceria - B'] ?? '-' }}</td>
-                            <td>{{ $kelas['Kreatif - A'] ?? '-' }}</td>
-=======
         {{-- <h3 class="fw-bold text-primary mb-1">Selamat datang kembali, pantau jadwal dan kegiatan mengajar Anda di sini.</h3> --}}
         <p class="text-muted mb-0">Selamat datang kembali, pantau jadwal dan kegiatan mengajar Anda di sini.</p>
     </div>
@@ -111,7 +82,6 @@
                                     {{ $item->kelas->nama_kelas ?? '-' }}
                                 </span>
                             </td>
->>>>>>> ce5e812 (Update untuk GURU di bagian dashboard, data siswa, tambah model & migration)
                         </tr>
                         @empty
                         <tr>

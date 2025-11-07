@@ -89,14 +89,11 @@
                     <i class="bi bi-people-fill"></i> <span>Data Siswa</span>
                 </a>
             </li>
-<<<<<<< HEAD
-=======
             <li class="nav-item">
                 <a class="nav-link d-flex align-items-center {{ request()->is('guru/nilai-absensi*') ? 'active' : '' }}" href="{{ route('guru.nilai_absensi') }}">
                     <i class="bi bi-journal-check"></i> <span>Nilai & Absensi</span>
                 </a>
             </li>
->>>>>>> ce5e812 (Update untuk GURU di bagian dashboard, data siswa, tambah model & migration)
         </ul>
     </aside>
 
@@ -108,7 +105,6 @@
             @yield('content')
         </div>
     </main>
-<<<<<<< HEAD
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             @if (Session::has('success'))
@@ -128,7 +124,6 @@
             @endif
         });
     </script>
-=======
 
     {{-- Bootstrap JS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -155,6 +150,5 @@
     </script>
 
     @stack('scripts')
->>>>>>> ce5e812 (Update untuk GURU di bagian dashboard, data siswa, tambah model & migration)
 </body>
 </html>

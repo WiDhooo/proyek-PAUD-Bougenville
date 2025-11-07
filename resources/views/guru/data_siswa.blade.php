@@ -70,62 +70,6 @@
     </div>
 </div>
 
-<<<<<<< HEAD
-<script>
-    function manager() {
-        return {
-            searchQuery: '',
-            items: @json($murid),
-            
-            // Variabel untuk sorting & pagination
-            sortColumn: '',
-            sortDirection: 'asc',
-            currentPage: 1,
-            itemsPerPage: 5, // Ubah angka ini sesuai kebutuhan
-
-            sortBy(column) {
-                if (this.sortColumn === column) {
-                    this.sortDirection = this.sortDirection === 'asc' ? 'desc' : 'asc';
-                } else {
-                    this.sortColumn = column;
-                    this.sortDirection = 'asc';
-                }
-            },
-
-            get filteredItems() {
-                let filtered = [...this.items];
-                if (this.searchQuery) {
-                    filtered = filtered.filter(item =>
-                        item.nama.toLowerCase().includes(this.searchQuery.toLowerCase())
-                    );
-                }
-                if (this.sortColumn) {
-                    filtered.sort((a, b) => {
-                        const valA = a[this.sortColumn] || '';
-                        const valB = b[this.sortColumn] || '';
-                        return this.sortDirection === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
-                    });
-                }
-                return filtered;
-            },
-            
-            get totalPages() {
-                return Math.ceil(this.filteredItems.length / this.itemsPerPage);
-            },
-
-            get paginatedItems() {
-                if (this.totalPages > 0 && this.currentPage > this.totalPages) {
-                    this.currentPage = 1;
-                }
-                const start = (this.currentPage - 1) * this.itemsPerPage;
-                const end = start + this.itemsPerPage;
-                return this.filteredItems.slice(start, end);
-            }
-        }
-    }
-</script>
-@endsection
-=======
 {{-- Modal Detail Siswa --}}
 <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -187,4 +131,3 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush
->>>>>>> ce5e812 (Update untuk GURU di bagian dashboard, data siswa, tambah model & migration)
