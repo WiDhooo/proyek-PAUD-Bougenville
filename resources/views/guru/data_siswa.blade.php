@@ -70,6 +70,72 @@
     </div>
 </div>
 
+<<<<<<< HEAD
+{{-- Modal Detail Siswa --}}
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-sm">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title" id="detailModalLabel">Detail Siswa</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <p><strong>NIS:</strong> <span id="detailNis"></span></p>
+                <p><strong>Nama:</strong> <span id="detailNama"></span></p>
+                <p><strong>Jenis Kelamin:</strong> <span id="detailJenis"></span></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // --- Bagian Modal Detail ---
+    const detailButtons = document.querySelectorAll('.btn-detail');
+    const nisField = document.getElementById('detailNis');
+    const namaField = document.getElementById('detailNama');
+    const jenisField = document.getElementById('detailJenis');
+
+    detailButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            nisField.textContent = this.dataset.nis;
+            namaField.textContent = this.dataset.nama;
+            jenisField.textContent = this.dataset.jenis;
+        });
+    });
+
+    // --- Bagian Search / Filter ---
+    const searchInput = document.querySelector('input[type="search"]');
+    const rows = document.querySelectorAll('tbody tr');
+
+    searchInput.addEventListener('keyup', function() {
+        const keyword = this.value.toLowerCase().trim();
+        rows.forEach(row => {
+            const columns = row.querySelectorAll('td');
+            let match = false;
+
+            // Cek setiap kolom (NIS, Nama, Jenis Kelamin)
+            columns.forEach(col => {
+                if (col.textContent.toLowerCase().includes(keyword)) {
+                    match = true;
+                }
+            });
+
+            row.style.display = match ? '' : 'none';
+        });
+    });
+});
+</script>
+<<<<<<< HEAD
+@endpush
+=======
+@endsection
+=======
 {{-- Modal Detail Siswa --}}
 <div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="detailModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">

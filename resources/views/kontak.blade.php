@@ -1,128 +1,321 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kontak - PAUD Bougenville</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    body { font-family: 'Poppins', sans-serif; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontak - PAUD Bougenville</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    /* Animasi Fade-In */
-    .fade-in {
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
-    }
-    .fade-in.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  </style>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease-out;
+        }
+
+        .fade-in.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
 </head>
 
 <body class="bg-[#FFFDF5] text-gray-800">
 
-  <!-- Navbar -->
-  <nav class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50 transition-all duration-300">
-    <div class="container mx-auto px-10 md:px-24 flex justify-between items-center py-4">
-      <a href="{{ url('/') }}" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition">
-        PAUD Bougenville
-      </a>
-      <ul class="hidden md:flex space-x-8 font-medium">
-        <li><a href="{{ url('/') }}" class="text-gray-700 hover:text-blue-600 transition">Beranda</a></li>
-        <li><a href="{{ url('/tentang') }}" class="text-gray-700 hover:text-blue-600 transition">Tentang Kami</a></li>
-        <li><a href="{{ url('/kegiatan') }}" class="text-gray-700 hover:text-blue-600 transition">Kegiatan</a></li>
-        <li><a href="{{ url('/kontak') }}" class="text-blue-600 font-semibold">Kontak</a></li>
-      </ul>
-      <a href="#" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
-        Daftar Sekarang
-      </a>
-    </div>
-  </nav>
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50 transition-all duration-300">
+        <div class="container mx-auto px-6 md:px-24 flex justify-between items-center py-4">
+            <a href="{{ url('/') }}" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition">
+                PAUD Bougenville
+            </a>
 
-  <!-- Kontak Section -->
-  <section class="pt-32 pb-16 px-10 md:px-24 text-center fade-in">
-    <h2 class="text-2xl md:text-3xl font-bold text-blue-600 mb-3">Kontak</h2>
-    <p class="text-gray-600 mb-12">
-      Silahkan menghubungi kami untuk menyampaikan pertanyaan, komentar, saran, maupun hal lainnya.
-    </p>
+            <!-- Menu Desktop -->
+            <ul class="hidden md:flex space-x-8 font-medium">
+                <li><a href="{{ url('/') }}" class="relative text-gray-700 hover:text-blue-600 transition duration-300 group">
+                    Beranda
+                    <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 group-hover:w-full transition-all duration-300"></span>
+                </a></li>
+                <li><a href="{{ url('/tentang') }}" class="relative text-gray-700 hover:text-blue-600 transition duration-300 group">
+                    Tentang Kami
+                    <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 group-hover:w-full transition-all duration-300"></span>
+                </a></li>
+                <li><a href="{{ url('/kegiatan') }}" class="relative text-gray-700 hover:text-blue-600 transition duration-300 group">
+                    Kegiatan
+                    <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 group-hover:w-full transition-all duration-300"></span>
+                </a></li>
+                <li><a href="{{ url('/kontak') }}" class="relative text-blue-600 transition duration-300 group">
+                    Kontak
+                    <span class="absolute left-0 -bottom-1 w-full h-0.5 bg-blue-500 transition-all duration-300"></span>
+                </a></li>
+            </ul>
+
+            <!-- Tombol -->
+            <a href="#" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
+                Daftar Sekarang
+            </a>
+
+            <!-- Hamburger -->
+            <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
+                <span class="w-6 h-0.5 bg-gray-700"></span>
+                <span class="w-6 h-0.5 bg-gray-700"></span>
+                <span class="w-6 h-0.5 bg-gray-700"></span>
+            </button>
+        </div>
+
+        <!-- Menu Mobile -->
+        <div id="mobile-menu" class="hidden flex-col items-center space-y-4 bg-white shadow-md py-6 md:hidden">
+            <a href="{{ url('/') }}" class="text-gray-700 hover:text-blue-500">Beranda</a>
+            <a href="{{ url('/tentang') }}" class="text-gray-700 hover:text-blue-500">Tentang Kami</a>
+            <a href="{{ url('/kegiatan') }}" class="text-gray-700 hover:text-blue-500">Kegiatan</a>
+            <a href="{{ url('/kontak') }}" class="text-blue-600">Kontak</a>
+            <a href="#" class="px-4 py-2 border-2 border-blue-500 text-blue-500 rounded-full hover:bg-blue-500 hover:text-white transition">
+                Daftar Sekarang
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Toggle menu mobile
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+            mobileMenu.classList.toggle('flex');
+        });
+    </script>
+
+    <!-- Hero Section Kontak -->
+    <section class="pt-20 md:pt-16">
+        <div class="bg-cover bg-center h-96 relative" style="background-image: url('{{ asset('images/bg1.png') }}');">
+            <div class="absolute inset-0 bg-blue-700 bg-opacity-10"></div>
+            <div class="absolute inset-0 flex flex-col justify-center items-start text-left text-white px-10 md:px-24">
+                <h1 class="text-3xl md:text-5xl font-bold drop-shadow-lg leading-tight">Kontak</h1>
+                <h1 class="text-3xl md:text-5xl font-bold drop-shadow-lg leading-tight mt-3">PAUD Bougenville</h1>
+                <p class="mt-6 text-lg md:text-xl drop-shadow-md">Hubungi kami untuk informasi lebih lanjut</p>
+            </div>
+        </div>
+    </section>
 
     <!-- Info Kontak -->
-    <div class="flex flex-col md:flex-row justify-center gap-6 mb-12 fade-in">
-      <div class="bg-blue-500 text-white w-full md:w-1/3 py-6 rounded-lg flex flex-col items-center justify-center shadow-md transition duration-500 hover:scale-105">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 6.75c0-1.242 1.008-2.25 2.25-2.25h2.25a2.25 2.25 0 012.25 2.25v1.5a2.25 2.25 0 01-2.25 2.25H4.5v2.25c0 3.728 3.022 6.75 6.75 6.75h2.25a2.25 2.25 0 012.25 2.25v1.5a2.25 2.25 0 01-2.25 2.25H9A10.5 10.5 0 012.25 12V6.75z" />
-        </svg>
-        <h3 class="font-semibold text-lg">Nomor Telepon</h3>
-        <p class="mt-1">+62 877-1537-3102</p>
-      </div>
+    <section class="py-16 bg-white fade-in">
+        <div class="container mx-auto px-8 md:px-32">
+            <h2 class="text-2xl font-bold mb-3 text-blue-500 text-center">
+                Informasi <span class="text-[#FF9900]">Kontak</span>
+            </h2>
+            <p class="text-gray-600 mb-10 text-center max-w-2xl mx-auto">Silakan hubungi kami untuk informasi pendaftaran, kunjungan, atau pertanyaan lainnya</p>
 
-      <div class="bg-blue-500 text-white w-full md:w-1/3 py-6 rounded-lg flex flex-col items-center justify-center shadow-md transition duration-500 hover:scale-105">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8.25l8.25 6.75L19.5 8.25M3 6h18a1.5 1.5 0 011.5 1.5v9A1.5 1.5 0 0121 18H3a1.5 1.5 0 01-1.5-1.5v-9A1.5 1.5 0 013 6z" />
-        </svg>
-        <h3 class="font-semibold text-lg">Email</h3>
-        <p class="mt-1">paudbougenville@gmail.com</p>
-      </div>
-    </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-[#FFFDF5] p-6 rounded-lg shadow-md border border-gray-100 text-center transform hover:scale-105 transition duration-300">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-phone text-blue-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-blue-600 mb-3">Telepon</h3>
+                    <p class="text-gray-600 text-sm mb-2 font-medium">081513747681</p>
+                    <p class="text-gray-500 text-xs">Senin - Jumat, 08.00 - 16.00 WIB</p>
+                </div>
 
-    <!-- Google Maps -->
-    <div class="flex justify-center fade-in">
-      <iframe 
-        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.212020654405!2d106.85777497498952!3d-6.233406161027171!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f33ab9a5f431%3A0x3f882c49751508cf!2sJl.%20Pinang%20Barat%2C%20Jakarta%20Timur!5e0!3m2!1sid!2sid!4v1713241946208!5m2!1sid!2sid"
-        width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade" class="rounded-lg shadow-md max-w-4xl">
-      </iframe>
-    </div>
-  </section>
+                <div class="bg-[#FFFDF5] p-6 rounded-lg shadow-md border border-gray-100 text-center transform hover:scale-105 transition duration-300">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-envelope text-green-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-green-600 mb-3">Email</h3>
+                    <p class="text-gray-600 text-sm font-medium">bougenvilleuks@gmail.com</p>
+                </div>
 
-  <!-- Footer -->
-  <footer class="bg-blue-600 text-white py-8 fade-in">
-    <div class="container mx-auto px-10 grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div>
-        <h3 class="font-bold text-lg mb-3">Tentang PAUD Bougenville</h3>
-        <p class="text-sm leading-relaxed">
-          Lembaga pendidikan anak usia dini yang fokus membangun karakter, kreativitas, dan keceriaan anak-anak dengan penuh kasih sayang.
-        </p>
-      </div>
+                <div class="bg-[#FFFDF5] p-6 rounded-lg shadow-md border border-gray-100 text-center transform hover:scale-105 transition duration-300">
+                    <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="fas fa-map-marker-alt text-orange-600 text-2xl"></i>
+                    </div>
+                    <h3 class="text-lg font-semibold text-orange-600 mb-3">Alamat</h3>
+                    <p class="text-gray-600 text-sm">Jl. Kelapa Sawit V Kelapa<br>Kel. Utan Kayu Selatan, Matraman<br>Jakarta Timur (13120)</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-      <div>
-        <h3 class="font-bold text-lg mb-3">Quick Links</h3>
-        <ul class="space-y-2 text-sm">
-          <li><a href="{{ url('/') }}" class="hover:underline">Beranda</a></li>
-          <li><a href="{{ url('/tentang') }}" class="hover:underline">Tentang Kami</a></li>
-          <li><a href="{{ url('/kegiatan') }}" class="hover:underline">Kegiatan</a></li>
-          <li><a href="{{ url('/kontak') }}" class="hover:underline">Kontak</a></li>
-        </ul>
-      </div>
+    <!-- Form Kontak & Map -->
+    <section class="py-16 bg-[#FFFDF5] fade-in">
+        <div class="container mx-auto px-8 md:px-32">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                <!-- Form Kontak -->
+                <div>
+                    <h2 class="text-2xl font-bold mb-3 text-blue-500">
+                        Kirim <span class="text-[#FF9900]">Pesan</span>
+                    </h2>
+                    <p class="text-gray-600 mb-6">Isi form berikut untuk mengirim pesan kepada kami</p>
+                    
+                    <form class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2">Nama Lengkap</label>
+                                <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300" placeholder="Masukkan nama lengkap">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 text-sm font-medium mb-2">Email</label>
+                                <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300" placeholder="Masukkan email">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-medium mb-2">Subjek</label>
+                            <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300" placeholder="Subjek pesan">
+                        </div>
+                        <div>
+                            <label class="block text-gray-700 text-sm font-medium mb-2">Pesan</label>
+                            <textarea rows="5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300" placeholder="Tulis pesan Anda di sini..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-600 transition duration-300 transform hover:-translate-y-1">
+                            Kirim Pesan
+                        </button>
+                    </form>
+                </div>
 
-      <div>
-        <h3 class="font-bold text-lg mb-3">Kontak Kami</h3>
-        <p class="text-sm">Alamat: Jl. Pinang Barat, Jakarta Timur</p>
-        <p class="text-sm">Email: info@paudbougenville.com</p>
-        <p class="text-sm">Telp: +62 812 3456 7890</p>
-        <p class="text-sm mt-1">Jam Operasional: Senin - Jumat, 08.00 - 16.00 WIB</p>
-      </div>
-    </div>
+                <!-- Google Maps -->
+                <div>
+                    <h2 class="text-2xl font-bold mb-3 text-blue-500">
+                        Lokasi <span class="text-[#FF9900]">Kami</span>
+                    </h2>
+                    <p class="text-gray-600 mb-6">Kunjungi lokasi PAUD Bougenville di alamat berikut</p>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                        <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m12!1m8!1m3!1d63462.634054902526!2d106.8676109!3d-6.2089159!3m2!1i1024!2i768!4f13.1!2m1!1ssekretariat%20rw%2010%20utan%20kayu%20selatan!5e0!3m2!1sen!2sid!4v1761732823672!5m2!1sen!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                                width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"
+                                referrerpolicy="no-referrer-when-downgrade" class="rounded-lg">
+                            </iframe>
+                        </div>
+                        <div class="mt-4 p-4 bg-blue-50 rounded-lg">
+                            <div class="flex items-start">
+                                <i class="fas fa-map-marker-alt text-blue-500 mt-1 mr-3"></i>
+                                <div>
+                                    <h4 class="font-semibold text-blue-600">Alamat Lengkap</h4>
+                                    <p class="text-gray-600 text-sm">
+                                        Jl. Kelapa Sawit V Kelapa Rt 03 Rw 10<br>
+                                        Kel. Utan Kayu Selatan, Matraman<br>
+                                        Jakarta Timur (13120)
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <div class="text-center text-xs text-gray-100 mt-8">
-      &copy; 2025 PAUD Bougenville. Semua Hak Dilindungi.
-    </div>
-  </footer>
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white py-12 fade-in">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+                <!-- Tentang -->
+                <div class="space-y-4 text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start mb-4">
+                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-school text-white text-sm"></i>
+                        </div>
+                        <h3 class="font-bold text-lg">Tentang PAUD Bougenville</h3>
+                    </div>
+                    <p class="text-blue-100 leading-relaxed text-sm max-w-md mx-auto md:mx-0">
+                        Lembaga pendidikan anak usia dini yang fokus membangun karakter, kreativitas, dan keceriaan anak-anak dengan penuh kasih sayang.
+                    </p>
+                </div>
 
-  <script>
-    // Fade in saat elemen masuk viewport
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-        }
-      });
-    }, { threshold: 0.1 });
+                <!-- Quick Links -->
+                <div class="space-y-4 text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start mb-4">
+                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-link text-white text-sm"></i>
+                        </div>
+                        <h3 class="font-bold text-lg">Quick Links</h3>
+                    </div>
+                    <ul class="space-y-3">
+                        <li class="flex justify-center md:justify-start">
+                            <a href="{{ url('/') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
+                                <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                Beranda
+                            </a>
+                        </li>
+                        <li class="flex justify-center md:justify-start">
+                            <a href="{{ url('/tentang') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
+                                <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                Tentang Kami
+                            </a>
+                        </li>
+                        <li class="flex justify-center md:justify-start">
+                            <a href="{{ url('/kegiatan') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
+                                <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                Kegiatan
+                            </a>
+                        </li>
+                        <li class="flex justify-center md:justify-start">
+                            <a href="{{ url('/kontak') }}" class="text-blue-100 hover:text-white transition duration-300 flex items-center group">
+                                <i class="fas fa-chevron-right text-xs mr-3 group-hover:translate-x-1 transition-transform duration-300"></i>
+                                Kontak
+                            </a>
+                        </li>
+                    </ul>
+                </div>
 
-    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
-  </script>
+                <!-- Kontak -->
+                <div class="space-y-4 text-center md:text-left">
+                    <div class="flex items-center justify-center md:justify-start mb-4">
+                        <div class="w-8 h-8 bg-white/20 rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-phone text-white text-sm"></i>
+                        </div>
+                        <h3 class="font-bold text-lg">Kontak Kami</h3>
+                    </div>
+                    <div class="space-y-3 text-blue-100">
+                        <div class="flex flex-col items-center md:items-start text-center md:text-left">
+                            <div class="flex items-start mb-2">
+                                <i class="fas fa-map-marker-alt mt-1 mr-3 text-sm w-4"></i>
+                                <span class="text-sm">Jl. Kelapa Sawit V Kelapa Rt 03 Rw 10<br>Kel. Utan Kayu Selatan, Matraman<br>Jakarta Timur (13120)</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-center md:justify-start">
+                            <i class="fas fa-envelope mr-3 text-sm w-4"></i>
+                            <span class="text-sm font-medium">bougenvilleuks@gmail.com</span>
+                        </div>
+                        <div class="flex items-center justify-center md:justify-start">
+                            <i class="fas fa-phone mr-3 text-sm w-4"></i>
+                            <span class="text-sm font-medium">081513747681</span>
+                        </div>
+                        <div class="flex items-center justify-center md:justify-start">
+                            <i class="fas fa-clock mt-1 mr-3 text-sm w-4"></i>
+                            <span class="text-sm">Senin - Jumat, 08.00 - 16.00 WIB</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="border-t border-blue-500/30 mt-8 pt-8 text-center">
+                <div class="text-blue-100 text-sm">
+                    &copy; 2025 PAUD Bougenville. Semua Hak Dilindungi.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Animasi scroll
+        const elements = document.querySelectorAll('.fade-in');
+        const showOnScroll = () => {
+            elements.forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 100) el.classList.add('show');
+            });
+        };
+        window.addEventListener('scroll', showOnScroll);
+        window.addEventListener('load', showOnScroll);
+    </script>
+
 </body>
 </html>
