@@ -28,6 +28,27 @@ Route::get('/kontak', function () {
     return view('kontak');
 });
 
+/*
+|--------------------------------------------------------------------------
+| ROUTE UNTUK AUTENTIKASI (LOGIN & LOGOUT)
+|--------------------------------------------------------------------------
+*/
+Route::get('/login', function () {
+    // Rute ini untuk MENAMPILKAN halaman login
+    return view('auth.login');
+})->name('login');
+
+Route::post('/login', function () {
+    // Rute ini untuk MEMPROSES login (nanti diisi Back-End)
+    // Kita simulasikan login sukses sebagai Admin
+    return redirect()->route('admin.dashboard')->with('success', 'Selamat datang kembali!');
+})->name('login.attempt');
+
+Route::post('/logout', function () {
+    // Rute ini untuk MEMPROSES logout (nanti diisi Back-End)
+    // Kita simulasikan logout sukses
+    return redirect()->route('login')->with('success', 'Anda berhasil logout.');
+})->name('logout');
 
 /*
 |--------------------------------------------------------------------------
@@ -133,4 +154,6 @@ Route::prefix('guru')->name('guru.')->group(function () {
     Route::get('/nilai-absensi/{kelas}', [GuruController::class, 'nilaiAbsensi'])->name('nilai_absensi.kelas');
     Route::post('/nilai-absensi/{kelas}/simpan', [GuruController::class, 'simpanNilaiAbsensi'])->name('nilai_absensi.simpan');
 });
+
+
 
