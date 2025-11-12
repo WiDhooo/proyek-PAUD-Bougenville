@@ -74,6 +74,108 @@
                 </ul>
             </nav>
 
+            <div class="modal fade" id="modalTambahKelas" tabindex="-1" aria-labelledby="modalTambahKelasLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        
+                        {{-- Form ini akan dikirim ke route 'admin.kelas.store' --}}
+                        <form action="{{ route('admin.kelas.store') }}" method="POST">
+                            @csrf
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalTambahKelasLabel">Buat Kelas Baru</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="add-nama_kelas" class="form-label">Nama Kelas</label>
+                                    <input type="text" class="form-control" id="add-nama_kelas" name="nama_kelas" placeholder="Contoh: Mandiri, Kreatif, Ceria" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="add-kelas" class="form-label">Tingkat/Kelompok</label>
+                                    <input type="text" class="form-control" id="add-kelas" name="kelas" placeholder="Contoh: A, B, Kelompok Bermain" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="add-wali_id" class="form-label">Wali Kelas</label>
+                                    <select class="form-select" id="add-wali_id" name="guru_id" required>
+                                        <option value="" disabled selected>Pilih seorang guru</option>
+                                        
+                                        @isset($gurus)
+                                            @foreach($gurus as $guru)
+                                                <option value="{{ $guru->id }}">{{ $guru->nama }}</option>
+                                            @endforeach
+                                        @else
+                                            <option disabled>Data guru tidak ditemukan</option>
+                                        @endisset
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-success">Simpan</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="modalEditKelas" tabindex="-1" aria-labelledby="modalEditKelasLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        
+                        <form :action="editUrl" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalEditKelasLabel">Edit Kelas <span x-text="editData.nama_kelas"></span></h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                {{-- Input 1: Nama Kelas --}}
+                                <div class="mb-3">
+                                    <label for="upd-nama_kelas" class="form-label">Nama Kelas</label>
+                                    <input type="text" class="form-control" id="upd-nama_kelas" name="nama_kelas" 
+                                        x-model="editData.nama_kelas" required>
+                                </div>
+                                
+                                {{-- Input 2: Tingkat/Kelompok (A/B) --}}
+                                <div class="mb-3">
+                                    <label for="upd-kelas" class="form-label">Tingkat/Kelompok</label>
+                                    <input type="text" class="form-control" id="upd-kelas" name="kelas" 
+                                        x-model="editData.kelas" required>
+                                </div>
+                                
+                                {{-- Input 3: Wali Kelas (Dropdown) --}}
+                                <div class="mb-3">
+                                    <label for="upd-wali_id" class="form-label">Wali Kelas</label>
+                                    <select class="form-select" id="upd-wali_id" name="guru_id" 
+                                            x-model="editData.guru_id" required>
+                                        
+                                        {{-- Catatan: editData.guru_id akan otomatis memilih guru yang benar --}}
+                                        
+                                        @isset($gurus)
+                                            @foreach($gurus as $guru)
+                                                <option value="{{ $guru->id }}">{{ $guru->nama }}</option>
+                                            @endforeach
+                                        @else
+                                            <option disabled>Data guru tidak ditemukan</option>
+                                        @endisset
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-success">Simpan</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>

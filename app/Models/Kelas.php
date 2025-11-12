@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Kelas extends Model
 {
-    protected $fillable = ['nama_kelas', 'guru_id'];
+    protected $fillable = ['nama_kelas', 'kelas', 'guru_id'];
 
     public function guru()
     {

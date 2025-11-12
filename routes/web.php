@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GuruController;
+use App\Http\Controllers\KelasController;
 
 /*
 |--------------------------------------------------------------------------
@@ -98,15 +99,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('/murid/{id}', function ($id) { return redirect()->route('admin.murid.index')->with('success', 'Data murid berhasil dihapus!'); })->name('murid.destroy');
 
     // CRUD Kelas
-    Route::get('/kelas', function () {
-        $data_kelas_palsu = [
-            ['id' => 1, 'nama_kelas' => 'Mandiri', 'kelas' => 'A', 'wali' => 'Jayeng Wawan Pradipta S.E.I'],
-            ['id' => 2, 'nama_kelas' => 'Ceria', 'kelas' => 'B', 'wali' => 'Victoria Pertiwi'],
-        ];
-        return view('admin.kelas.index', ['kelas' => $data_kelas_palsu]);
-    })->name('kelas.index');
-    Route::post('/kelas', function () { return redirect()->route('admin.kelas.index')->with('success', 'Data kelas berhasil ditambahkan!'); })->name('kelas.store');
-    Route::put('/kelas/{id}', function ($id) { return redirect()->route('admin.kelas.index')->with('success', 'Data kelas berhasil diperbarui!'); })->name('kelas.update');
+    Route::get('/kelas', [KelasController::class, 'index'])->name('kelas.index');
+    //     $data_kelas_palsu = [
+    //         ['id' => 1, 'nama_kelas' => 'Mandiri', 'kelas' => 'A', 'wali' => 'Jayeng Wawan Pradipta S.E.I'],
+    //         ['id' => 2, 'nama_kelas' => 'Ceria', 'kelas' => 'B', 'wali' => 'Victoria Pertiwi'],
+    //     ];
+    //     return view('admin.kelas.index', ['kelas' => $data_kelas_palsu]);
+    // })->name('kelas.index');
+    Route::post('/kelas', [KelasController::class, 'store'])->name('kelas.store');
+    Route::put('/kelas/{id}', [KelasController::class, 'update'])->name('kelas.update');
     Route::delete('/kelas/{id}', function ($id) { return redirect()->route('admin.kelas.index')->with('success', 'Data kelas berhasil dihapus!'); })->name('kelas.destroy');
     Route::get('/kelas/{id}', function ($id) {
         $kelas_detail = ['id' => $id, 'nama_kelas' => 'Mandiri', 'kelas' => 'A'];
