@@ -81,7 +81,7 @@ class SiswaController extends Controller
             'nis' => 'required|string|max:100|unique:siswa,nis,' . $murid->id,
             'nama' => 'required|string|max:100',
             'jenis_kelamin' => 'required|string|max:15',
-            'tanggal_lahir' => 'required',
+            'tanggal_lahir' => 'required|date',
         ]);
 
         $murid->update($data);

@@ -28,9 +28,7 @@
                             <th>NIS</th>
                             <th @click="sortBy('nama')" style="cursor: pointer;">
                                 Nama Murid
-                                <span x-show="sortColumn === 'nama'">
-                                    <i :class="sortDirection === 'asc' ? 'bi bi-arrow-up' : 'bi-arrow-down'"></i>
-                                </span>
+                                <span x-show="sortColumn === 'nama'"><i :class="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i></span>
                             </th>
                             <th>Usia</th>
                             <th>Jenis Kelamin</th>
@@ -46,9 +44,10 @@
                                 <td x-text="item.usia"></td>
                                 <td x-text="item.jenis_kelamin"></td>
                                 <td>
+                                    {{-- PERUBAHAN 1: Tombol sekarang MENGIRIM EVENT --}}
                                     <button type="button" class="btn btn-warning btn-sm"
                                         data-bs-toggle="modal" data-bs-target="#modalEditMurid"
-                                        @click="editData = item; editUrl = `/admin/murid/${item.id}`">
+                                        @click="$dispatch('open-edit-modal', { item: item })">
                                         <i class="bi bi-pencil-fill"></i>
                                     </button>
                                     <button type="button" class="btn btn-danger btn-sm"
@@ -68,23 +67,18 @@
 
             <nav x-show="totalPages > 1" class="d-flex justify-content-end mt-3">
                 <ul class="pagination">
-                    <li class="page-item" :class="{ 'disabled': currentPage === 1 }">
-                        <a class="page-link" href="#" @click.prevent="currentPage--">Previous</a>
-                    </li>
+                    <li class="page-item" :class="{ 'disabled': currentPage === 1 }"><a class="page-link" href="#" @click.prevent="currentPage--">Previous</a></li>
                     <template x-for="page in totalPages" :key="page">
-                        <li class="page-item" :class="{ 'active': currentPage === page }">
-                            <a class="page-link" href="#" @click.prevent="currentPage = page" x-text="page"></a>
-                        </li>
+                        <li class="page-item" :class="{ 'active': currentPage === page }"><a class="page-link" href="#" @click.prevent="currentPage = page" x-text="page"></a></li>
                     </template>
-                    <li class="page-item" :class="{ 'disabled': currentPage === totalPages }">
-                        <a class="page-link" href="#" @click.prevent="currentPage++">Next</a>
-                    </li>
+                    <li class="page-item" :class="{ 'disabled': currentPage === totalPages }"><a class="page-link" href="#" @click.prevent="currentPage++">Next</a></li>
                 </ul>
             </nav>
         </div>
     </div>
 </div>
 
+{{-- Modal Tambah Murid (Tidak Berubah) --}}
 <div class="modal fade" id="modalTambahMurid" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -103,8 +97,18 @@
     </div>
 </div>
 
-<!-- Modal Edit Murid -->
-<div class="modal fade" id="modalEditMurid" tabindex="-1" aria-labelledby="modalEditKelasLabel" aria-hidden="true">
+{{-- PERUBAHAN 2: Modal Edit sekarang punya x-data dan event listener sendiri --}}
+<div class="modal fade" id="modalEditMurid" tabindex="-1" aria-labelledby="modalEditKelasLabel" aria-hidden="true"
+     x-data="{ editUrl: '', editData: { id: null, nis: '', nama: '', tanggal_lahir: '', jenis_kelamin: '' } }"
+     @open-edit-modal.window="
+        let item = event.detail.item;
+        editData.id = item.id;
+        editData.nis = item.nis;
+        editData.nama = item.nama;
+        editData.tanggal_lahir = item.tanggal_lahir ? String(item.tanggal_lahir).substring(0, 10) : '';
+        editData.jenis_kelamin = item.jenis_kelamin;
+        editUrl = `/admin/murid/${item.id}`;
+     ">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <form :action="editUrl" method="POST">
@@ -144,6 +148,7 @@
     </div>
 </div>
 
+{{-- Modal Hapus Murid (Tidak Berubah) --}}
 <div class="modal fade" id="modalHapusMurid" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -159,7 +164,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> 
 
 <script>
     function manager() {
@@ -167,13 +172,16 @@
             searchQuery: '',
             deleteName: '',
             deleteUrl: '',
-            editUrl: '',
-            editData: {},
+            
+            {{-- PERUBAHAN 3: editUrl dan editData DIHAPUS dari sini --}}
+            
             items: @json($murid),
             currentPage: 1,
             itemsPerPage: 5,
             sortColumn: '',
             sortDirection: 'asc',
+
+            {{-- FUNGSI openEditModal DIHAPUS dari sini --}}
 
             sortBy(column) {
                 if (this.sortColumn === column) {
@@ -210,7 +218,6 @@
             },
 
             get paginatedItems() {
-                // Reset ke halaman pertama setiap kali filter atau sort berubah
                 if (this.totalPages > 0 && this.currentPage > this.totalPages) {
                     this.currentPage = 1;
                 }
