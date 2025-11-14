@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\KelasController;
+use App\Http\Controllers\SiswaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -87,16 +88,16 @@ Route::prefix('admin')->name('admin.')->group(function () {
     Route::delete('/guru/{id}', function ($id) { return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil dihapus!'); })->name('guru.destroy');
 
     // CRUD Murid
-    Route::get('/murid', function () {
-        $data_murid_palsu = [
-            ['id' => 1, 'nik' => '25190527237', 'nama' => 'Rogelio Torphy', 'usia' => '6 tahun', 'jenis_kelamin' => 'Laki-laki'],
-            ['id' => 2, 'nik' => '25130909649', 'nama' => 'Marguerite McKenzie', 'usia' => '5 tahun', 'jenis_kelamin' => 'Perempuan'],
-        ];
-        return view('admin.murid.index', ['murid' => $data_murid_palsu]);
-    })->name('murid.index');
-    Route::post('/murid', function () { return redirect()->route('admin.murid.index')->with('success', 'Data murid berhasil ditambahkan!'); })->name('murid.store');
-    Route::put('/murid/{id}', function ($id) { return redirect()->route('admin.murid.index')->with('success', 'Data murid berhasil diperbarui!'); })->name('murid.update');
-    Route::delete('/murid/{id}', function ($id) { return redirect()->route('admin.murid.index')->with('success', 'Data murid berhasil dihapus!'); })->name('murid.destroy');
+    Route::get('/murid', [SiswaController::class, 'index'])->name('murid.index');
+    //     $data_murid_palsu = [
+    //         ['id' => 1, 'nik' => '25190527237', 'nama' => 'Rogelio Torphy', 'usia' => '6 tahun', 'jenis_kelamin' => 'Laki-laki'],
+    //         ['id' => 2, 'nik' => '25130909649', 'nama' => 'Marguerite McKenzie', 'usia' => '5 tahun', 'jenis_kelamin' => 'Perempuan'],
+    //     ];
+    //     return view('admin.murid.index', ['murid' => $data_murid_palsu]);
+    // })->name('murid.index');
+    Route::post('/murid', [SiswaController::class, 'store'])->name('murid.store');
+    Route::put('/murid/{id}', [SiswaController::class, 'update'])->name('murid.update');
+    Route::delete('/kelas/{id}', [SiswaController::class, 'destroy'])->name('murid.destroy');
 
     // CRUD Kelas
     Route::get('/kelas', [KelasController::class, 'index'])->name('kelas.index');
@@ -108,15 +109,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // })->name('kelas.index');
     Route::post('/kelas', [KelasController::class, 'store'])->name('kelas.store');
     Route::put('/kelas/{id}', [KelasController::class, 'update'])->name('kelas.update');
-    Route::delete('/kelas/{id}', function ($id) { return redirect()->route('admin.kelas.index')->with('success', 'Data kelas berhasil dihapus!'); })->name('kelas.destroy');
-    Route::get('/kelas/{id}', function ($id) {
-        $kelas_detail = ['id' => $id, 'nama_kelas' => 'Mandiri', 'kelas' => 'A'];
-        $murid_di_kelas = [['id' => 1, 'nis' => '2526530970', 'nama' => 'Zelda Maheswara', 'jenis_kelamin' => 'Perempuan']];
-        $semua_murid = [['id' => 3, 'nik' => '25190910658', 'nama' => 'Prof. Reynold Trantow III']];
-        return view('admin.kelas.show', ['kelas' => $kelas_detail, 'murid_di_kelas' => $murid_di_kelas, 'semua_murid' => $semua_murid]);
-    })->name('kelas.show');
-    Route::post('/kelas/{id}/assign-murid', function ($id) { return redirect()->route('admin.kelas.show', $id)->with('success', 'Murid berhasil ditambahkan!'); })->name('kelas.assign');
-    Route::delete('/kelas/{id}/unassign-murid/{muridId}', function ($id, $muridId) { return redirect()->route('admin.kelas.show', $id)->with('success', 'Murid berhasil dihapus!'); })->name('kelas.unassign');
+    Route::delete('/kelas/{id}', [KelasController::class, 'destroy'])->name('kelas.destroy');
+    Route::get('/kelas/{id}', [KelasController::class, 'show'])->name('kelas.show');
+    //     $kelas_detail = ['id' => $id, 'nama_kelas' => 'Mandiri', 'kelas' => 'A'];
+    //     $murid_di_kelas = [['id' => 1, 'nis' => '2526530970', 'nama' => 'Zelda Maheswara', 'jenis_kelamin' => 'Perempuan']];
+    //     $semua_murid = [['id' => 3, 'nik' => '25190910658', 'nama' => 'Prof. Reynold Trantow III']];
+    //     return view('admin.kelas.show', ['kelas' => $kelas_detail, 'murid_di_kelas' => $murid_di_kelas, 'semua_murid' => $semua_murid]);
+    // })->name('kelas.show');
+    Route::post('/kelas/{id}/assign-murid', [KelasController::class, 'assignMurid'])->name('kelas.assign');
+    Route::delete('/kelas/{id}/unassign-murid/{muridId}', [KelasController::class, 'unassignMurid'])->name('kelas.unassign');
 
     // Manajemen Konten
     Route::get('/profil-sekolah', function () { return view('admin.profil.index'); })->name('profil.index');

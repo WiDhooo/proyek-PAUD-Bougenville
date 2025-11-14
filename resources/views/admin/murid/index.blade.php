@@ -13,7 +13,6 @@
             <div class="d-flex align-items-center">
                 <div class="input-group me-2">
                      <input type="search" class="form-control" placeholder="Cari Nama Murid..." x-model.debounce.300ms="searchQuery">
-                     <button class="btn btn-primary" type="button">Cari</button>
                 </div>
                 <button type="button" class="btn btn-outline-success flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalTambahMurid">
                     <i class="bi bi-plus-lg"></i> Tambah Murid
@@ -26,7 +25,7 @@
                     <thead class="table-light">
                         <tr>
                             <th>No</th>
-                            <th>NIK</th>
+                            <th>NIS</th>
                             <th @click="sortBy('nama')" style="cursor: pointer;">
                                 Nama Murid
                                 <span x-show="sortColumn === 'nama'">
@@ -42,7 +41,7 @@
                         <template x-for="(item, index) in paginatedItems" :key="item.id">
                             <tr>
                                 <td x-text="(currentPage - 1) * itemsPerPage + index + 1"></td>
-                                <td x-text="item.nik"></td>
+                                <td x-text="item.nis"></td>
                                 <td x-text="item.nama"></td>
                                 <td x-text="item.usia"></td>
                                 <td x-text="item.jenis_kelamin"></td>
@@ -93,10 +92,10 @@
             <div class="modal-body">
                 <form action="{{ route('admin.murid.store') }}" method="POST">
                     @csrf
-                    <div class="mb-3"><label class="form-label">NIK</label><input type="text" class="form-control" name="nik" required></div>
+                    <div class="mb-3"><label class="form-label">NIS</label><input type="text" class="form-control" name="nis" required></div>
                     <div class="mb-3"><label class="form-label">Nama Lengkap</label><input type="text" class="form-control" name="nama" required></div>
-                    <div class="mb-3"><label class="form-label">Usia</label><input type="text" class="form-control" name="usia" required></div>
-                    <div class="mb-3"><label class="form-label">Jenis Kelamin</label><select name="jenis_kelamin" class="form-select" required><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></div>
+                    <div class="mb-3"><label class="form-label">Tanggal Lahir</label><input type="date" class="form-control" name="tanggal_lahir" required></div>
+                    <div class="mb-3"><label class="form-label">Jenis Kelamin</label><select name="jenis_kelamin" class="form-select" required><option value="" disabled selected>Pilih jenis kelamin</option><option value="Laki-Laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></div>
                     <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="submit" class="btn btn-primary">Simpan</button></div>
                 </form>
             </div>
@@ -104,21 +103,43 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalEditMurid" tabindex="-1">
+<!-- Modal Edit Murid -->
+<div class="modal fade" id="modalEditMurid" tabindex="-1" aria-labelledby="modalEditKelasLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title">Edit Murid</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body">
-                <form x-bind:action="editUrl" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <div class="mb-3"><label class="form-label">NIK</label><input type="text" class="form-control" name="nik" x-model="editData.nik" required></div>
-                    <div class="mb-3"><label class="form-label">Nama Lengkap</label><input type="text" class="form-control" name="nama" x-model="editData.nama" required></div>
-                    <div class="mb-3"><label class="form-label">Usia</label><input type="text" class="form-control" name="usia" x-model="editData.usia" required></div>
-                    <div class="mb-3"><label class="form-label">Jenis Kelamin</label><select name="jenis_kelamin" class="form-select" x-model="editData.jenis_kelamin" required><option value="Laki-laki">Laki-laki</option><option value="Perempuan">Perempuan</option></select></div>
-                    <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button><button type="submit" class="btn btn-primary">Simpan Perubahan</button></div>
-                </form>
-            </div>
+            <form :action="editUrl" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalEditKelasLabel">Edit Murid</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="upd-nis" class="form-label">NIS</label>
+                        <input type="text" class="form-control" name="nis" id="upd-nis" x-model="editData.nis" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="upd-nama" class="form-label">Nama Lengkap</label>
+                        <input type="text" class="form-control" id="upd-nama" name="nama" x-model="editData.nama" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="upd-tanggal_lahir" class="form-label">Tanggal Lahir</label>
+                        <input type="date" class="form-control" id="upd-tanggal_lahir" name="tanggal_lahir" x-model="editData.tanggal_lahir" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="upd-jenis_kelamin" class="form-label">Jenis Kelamin</label>
+                        <select name="jenis_kelamin" id="upd-jenis_kelamin" class="form-select" x-model="editData.jenis_kelamin" required>
+                            <option value="Laki-Laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -129,7 +150,7 @@
             <div class="modal-header"><h5 class="modal-title">Konfirmasi Hapus</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body"><p>Apakah Anda yakin ingin menghapus murid bernama <strong x-text="deleteName"></strong>?</p></div>
             <div class="modal-footer">
-                <form x-bind:action="deleteUrl" method="POST">
+                <form :action="deleteUrl" method="POST">
                     @csrf
                     @method('DELETE')
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>

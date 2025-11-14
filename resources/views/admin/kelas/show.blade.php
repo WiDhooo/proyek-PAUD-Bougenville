@@ -112,7 +112,7 @@
                                     <div class="form-check">
                                         <input class="form-check-input" type="checkbox" name="murid_ids[]" value="{{ $murid['id'] }}" id="murid-{{ $murid['id'] }}">
                                         <label class="form-check-label" for="murid-{{ $murid['id'] }}">
-                                            {{ $murid['nama'] }} (NIK: {{ $murid['nik'] }})
+                                            {{ $murid->nama }} (NIS: {{ $murid->nis }})
                                         </label>
                                     </div>
                                 </div>

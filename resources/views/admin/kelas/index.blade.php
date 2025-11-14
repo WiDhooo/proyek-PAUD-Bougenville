@@ -122,8 +122,7 @@
 
             <div class="modal fade" id="modalEditKelas" tabindex="-1" aria-labelledby="modalEditKelasLabel" aria-hidden="true">
                 <div class="modal-dialog">
-                    <div class="modal-content">
-                        
+                    <div class="modal-content">     
                         <form :action="editUrl" method="POST">
                             @csrf
                             @method('PUT')
@@ -176,6 +175,34 @@
                 </div>
             </div>
 
+            <div class="modal fade" id="modalHapusKelas" tabindex="-1" aria-labelledby="modalHapusKelasLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form :action="deleteUrl" method="POST">
+                            @csrf
+                            @method('DELETE')
+
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalHapusKelasLabel">Konfirmasi Hapus</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <p>Anda yakin ingin menghapus data kelas: 
+                                <strong x-text="deleteName"></strong>?
+                                </p>
+                                <p class="text-danger mb-0">Tindakan ini tidak dapat dibatalkan.</p>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
