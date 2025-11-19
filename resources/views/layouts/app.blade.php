@@ -62,11 +62,6 @@
         /* Submenu */
         .submenu {
             padding-left: 35px;
-            display: none;
-        }
-
-        .submenu.show {
-            display: block !important;
         }
 
         /* Main Content */
@@ -88,6 +83,19 @@
             transform: rotate(180deg);
             transition: .3s;
         }
+
+        .dropdown-item {
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+            padding: 0.5rem 1rem;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
     </style>
 
 </head>
@@ -102,90 +110,61 @@
             <img src="{{ asset('images/melaju-01.png') }}" style="width:40px;height:40px;border-radius:8px;">
             <span class="sidebar-logo ms-2">PAUD Bougenville</span>
         </div>
-        <div x-data="{ open: {{ request()->is('admin/guru*') || request()->is('admin/kelas*') || request()->is('admin/murid*') ? 'true' : 'false' }} }">
+
+        {{-- Navigation Menu --}}
+        <div x-data="{ open: {{ request()->is('admin/guru*') || request()->is('admin/kelas*') || request()->is('admin/siswa*') ? 'true' : 'false' }} }">
             <ul class="nav flex-column gap-2">
+                {{-- Dashboard --}}
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center {{ request()->is('admin/dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">
+                    <a class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }}" 
+                       href="{{ route('admin.dashboard') }}">
                         <i class="bi bi-grid-fill"></i>
                         Dashboard
                     </a>
                 </li>
+
+                {{-- Data Sekolah (with submenu) --}}
                 <li class="nav-item">
-                    <a class="nav-link d-flex align-items-center justify-content-between" href="#" @click.prevent="open = !open">
+                    <a class="nav-link justify-content-between" href="#" @click.prevent="open = !open">
                         <span>
                             <i class="bi bi-bank"></i>
                             Data Sekolah
                         </span>
-                        <i class="bi bi-chevron-down" :class="{'transform: rotate-180deg;': open}"></i>
+                        <i class="bi bi-chevron-down" :class="{ 'rotate': open }"></i>
                     </a>
-                    <ul class="nav flex-column mt-2 ms-3 gap-2 submenu" x-show="open" x-transition>
+                    
+                    <ul class="nav flex-column gap-2 submenu" x-show="open" x-transition>
                         <li class="nav-item">
-                            <a href="{{ route('admin.guru.index') }}" class="nav-link d-flex align-items-center {{ request()->is('admin/guru*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.guru.index') }}" 
+                               class="nav-link {{ request()->is('admin/guru*') ? 'active' : '' }}">
                                 <i class="bi bi-person-badge-fill"></i> Guru
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{ route('admin.murid.index') }}" class="nav-link d-flex align-items-center {{ request()->is('admin/murid*') ? 'active' : '' }}">
-                                <i class="bi bi-person-fill"></i> Murid
+                            <a href="{{ route('admin.siswa.index') }}" 
+                               class="nav-link {{ request()->is('admin/siswa*') ? 'active' : '' }}">
+                                <i class="bi bi-person-fill"></i> Siswa
                             </a>
                         </li>
-                         <li class="nav-item">
-                            <a href="{{ route('admin.kelas.index') }}" class="nav-link d-flex align-items-center {{ request()->is('admin/kelas*') ? 'active' : '' }}">
+                        <li class="nav-item">
+                            <a href="{{ route('admin.kelas.index') }}" 
+                               class="nav-link {{ request()->is('admin/kelas*') ? 'active' : '' }}">
                                 <i class="bi bi-house-door-fill"></i> Kelas
                             </a>
                         </li>
                     </ul>
                 </li>
-                 <li class="nav-item">
-                 <a class="nav-link d-flex align-items-center {{ request()->is('admin/profil*') || request()->is('admin/galeri*')  ? 'active' : '' }}" href="{{ route('admin.profil.index') }}">
-                    <i class="bi bi-person-vcard"></i>
-                    Profil Sekolah
-                </a>
+
+                {{-- Profil Sekolah --}}
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->is(['admin/profil*', 'admin/galeri*']) ? 'active' : '' }}" 
+                       href="{{ route('admin.profil.index') }}">
+                        <i class="bi bi-person-vcard"></i>
+                        Profil Sekolah
+                    </a>
                 </li>
             </ul>
         </div>
-    </aside>
-    <main class="main-content">
-    <header class="header d-flex justify-content-between align-items-center">
-        <h4 class="mb-0">@yield('title', 'Dashboard')</h4>
-        <nav>
-            <a class="nav-link {{ request()->is('admin/dashboard') ? 'active' : '' }}"
-                href="{{ route('admin.dashboard') }}">
-                <i class="bi bi-grid-fill"></i> Dashboard
-            </a>
-
-            {{-- DROPDOWN DATA SEKOLAH --}}
-            <a href="#" class="nav-link d-flex justify-content-between align-items-center" id="toggleSekolah">
-                <span><i class="bi bi-bank"></i> Data Sekolah</span>
-                <i class="bi bi-chevron-down" id="iconSekolah"></i>
-            </a>
-
-            <div class="submenu {{ request()->is('admin/guru*') || request()->is('admin/murid*') || request()->is('admin/kelas*') ? 'show' : '' }}"
-                id="submenuSekolah">
-
-                <a href="{{ route('admin.guru.index') }}"
-                    class="nav-link {{ request()->is('admin/guru*') ? 'active' : '' }}">
-                    <i class="bi bi-person-badge-fill"></i> Guru
-                </a>
-
-                <a href="{{ route('admin.murid.index') }}"
-                    class="nav-link {{ request()->is('admin/murid*') ? 'active' : '' }}">
-                    <i class="bi bi-person-fill"></i> Murid
-                </a>
-
-                <a href="{{ route('admin.kelas.index') }}"
-                    class="nav-link {{ request()->is('admin/kelas*') ? 'active' : '' }}">
-                    <i class="bi bi-house-door-fill"></i> Kelas
-                </a>
-            </div>
-
-            <a class="nav-link {{ request()->is('admin/profil-sekolah*') ? 'active' : '' }}"
-                href="{{ route('admin.profil.index') }}">
-                <i class="bi bi-person-vcard"></i> Profil Sekolah
-            </a>
-
-        </nav>
-
     </aside>
 
     {{-- MAIN CONTENT --}}
@@ -193,21 +172,24 @@
 
         {{-- HEADER --}}
         <header class="header d-flex justify-content-between align-items-center">
-            <h4 class="mb-0">@yield('title')</h4>
+            <h4 class="mb-0">@yield('title', 'Dashboard')</h4>
 
             {{-- USER DROPDOWN --}}
             <div class="dropdown">
-                <a href="#" class="dropdown-toggle d-flex align-items-center text-dark text-decoration-none"
-                    data-bs-toggle="dropdown">
+                <a href="#" 
+                class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" 
+                id="dropdownUser" 
+                data-bs-toggle="dropdown" 
+                aria-expanded="false">
                     <i class="bi bi-person-circle fs-4 me-2"></i>
-                    <span class="fw-bold">{{ Auth::user()->name }}</span>
+                    <span class="fw-bold">{{ Auth::user()->name ?? 'Administrator' }}</span>
                 </a>
 
-                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" aria-labelledby="dropdownUser">
                     <li>
-                        <form action="{{ route('logout') }}" method="POST">
+                        <form action="{{ route('logout') }}" method="POST" id="logout-form">
                             @csrf
-                            <button class="dropdown-item text-danger">
+                            <button type="submit" class="dropdown-item text-danger">
                                 <i class="bi bi-box-arrow-right me-2"></i> Keluar
                             </button>
                         </form>
@@ -216,24 +198,15 @@
             </div>
         </header>
 
+        {{-- Content Area --}}
         <div>
             @yield('content')
         </div>
 
     </main>
 
-    {{-- Dropdown Data Sekolah --}}
-    <script>
-        document.getElementById('toggleSekolah').addEventListener('click', function(e) {
-            e.preventDefault();
-
-            let submenu = document.getElementById('submenuSekolah');
-            let icon = document.getElementById('iconSekolah');
-
-            submenu.classList.toggle('show');
-            icon.classList.toggle('rotate');
-        });
-    </script>
+    <!-- {{-- Bootstrap JS --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> -->
 
 </body>
 

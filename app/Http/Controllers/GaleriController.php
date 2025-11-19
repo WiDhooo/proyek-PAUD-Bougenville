@@ -8,6 +8,13 @@ use Illuminate\Support\Str;
 
 class GaleriController extends Controller
 {
+
+    public function kegiatan()
+    {
+        $galeris = Galeri::latest()->get();
+        return view('kegiatan', compact('galeris'));
+    }
+    
     /**
      * Display a listing of the resource.
      */

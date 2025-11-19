@@ -122,15 +122,7 @@
             <div class="bg-blue-500 text-white p-8 rounded-lg shadow-md text-justify leading-relaxed flex-1">
                 <p class="font-semibold text-lg mb-4">Selamat Datang di PAUD Bougenville</p>
                 <p class="mb-4">
-                    PAUD Bougenville adalah lembaga pendidikan anak usia dini yang berkomitmen untuk menciptakan lingkungan belajar
-                    yang menyenangkan, aman, dan penuh kasih sayang. Berdiri dengan semangat mencerdaskan generasi penerus bangsa,
-                    kami percaya bahwa setiap anak memiliki potensi luar biasa yang perlu dikembangkan sejak dini melalui pendidikan
-                    yang tepat dan menyenangkan.
-                </p>
-                <p>
-                    Dengan pendekatan "Belajar sambil Bermain", kami menciptakan pengalaman belajar yang bermakna dan menyenangkan 
-                    bagi setiap anak. Fasilitas yang lengkap dan guru-guru yang berpengalaman menjadikan PAUD Bougenville pilihan 
-                    tepat untuk mendampingi tumbuh kembang putra-putri Anda.
+                    {!! nl2br(e($profil->tentang_sekolah ?? 'Informasi belum tersedia.')) !!}
                 </p>
             </div>
         </div>
@@ -148,21 +140,33 @@
                 <!-- Visi -->
                 <div class="bg-blue-500 text-white p-8 rounded-lg shadow-md">
                     <h3 class="font-semibold text-lg mb-4 text-center">Visi</h3>
-                    <p class="text-center leading-relaxed">
-                       Mensosialisasikan, meningkatkan mutu, minat, bermain dan belajar anak usia dini dilingkungan sekitar khususnya dan luar pada umumnya
-                    </p>
+                    @if($visi->count() > 1)
+                        <ul class="list-disc list-inside space-y-2 text-sm leading-relaxed">
+                            @foreach($visi as $item)
+                                <li>{{ $item->isi }}</li>
+                            @endforeach
+                        </ul>
+                    @elseif($visi->count() === 1)
+                        <p class="text-center leading-relaxed">{{ $visi->first()->isi }}</p>
+                    @else
+                        <p class="text-center leading-relaxed text-blue-100">Visi belum diatur</p>
+                    @endif
                 </div>
 
                 <!-- Misi -->
                 <div class="bg-blue-500 text-white p-8 rounded-lg shadow-md">
                     <h3 class="font-semibold text-lg mb-4 text-center">Misi</h3>
-                    <ul class="list-disc list-inside space-y-2 text-sm leading-relaxed">
-                        <li>Mengembangkan potensi anak didik </li>
-                        <li>Menjadikan anak yang sehat, cerdas,ceria </li>
-                        <li>Menjadikan anak untuk kreatif dan mandiri </li>
-                        <li>Menjadikan anak yang bertaqwa kepada Tuhan YME</li>
-                        <li>Menjadikan anak yang berkarakter </li>
-                    </ul>
+                    @if($misi->count() > 1)
+                        <ul class="list-disc list-inside space-y-2 text-sm leading-relaxed">
+                            @foreach($misi as $item)
+                                <li>{{ $item->isi }}</li>
+                            @endforeach
+                        </ul>
+                    @elseif($misi->count() === 1)
+                        <p class="text-center leading-relaxed">{{ $misi->first()->isi }}</p>
+                    @else
+                        <p class="text-center leading-relaxed text-blue-100">Misi belum diatur</p>
+                    @endif
                 </div>
             </div>
         </div>

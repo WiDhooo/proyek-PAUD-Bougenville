@@ -31,15 +31,15 @@
                 </div>
                 <div class="d-flex">
                     <div class="input-group me-2">
-                        <input class="form-control" type="search" placeholder="Cari nama murid..." x-model.debounce.300ms="searchQuery">
+                        <input class="form-control" type="search" placeholder="Cari nama siswa..." x-model.debounce.300ms="searchQuery">
                     </div>
-                    <button type="button" class="btn btn-outline-success flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalTambahMuridKeKelas">
-                        <i class="bi bi-plus-lg"></i> Tambah Murid
+                    <button type="button" class="btn btn-outline-success flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalTambahSiswaKeKelas">
+                        <i class="bi bi-plus-lg"></i> Tambah Siswa
                     </button>
                 </div>
             </div>
 
-            <!-- Tabel Murid di Kelas -->
+            <!-- Tabel Siswa di Kelas -->
             <div class="table-responsive">
                 <table class="table table-hover">
                      <thead class="table-light">
@@ -48,7 +48,7 @@
                             <th>NIS</th>
                             {{-- KOLOM NAMA SEKARANG BISA DI-SORT --}}
                             <th @click="sortBy('nama')" style="cursor: pointer;">
-                                Nama Murid
+                                Nama Siswa
                                 <span x-show="sortColumn === 'nama'"><i :class="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i></span>
                             </th>
                             <th>Jenis Kelamin</th>
@@ -57,19 +57,19 @@
                     </thead>
                     <tbody>
                         {{-- LOOPING SEKARANG MENGGUNAKAN PAGINATED ITEMS --}}
-                        <template x-for="(murid, index) in paginatedItems" :key="murid.id">
+                        <template x-for="(siswa, index) in paginatedItems" :key="siswa.id">
                             <tr>
                                 <td x-text="(currentPage - 1) * itemsPerPage + index + 1"></td>
-                                <td x-text="murid.nis"></td>
-                                <td x-text="murid.nama"></td>
-                                <td x-text="murid.jenis_kelamin"></td>
+                                <td x-text="siswa.nis"></td>
+                                <td x-text="siswa.nama"></td>
+                                <td x-text="siswa.jenis_kelamin"></td>
                                 <td>
                                     <button type="button" class="btn btn-danger btn-sm"
                                         data-bs-toggle="modal"
-                                        data-bs-target="#modalHapusMurid"
+                                        data-bs-target="#modalHapusSiswa"
                                         @click="
-                                            deleteName = murid.nama;
-                                            deleteUrl = `/admin/kelas/{{ $kelas['id'] }}/unassign-murid/${murid.id}`;
+                                            deleteName = siswa.nama;
+                                            deleteUrl = `/admin/kelas/{{ $kelas['id'] }}/unassign-siswa/${siswa.id}`;
                                         ">
                                         <i class="bi bi-trash-fill"></i>
                                     </button>
@@ -98,26 +98,26 @@
     </div>
 
     {{-- KODE MODAL LAMA ANDA --}}
-    <!-- Modal Tambah Murid ke Kelas -->
-    <div class="modal fade" id="modalTambahMuridKeKelas" tabindex="-1">
+    <!-- Modal Tambah Siswa ke Kelas -->
+    <div class="modal fade" id="modalTambahSiswaKeKelas" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-                <div class="modal-header"><h5 class="modal-title">Tambah Murid ke Kelas</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-header"><h5 class="modal-title">Tambah Siswa ke Kelas</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
                 <div class="modal-body">
                     <form action="{{ route('admin.kelas.assign', $kelas['id']) }}" method="POST">
                         @csrf
                         <div class="row">
-                            @forelse ($semua_murid as $murid)
+                            @forelse ($semua_siswa as $siswa)
                                 <div class="col-md-6 mb-2">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" name="murid_ids[]" value="{{ $murid['id'] }}" id="murid-{{ $murid['id'] }}">
-                                        <label class="form-check-label" for="murid-{{ $murid['id'] }}">
-                                            {{ $murid->nama }} (NIS: {{ $murid->nis }})
+                                        <input class="form-check-input" type="checkbox" name="siswa_ids[]" value="{{ $siswa['id'] }}" id="siswa-{{ $siswa['id'] }}">
+                                        <label class="form-check-label" for="siswa-{{ $siswa['id'] }}">
+                                            {{ $siswa->nama }} (NIS: {{ $siswa->nis }})
                                         </label>
                                     </div>
                                 </div>
                             @empty
-                                <p class="text-center">Semua murid sudah terdaftar di kelas lain.</p>
+                                <p class="text-center">Semua siswa sudah terdaftar di kelas lain.</p>
                             @endforelse
                         </div>
                         <div class="modal-footer mt-3">
@@ -130,8 +130,8 @@
         </div>
     </div>
 
-    <!-- Modal Hapus Murid dari Kelas -->
-    <div class="modal fade" id="modalHapusMurid" tabindex="-1">
+    <!-- Modal Hapus Siswa dari Kelas -->
+    <div class="modal fade" id="modalHapusSiswa" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header"><h5 class="modal-title">Konfirmasi Hapus</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
@@ -163,7 +163,7 @@
             currentPage: 1,
             itemsPerPage: 5, // Ubah angka ini sesuai kebutuhan
 
-            studentsInClass: @json($murid_di_kelas),
+            studentsInClass: @json($siswa_di_kelas),
 
             sortBy(column) {
                 if (this.sortColumn === column) {

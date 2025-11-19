@@ -33,33 +33,33 @@ class KelasController extends Controller
     public function show($id)
     {
         $kelas = Kelas::with('siswa')->findOrFail($id);
-        $murid_di_kelas = $kelas->siswa;
-        $semua_murid = Siswa::whereNull('kelas_id')->get();
+        $siswa_di_kelas = $kelas->siswa;
+        $semua_siswa = Siswa::whereNull('kelas_id')->get();
         return view('admin.kelas.show', [
             'kelas' => $kelas,
-            'murid_di_kelas' => $murid_di_kelas,
-            'semua_murid' => $semua_murid
+            'siswa_di_kelas' => $siswa_di_kelas,
+            'semua_siswa' => $semua_siswa
         ]);
     }
 
-    public function assignMurid(Request $request, $id)
+    public function assignSiswa(Request $request, $id)
     {
         $request->validate([
-            'murid_ids' => 'required|array',
-            'murid_ids.*' => 'exists:siswa,id',
+            'siswa_ids' => 'required|array',
+            'siswa_ids.*' => 'exists:siswa,id',
         ]);
-        $muridIds = $request->input('murid_ids');
-        Siswa::whereIn('id', $muridIds)->update(['kelas_id' => $id]);
+        $siswaIds = $request->input('siswa_ids');
+        Siswa::whereIn('id', $siswaIds)->update(['kelas_id' => $id]);
         return redirect()->route('admin.kelas.show', $id)
-                         ->with('success', 'Murid berhasil ditambahkan ke kelas!');
+                         ->with('success', 'Siswa berhasil ditambahkan ke kelas!');
     }
 
-    public function unassignMurid($id, $muridId)
+    public function unassignSiswa($id, $siswaId)
     {
-        $murid = Siswa::where('id', $muridId)->where('kelas_id', $id)->firstOrFail();
-        $murid->update(['kelas_id' => null]);
+        $siswa = Siswa::where('id', $siswaId)->where('kelas_id', $id)->firstOrFail();
+        $siswa->update(['kelas_id' => null]);
         return redirect()->route('admin.kelas.show', $id)
-                         ->with('success', 'Murid berhasil dihapus dari kelas!');
+                         ->with('success', 'Siswa berhasil dihapus dari kelas!');
     }
 
     public function store(Request $request)
@@ -110,9 +110,15 @@ class KelasController extends Controller
     public function destroy($id)
     {
         $kelas = Kelas::findOrFail($id);
-        $kelas -> delete();
+        
+        // Set kelas_id menjadi NULL untuk semua siswa di kelas ini
+        Siswa::where('kelas_id', $id)->update(['kelas_id' => null]);
+        
+        // Baru hapus kelasnya
+        $kelas->delete();
+        
         return redirect()->route('admin.kelas.index')
-                        ->with('success', 'Data kelas berhasil dihapus!');
+                        ->with('success', 'Data kelas berhasil dihapus dan siswa dipindahkan ke tanpa kelas!');
     }
 
 }

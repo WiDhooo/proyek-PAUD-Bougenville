@@ -7,57 +7,86 @@ use App\Models\Siswa;
 use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\NilaiAbsensi;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
-
 
 class GuruController extends Controller
 {
     public function dashboard()
     {
-        // Ambil jadwal beserta nama kelas dan guru-nya (biar tidak error kalau guru kosong)
-        $jadwal = Jadwal::with(['kelas', 'guru'])->get();
+        // Ambil guru yang sedang login
+        $guruId = Auth::id(); // atau Auth::user()->id
+        
+        // Ambil jadwal guru yang login beserta relasi kelas
+        $jadwal = Jadwal::with('kelas')
+                       ->where('guru_id', $guruId)
+                       ->orderByRaw("FIELD(hari, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat')")
+                       ->get();
 
         return view('guru.dashboard', compact('jadwal'));
     }
 
     public function dataSiswa()
     {
-        // Ambil semua siswa tanpa filter guru/kelas
-        $murid = Siswa::all();
-        return view('guru.data_siswa', compact('murid'));
+        // Ambil guru yang sedang login
+        $guruId = Auth::id();
+        
+        // Ambil kelas yang diajar oleh guru ini
+        $kelasIds = Jadwal::where('guru_id', $guruId)
+                          ->pluck('kelas_id')
+                          ->unique();
+        
+        // Ambil siswa dari kelas-kelas tersebut
+        $siswa = Siswa::whereIn('kelas_id', $kelasIds)->get();
+        
+        return view('guru.data_siswa', compact('siswa'));
     }
 
     public function pilihKelas()
     {
-        $guru = Guru::first(); // sementara ambil guru pertama
-        $kelas = $guru->kelas; // ambil semua kelas guru ini
+        // Ambil guru yang sedang login
+        $guruId = Auth::id();
+        
+        // Ambil kelas yang diajar oleh guru ini (dari jadwal)
+        $kelasIds = Jadwal::where('guru_id', $guruId)
+                          ->pluck('kelas_id')
+                          ->unique();
+        
+        $kelas = Kelas::whereIn('id', $kelasIds)->get();
+        
         return view('guru.pilih_kelas', compact('kelas'));
     }
 
-    public function nilaiAbsensi(Kelas $kelas)
+    public function nilaiAbsensi($kelasId)
     {
-        $murid = $kelas->siswa; // siswa hanya di kelas itu
+        $kelas = Kelas::findOrFail($kelasId);
+        $murid = $kelas->siswa; // Ambil siswa dari kelas
+        
         return view('guru.nilai_absensi', compact('murid', 'kelas'));
     }
 
-    public function simpanNilaiAbsensi(Request $request, Kelas $kelas)
+    public function simpanNilaiAbsensi(Request $request, $kelasId)
     {
+        $kelas = Kelas::findOrFail($kelasId);
+        
         foreach ($kelas->siswa as $siswa) {
             NilaiAbsensi::updateOrCreate(
                 ['siswa_id' => $siswa->id],
                 [
-                    'absensi' => $request->absensi[$siswa->id],
-                    'nilai' => $request->nilai[$siswa->id],
-                    'catatan' => $request->catatan[$siswa->id],
+                    'absensi' => $request->absensi[$siswa->id] ?? 'h',
+                    'nilai' => $request->nilai[$siswa->id] ?? null,
+                    'catatan' => $request->catatan[$siswa->id] ?? null,
                 ]
             );
         }
+        
         return redirect()->route('guru.nilai_absensi.kelas', $kelas->id)
                         ->with('success', 'Data absensi dan nilai berhasil disimpan!');
     }
 
+    // ... method admin tetap sama ...
+    
     public function index()
     {
         $gurus = Guru::all();
@@ -83,59 +112,46 @@ class GuruController extends Controller
     }
 
     public function update(Request $request, $id)
-{
+    {
         $gurus = Guru::findOrFail($id);
 
         $data = $request->validate([
             'nama' => ['required', 'string', 'max:255'],
-            
-            // 1. PERBAIKAN VALIDASI UNIQUE:
             'username' => [
                 'required',
                 'string',
                 'max:255',
                 'alpha_dash',
-                Rule::unique('guru')->ignore($gurus->id) // <-- 'ignore' ID milik sendiri
+                Rule::unique('guru')->ignore($gurus->id)
             ],
-
-            // 2. PERBAIKAN VALIDASI PASSWORD:
-            // Dibuat 'nullable' (boleh kosong). Jika diisi, baru 'min:8' dan 'confirmed' dicek.
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
-
             'tempat_lahir' => ['nullable', 'string', 'max:255'],
             'tanggal_lahir' => ['nullable', 'date'],
             'no_hp' => ['required', 'string', 'max:20'],
-            'alamat' => ['required', 'string'], // Dihapus max:255 karena di form <textarea>
+            'alamat' => ['required', 'string'],
             'jabatan' => [
                 'required',
                 'string',
-                Rule::in(['Kepala Sekolah', 'Sekretaris', 'Bendahara', 'Pendidik']) // <-- Lebih aman pakai Rule::in
+                Rule::in(['Kepala Sekolah', 'Sekretaris', 'Bendahara', 'Pendidik'])
             ]
         ]);
 
-        // 3. LOGIKA UPDATE PASSWORD:
-        // Hanya update password jika field 'password' di form diisi (tidak kosong)
         if (!empty($data['password'])) {
-            // Asumsi Anda punya Mutator (otomatis hash) di Model Guru.
             $gurus->password = $data['password'];
         }
 
-        // 4. UPDATE DATA SELAIN PASSWORD:
-        // 'except' digunakan agar password lama tidak tertimpa data kosong
         $gurus->update($request->except('password'));
 
         return redirect()->route('admin.guru.index')
-                        ->with('success', 'Data Guru berhasil diperbarui!'); // Pesan diganti
+                        ->with('success', 'Data Guru berhasil diperbarui!');
     }
 
     public function destroy(string $id)
     {
-        // Tambahkan ini agar fungsi hapus berjalan
         $gurus = Guru::findOrFail($id);
         $gurus->delete();
         
         return redirect()->route('admin.guru.index')
                          ->with('success', 'Data guru berhasil dihapus!');
     }
-
 }

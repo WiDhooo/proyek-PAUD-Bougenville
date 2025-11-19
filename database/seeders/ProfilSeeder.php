@@ -17,7 +17,9 @@ class ProfilSeeder extends Seeder
     {
         // 1. Buat satu data Profil utama (Asumsi ID=1)
         $profil = Profil::create([
-            'tentang_sekolah' => 'PAUD Bougenville adalah lembaga pendidikan anak usia dini yang berkomitmen untuk menciptakan lingkungan belajar yang menyenangkan, aman, dan penuh kasih sayang. Berdiri dengan semangat mencerdaskan generasi penerus bangsa, kami percaya bahwa setiap anak memiliki potensi luar biasa yang perlu dikembangkan sejak dini melalui pendidikan yang tepat dan menyenangkan. Dengan pendekatan "Belajar sambil Bermain", kami menciptakan pengalaman belajar yang bermakna dan menyenangkan bagi setiap anak. Fasilitas yang lengkap dan guru-guru yang berpengalaman menjadikan PAUD Bougenville pilihan tepat untuk mendampingi tumbuh kembang putra-putri Anda.',
+            'tentang_sekolah' => 'PAUD Bougenville adalah lembaga pendidikan anak usia dini yang berkomitmen untuk menciptakan lingkungan belajar yang menyenangkan, aman, dan penuh kasih sayang. Berdiri dengan semangat mencerdaskan generasi penerus bangsa, kami percaya bahwa setiap anak memiliki potensi luar biasa yang perlu dikembangkan sejak dini melalui pendidikan yang tepat dan menyenangkan. 
+            
+            Dengan pendekatan "Belajar sambil Bermain", kami menciptakan pengalaman belajar yang bermakna dan menyenangkan bagi setiap anak. Fasilitas yang lengkap dan guru-guru yang berpengalaman menjadikan PAUD Bougenville pilihan tepat untuk mendampingi tumbuh kembang putra-putri Anda.',
         ]);
 
         // 2. Isi data Visi

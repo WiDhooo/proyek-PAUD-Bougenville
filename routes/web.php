@@ -15,8 +15,8 @@ use App\Http\Controllers\ProfilController;
 */
 
 Route::view('/', 'beranda');
-Route::view('/tentang', 'tentang');
-Route::view('/kegiatan', 'kegiatan');
+Route::get('/tentang', [ProfilController::class, 'tentang'])->name('tentang');
+Route::get('/kegiatan', [GaleriController::class, 'kegiatan'])->name('kegiatan');
 Route::view('/kontak', 'kontak');
 
 /*
@@ -47,29 +47,19 @@ Route::prefix('admin')
     ->name('admin.')
     ->middleware(['auth', 'role:admin'])
     ->group(function () {
+    
+        Route::get('/', function () {
+            return redirect()->route('admin.dashboard');
+        });
 
-    /* DASHBOARD */
-    Route::get('/dashboard', function () {
-        $dashboardData = [
-            'total_murid' => 57,
-            'total_guru' => 12,
-            'total_kelas' => 3,
-            'jadwal' => [
-                'Senin' => [
-                    'Mandiri - A' => 'Galar Widodo',
-                    'Ceria - B' => 'Xanana Megantara',
-                    'Kreatif - A' => 'Gaman Maras Saputra',
-                ],
-                'Selasa' => [
-                    'Mandiri - A' => 'Qori Usada M.Pd',
-                    'Ceria - B' => 'Zalindra Rahayu',
-                    'Kreatif - A' => 'Bakti Jarwadi S. M.T.',
-                ],
-            ],
-        ];
+     /* DASHBOARD */
+    Route::get('/dashboard', [\App\Http\Controllers\JadwalController::class, 'dashboard'])->name('dashboard');
 
-        return view('admin.dashboard', ['data' => $dashboardData]);
-    })->name('dashboard');
+    // CRUD Jadwal (untuk AJAX dari dashboard)
+    Route::post('/jadwal', [\App\Http\Controllers\JadwalController::class, 'store'])->name('jadwal.store');
+    Route::put('/jadwal/{id}', [\App\Http\Controllers\JadwalController::class, 'update'])->name('jadwal.update');
+    Route::delete('/jadwal/{id}', [\App\Http\Controllers\JadwalController::class, 'destroy'])->name('jadwal.destroy');
+    Route::delete('/jadwal-hapus-semua', [\App\Http\Controllers\JadwalController::class, 'destroyAll'])->name('jadwal.destroyAll');
 
     // CRUD Guru
     Route::get('/guru', [GuruController::class, 'index'])->name('guru.index');
@@ -77,11 +67,11 @@ Route::prefix('admin')
     Route::put('/guru/{id}', [GuruController::class, 'update'])->name('guru.update');
     Route::delete('/guru/{id}', [GuruController::class, 'destroy'])->name('guru.destroy');
 
-    // CRUD Murid
-    Route::get('/murid', [SiswaController::class, 'index'])->name('murid.index');
-    Route::post('/murid', [SiswaController::class, 'store'])->name('murid.store');
-    Route::put('/murid/{id}', [SiswaController::class, 'update'])->name('murid.update');
-    Route::delete('/murid/{id}', [SiswaController::class, 'destroy'])->name('murid.destroy');
+    // CRUD Siswa
+    Route::get('/siswa', [SiswaController::class, 'index'])->name('siswa.index');
+    Route::post('/siswa', [SiswaController::class, 'store'])->name('siswa.store');
+    Route::put('/siswa/{id}', [SiswaController::class, 'update'])->name('siswa.update');
+    Route::delete('/siswa/{id}', [SiswaController::class, 'destroy'])->name('siswa.destroy');
 
     // CRUD Kelas
     Route::get('/kelas', [KelasController::class, 'index'])->name('kelas.index');
@@ -89,8 +79,8 @@ Route::prefix('admin')
     Route::put('/kelas/{id}', [KelasController::class, 'update'])->name('kelas.update');
     Route::delete('/kelas/{id}', [KelasController::class, 'destroy'])->name('kelas.destroy');
     Route::get('/kelas/{id}', [KelasController::class, 'show'])->name('kelas.show');
-    Route::post('/kelas/{id}/assign-murid', [KelasController::class, 'assignMurid'])->name('kelas.assign');
-    Route::delete('/kelas/{id}/unassign-murid/{muridId}', [KelasController::class, 'unassignMurid'])->name('kelas.unassign');
+    Route::post('/kelas/{id}/assign-siswa', [KelasController::class, 'assignSiswa'])->name('kelas.assign');
+    Route::delete('/kelas/{id}/unassign-siswa/{siswaId}', [KelasController::class, 'unassignSiswa'])->name('kelas.unassign');
 
     // Manajemen Konten
     // GET /admin/profil

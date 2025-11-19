@@ -7,10 +7,12 @@
     <div class="card border-0 shadow-sm">
         <div class="card-header bg-white d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center">
             <div>
-                <h5 class="card-title mb-0">Input Nilai & Absensi - {{ $kelas->nama_kelas }}</h5>
+                <h5 class="card-title mb-0">Input Nilai & Absensi - {{ $kelas->nama_kelas }} ({{ $kelas->kelas }})</h5>
 
                 @if(session('success'))
-                <div class="alert alert-success mt-2">{{ session('success') }}</div>
+                <div class="alert alert-success mt-2">
+                    <i class="bi bi-check-circle me-2"></i>{{ session('success') }}
+                </div>
                 @endif
             </div>
         </div>
@@ -35,25 +37,31 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($murid as $item)
+                            @forelse ($murid as $item)
                                 <tr>
                                     <td class="text-center">{{ $loop->iteration }}</td>
-                                    <td>{{ $item['nama'] }}</td>
+                                    <td>{{ $item->nama }}</td>
                                     {{-- Kolom Absensi --}}
-                                    <td class="text-center"><input class="form-check-input" type="radio" name="absensi[{{ $item['id'] }}]" value="h" checked></td>
-                                    <td class="text-center"><input class="form-check-input" type="radio" name="absensi[{{ $item['id'] }}]" value="s"></td>
-                                    <td class="text-center"><input class="form-check-input" type="radio" name="absensi[{{ $item['id'] }}]" value="i"></td>
-                                    <td class="text-center"><input class="form-check-input" type="radio" name="absensi[{{ $item['id'] }}]" value="a"></td>
+                                    <td class="text-center"><input class="form-check-input" type="radio" name="absensi[{{ $item->id }}]" value="h" checked></td>
+                                    <td class="text-center"><input class="form-check-input" type="radio" name="absensi[{{ $item->id }}]" value="s"></td>
+                                    <td class="text-center"><input class="form-check-input" type="radio" name="absensi[{{ $item->id }}]" value="i"></td>
+                                    <td class="text-center"><input class="form-check-input" type="radio" name="absensi[{{ $item->id }}]" value="a"></td>
                                     {{-- Nilai --}}
                                     <td style="min-width: 100px;">
-                                        <input type="number" class="form-control form-control-sm" name="nilai[{{ $item['id'] }}]" min="0" max="100">
+                                        <input type="number" class="form-control form-control-sm" name="nilai[{{ $item->id }}]" min="0" max="100">
                                     </td>
                                     {{-- Catatan --}}
                                     <td style="min-width: 250px;">
-                                        <input type="text" class="form-control form-control-sm" name="catatan[{{ $item['id'] }}]" placeholder="Catatan singkat...">
+                                        <input type="text" class="form-control form-control-sm" name="catatan[{{ $item->id }}]" placeholder="Catatan singkat...">
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center text-muted py-4">
+                                        <i class="bi bi-exclamation-circle"></i> Belum ada siswa di kelas ini.
+                                    </td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -61,22 +69,12 @@
                     <a href="{{ route('guru.nilai_absensi.pilih_kelas') }}" class="btn btn-secondary">
                         <i class="bi bi-arrow-left-circle"></i> Kembali
                     </a>
-                    <button type="submit" class="btn btn-primary">Simpan Data</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-1"></i>Simpan Data
+                    </button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('form').forEach(form => {
-        form.addEventListener('submit', e => {
-            e.preventDefault();
-            alert('Data tersimpan!');
-        });
-    });
-});
-</script>
-
 @endsection

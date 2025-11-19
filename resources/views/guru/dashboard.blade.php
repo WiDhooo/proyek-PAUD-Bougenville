@@ -7,7 +7,7 @@
 
     <!-- Judul dan deskripsi -->
     <div class="mb-4">
-        <h3>Selamat Datang, Nama Guru! 👋</h3>
+        <h3>Selamat Datang, {{ Auth::user()->nama ?? 'Guru' }}! 👋</h3>
         <p class="text-muted">Berikut adalah jadwal mengajar keseluruhan pekan ini.</p>
     </div>
 
@@ -21,7 +21,7 @@
                     </div>
                     <div>
                         <h6 class="text-muted mb-1">Total Jadwal</h6>
-                        <h4 class="fw-bold mb-0">{{ count($jadwal) }}</h4>
+                        <h4 class="fw-bold mb-0">{{ $jadwal->count() }}</h4>
                     </div>
                 </div>
             </div>
@@ -50,8 +50,8 @@
                         <i class="bi bi-clock-history fs-4"></i>
                     </div>
                     <div>
-                        <h6 class="text-muted mb-1">Total Jam Mengajar</h6>
-                        <h4 class="fw-bold mb-0">{{ $jadwal->count() * 1.5 }} Jam</h4>
+                        <h6 class="text-muted mb-1">Total Pertemuan</h6>
+                        <h4 class="fw-bold mb-0">{{ $jadwal->count() }} Kali</h4>
                     </div>
                 </div>
             </div>
@@ -73,8 +73,8 @@
                     <thead style="background: linear-gradient(90deg, #0d6efd, #5ab2ff); color: white;">
                         <tr>
                             <th class="py-3 px-3">Hari</th>
-                            <th class="py-3 px-3">Waktu</th>
                             <th class="py-3 px-3">Kelas</th>
+                            <th class="py-3 px-3">Waktu</th>
                         </tr>
                     </thead>
 
@@ -82,17 +82,24 @@
                         @forelse ($jadwal as $item)
                         <tr class="table-row">
                             <td class="fw-semibold px-3 py-3 text-dark">{{ $item->hari }}</td>
-                            <td class="px-3 py-3 text-secondary">{{ $item->waktu }}</td>
                             <td class="px-3 py-3">
                                 <span class="badge bg-primary bg-opacity-10 text-primary border border-primary px-3 py-2 rounded-pill">
-                                    {{ $item->kelas->nama_kelas ?? '-' }}
+                                    {{ $item->kelas->nama_kelas ?? '-' }} - {{ $item->kelas->kelas ?? '' }}
                                 </span>
+                            </td>
+                            <td class="px-3 py-3 text-secondary">
+                                @if($item->waktu_mulai && $item->waktu_selesai)
+                                    <i class="bi bi-clock me-1"></i>
+                                    {{ $item->waktu_mulai->format('H:i') }} - {{ $item->waktu_selesai->format('H:i') }}
+                                @else
+                                    <span class="text-muted">Belum diatur</span>
+                                @endif
                             </td>
                         </tr>
                         @empty
                         <tr>
                             <td colspan="3" class="text-center text-muted py-4">
-                                <i class="bi bi-exclamation-circle"></i> Belum ada jadwal tersedia.
+                                <i class="bi bi-exclamation-circle me-2"></i> Belum ada jadwal tersedia.
                             </td>
                         </tr>
                         @endforelse

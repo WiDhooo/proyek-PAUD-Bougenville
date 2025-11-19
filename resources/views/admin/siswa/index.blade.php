@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Manajemen Murid')
+@section('title', 'Manajemen Siswa')
 
 @section('content')
 <div class="container-fluid" x-data="manager()">
@@ -9,13 +9,13 @@
     @endif
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">Data Murid</h5>
+            <h5 class="card-title mb-0">Data Siswa</h5>
             <div class="d-flex align-items-center">
                 <div class="input-group me-2">
-                     <input type="search" class="form-control" placeholder="Cari Nama Murid..." x-model.debounce.300ms="searchQuery">
+                     <input type="search" class="form-control" placeholder="Cari Nama Siswa..." x-model.debounce.300ms="searchQuery">
                 </div>
-                <button type="button" class="btn btn-outline-success flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalTambahMurid">
-                    <i class="bi bi-plus-lg"></i> Tambah Murid
+                <button type="button" class="btn btn-outline-success flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalTambahSiswa">
+                    <i class="bi bi-plus-lg"></i> Tambah Siswa
                 </button>
             </div>
         </div>
@@ -27,7 +27,7 @@
                             <th>No</th>
                             <th>NIS</th>
                             <th @click="sortBy('nama')" style="cursor: pointer;">
-                                Nama Murid
+                                Nama Siswa
                                 <span x-show="sortColumn === 'nama'"><i :class="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i></span>
                             </th>
                             <th>Usia</th>
@@ -46,12 +46,12 @@
                                 <td>
                                     {{-- PERUBAHAN 1: Tombol sekarang MENGIRIM EVENT --}}
                                     <button type="button" class="btn btn-warning btn-sm"
-                                        data-bs-toggle="modal" data-bs-target="#modalEditMurid"
+                                        data-bs-toggle="modal" data-bs-target="#modalEditSiswa"
                                         @click="$dispatch('open-edit-modal', { item: item })">
                                         <i class="bi bi-pencil-fill"></i>
                                     </button>
                                     <button type="button" class="btn btn-danger btn-sm"
-                                        data-bs-toggle="modal" data-bs-target="#modalHapusMurid"
+                                        data-bs-toggle="modal" data-bs-target="#modalHapusSiswa"
                                         @click="$dispatch('open-hapus-modal', { item: item })">
                                         <i class="bi bi-trash-fill"></i>
                                     </button>
@@ -78,13 +78,13 @@
     </div>
 </div>
 
-{{-- Modal Tambah Murid (Tidak Berubah) --}}
-<div class="modal fade" id="modalTambahMurid" tabindex="-1">
+{{-- Modal Tambah Siswa (Tidak Berubah) --}}
+<div class="modal fade" id="modalTambahSiswa" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-header"><h5 class="modal-title">Tambah Murid Baru</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-header"><h5 class="modal-title">Tambah Siswa Baru</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
             <div class="modal-body">
-                <form action="{{ route('admin.murid.store') }}" method="POST">
+                <form action="{{ route('admin.siswa.store') }}" method="POST">
                     @csrf
                     <div class="mb-3"><label class="form-label">NIS</label><input type="text" class="form-control" name="nis" required></div>
                     <div class="mb-3"><label class="form-label">Nama Lengkap</label><input type="text" class="form-control" name="nama" required></div>
@@ -98,7 +98,7 @@
 </div>
 
 {{-- PERUBAHAN 2: Modal Edit sekarang punya x-data dan event listener sendiri --}}
-<div class="modal fade" id="modalEditMurid" tabindex="-1" aria-labelledby="modalEditKelasLabel" aria-hidden="true"
+<div class="modal fade" id="modalEditSiswa" tabindex="-1" aria-labelledby="modalEditKelasLabel" aria-hidden="true"
      x-data="{ editUrl: '', editData: { id: null, nis: '', nama: '', tanggal_lahir: '', jenis_kelamin: '' } }"
      @open-edit-modal.window="
         let item = event.detail.item;
@@ -107,7 +107,7 @@
         editData.nama = item.nama;
         editData.tanggal_lahir = item.tanggal_lahir ? String(item.tanggal_lahir).substring(0, 10) : '';
         editData.jenis_kelamin = item.jenis_kelamin;
-        editUrl = `/admin/murid/${item.id}`;
+        editUrl = `/admin/siswa/${item.id}`;
      ">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
@@ -115,7 +115,7 @@
                 @csrf
                 @method('PUT')
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalEditKelasLabel">Edit Murid</h5>
+                    <h5 class="modal-title" id="modalEditKelasLabel">Edit Siswa</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -148,8 +148,8 @@
     </div>
 </div>
 
-{{-- Modal Hapus Murid (Tidak Berubah) --}}
-<div class="modal fade" id="modalHapusMurid" tabindex="-1" aria-labelledby="modalHapusKelasLabel" aria-hidden="true"
+{{-- Modal Hapus Siswa (Tidak Berubah) --}}
+<div class="modal fade" id="modalHapusSiswa" tabindex="-1" aria-labelledby="modalHapusKelasLabel" aria-hidden="true"
      x-data="{ hapusUrl: '', hapusData: { id: null, nis: '', nama: '', tanggal_lahir: '', jenis_kelamin: '' } }"
      @open-hapus-modal.window="
         let item = event.detail.item;
@@ -158,12 +158,12 @@
         hapusData.nama = item.nama;
         hapusData.tanggal_lahir = item.tanggal_lahir ? String(item.tanggal_lahir).substring(0, 10) : '';
         hapusData.jenis_kelamin = item.jenis_kelamin;
-        hapusUrl = `/admin/murid/${item.id}`;
+        hapusUrl = `/admin/siswa/${item.id}`;
      ">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header"><h5 class="modal-title">Konfirmasi Hapus</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body"><p>Apakah Anda yakin ingin menghapus murid bernama <strong x-text="hapusData.nama"></strong>?</p></div>
+            <div class="modal-body"><p>Apakah Anda yakin ingin menghapus siswa bernama <strong x-text="hapusData.nama"></strong>?</p></div>
             <div class="modal-footer">
                 <form :action="hapusUrl" method="POST">
                     @csrf
@@ -185,7 +185,7 @@
             
             {{-- PERUBAHAN 3: editUrl dan editData DIHAPUS dari sini --}}
             
-            items: @json($murid),
+            items: @json($siswa),
             currentPage: 1,
             itemsPerPage: 5,
             sortColumn: '',

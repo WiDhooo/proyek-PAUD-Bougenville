@@ -16,11 +16,11 @@ class SiswaController extends Controller
         // Cukup ambil semua model.
         // Laravel akan otomatis menerapkan $casts dan accessors ('usia')
         // saat data ini diubah menjadi JSON di view.
-        $murid = Siswa::all();
+        $siswa = Siswa::all();
         
         // Langsung kirim koleksi Model ke view.
         // HAPUS SEMUA BLOK .map()
-        return view('admin.murid.index', compact('murid'));
+        return view('admin.siswa.index', compact('siswa'));
     }
 
     /**
@@ -47,8 +47,8 @@ class SiswaController extends Controller
         ]);
 
         Siswa::create($data);
-        return redirect()->route('admin.murid.index')
-                         ->with('success', 'Data Murid berhasil disimpan!');
+        return redirect()->route('admin.siswa.index')
+                         ->with('success', 'Data Siswa berhasil disimpan!');
     }
 
     /**
@@ -72,21 +72,21 @@ class SiswaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $murid = Siswa::findOrFail($id);
+        $siswa = Siswa::findOrFail($id);
 
         // PERBAIKAN VALIDASI:
         // 1. Tambahkan 'unique' tapi abaikan ID saat ini
         // 2. Gunakan 'date'
         $data = $request->validate([
-            'nis' => 'required|string|max:100|unique:siswa,nis,' . $murid->id,
+            'nis' => 'required|string|max:100|unique:siswa,nis,' . $siswa->id,
             'nama' => 'required|string|max:100',
             'jenis_kelamin' => 'required|string|max:15',
             'tanggal_lahir' => 'required|date',
         ]);
 
-        $murid->update($data);
-        return redirect()->route('admin.murid.index')
-                         ->with('success', 'Data murid berhasil diubah!');
+        $siswa->update($data);
+        return redirect()->route('admin.siswa.index')
+                         ->with('success', 'Data siswa berhasil diubah!');
     }
 
     /**
@@ -95,10 +95,10 @@ class SiswaController extends Controller
     public function destroy(string $id)
     {
         // Tambahkan ini agar fungsi hapus berjalan
-        $murid = Siswa::findOrFail($id);
-        $murid->delete();
+        $siswa = Siswa::findOrFail($id);
+        $siswa->delete();
         
-        return redirect()->route('admin.murid.index')
-                         ->with('success', 'Data murid berhasil dihapus!');
+        return redirect()->route('admin.siswa.index')
+                         ->with('success', 'Data siswa berhasil dihapus!');
     }
 }

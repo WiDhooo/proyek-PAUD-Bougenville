@@ -8,6 +8,25 @@ use App\Models\VisiMisi; // Pastikan import model VisiMisi
 
 class ProfilController extends Controller
 {
+
+    public function tentang()
+    {
+        $profil = Profil::first();
+        
+        if (!$profil) {
+            return view('tentang', [
+                'tentang_sekolah' => 'Informasi belum tersedia.',
+                'visi' => collect([]),
+                'misi' => collect([])
+            ]);
+        }
+
+        $visi = $profil->visiMisi()->where('tipe', 'visi')->get();
+        $misi = $profil->visiMisi()->where('tipe', 'misi')->get();
+
+        return view('tentang', compact('profil', 'visi', 'misi'));
+    }
+    
     /**
      * Display a listing of the resource.
      * Metode ini biasanya untuk menampilkan daftar atau ringkasan.

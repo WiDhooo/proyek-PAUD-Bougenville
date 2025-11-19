@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             ProfilSeeder::class, // PENTING: Memastikan data profil dibuat
             GuruSeeder::class,
             GaleriSeeder::class,
+            UserSeeder::class,
             // MuridSeeder::class,
             // KelasSeeder::class,
         ]);
