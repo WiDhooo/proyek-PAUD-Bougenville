@@ -82,8 +82,25 @@ Route::prefix('admin')
     Route::put('/murid/{id}', fn () => back()->with('success', 'Data murid diperbarui!'))->name('murid.update');
     Route::delete('/murid/{id}', fn () => back()->with('success', 'Data murid dihapus!'))->name('murid.destroy');
 
-    /* DATA KELAS – FULL CRUD */
-    Route::resource('kelas', KelasController::class);
+    // CRUD Kelas
+    Route::get('/kelas', [KelasController::class, 'index'])->name('kelas.index');
+    //     $data_kelas_palsu = [
+    //         ['id' => 1, 'nama_kelas' => 'Mandiri', 'kelas' => 'A', 'wali' => 'Jayeng Wawan Pradipta S.E.I'],
+    //         ['id' => 2, 'nama_kelas' => 'Ceria', 'kelas' => 'B', 'wali' => 'Victoria Pertiwi'],
+    //     ];
+    //     return view('admin.kelas.index', ['kelas' => $data_kelas_palsu]);
+    // })->name('kelas.index');
+    Route::post('/kelas', [KelasController::class, 'store'])->name('kelas.store');
+    Route::put('/kelas/{id}', [KelasController::class, 'update'])->name('kelas.update');
+    Route::delete('/kelas/{id}', function ($id) { return redirect()->route('admin.kelas.index')->with('success', 'Data kelas berhasil dihapus!'); })->name('kelas.destroy');
+    Route::get('/kelas/{id}', function ($id) {
+        $kelas_detail = ['id' => $id, 'nama_kelas' => 'Mandiri', 'kelas' => 'A'];
+        $murid_di_kelas = [['id' => 1, 'nis' => '2526530970', 'nama' => 'Zelda Maheswara', 'jenis_kelamin' => 'Perempuan']];
+        $semua_murid = [['id' => 3, 'nik' => '25190910658', 'nama' => 'Prof. Reynold Trantow III']];
+        return view('admin.kelas.show', ['kelas' => $kelas_detail, 'murid_di_kelas' => $murid_di_kelas, 'semua_murid' => $semua_murid]);
+    })->name('kelas.show');
+    Route::post('/kelas/{id}/assign-murid', function ($id) { return redirect()->route('admin.kelas.show', $id)->with('success', 'Murid berhasil ditambahkan!'); })->name('kelas.assign');
+    Route::delete('/kelas/{id}/unassign-murid/{muridId}', function ($id, $muridId) { return redirect()->route('admin.kelas.show', $id)->with('success', 'Murid berhasil dihapus!'); })->name('kelas.unassign');
 
     /* Assign / Unassign murid */
     Route::post('/kelas/{id}/assign-murid', [KelasController::class, 'assign'])
