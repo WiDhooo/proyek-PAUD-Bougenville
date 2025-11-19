@@ -1,79 +1,73 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\GaleriController;
 use App\Http\Controllers\ProfilController;
 
+/*
+|--------------------------------------------------------------------------
+| ROUTE PENGUNJUNG (COMPANY PROFILE)
+|--------------------------------------------------------------------------
+*/
+
+Route::view('/', 'beranda');
+Route::view('/tentang', 'tentang');
+Route::view('/kegiatan', 'kegiatan');
+Route::view('/kontak', 'kontak');
 
 /*
 |--------------------------------------------------------------------------
-| ROUTE UNTUK PENGUNJUNG (COMPANY PROFILE)
+| LOGIN & AUTH
 |--------------------------------------------------------------------------
 */
-// Halaman Beranda
-Route::get('/', function () {
-    return view('beranda');
-});
 
-// Halaman Tentang Kami
-Route::get('/tentang', function () {
-    return view('tentang');
-});
-
-// Halaman Kegiatan
-Route::get('/kegiatan', function () {
-    return view('kegiatan');
-});
-
-// Halaman Kontak
-Route::get('/kontak', function () {
-    return view('kontak');
-});
-
-/*
-|--------------------------------------------------------------------------
-| ROUTE UNTUK AUTENTIKASI (LOGIN & LOGOUT)
-|--------------------------------------------------------------------------
-*/
 Route::get('/login', function () {
-    // Rute ini untuk MENAMPILKAN halaman login
     return view('auth.login');
-})->name('login');
+})->name('login')->middleware('guest');
 
-Route::post('/login', function () {
-    // Rute ini untuk MEMPROSES login (nanti diisi Back-End)
-    // Kita simulasikan login sukses sebagai Admin
-    return redirect()->route('admin.dashboard')->with('success', 'Selamat datang kembali!');
-})->name('login.attempt');
+Route::post('/login', [LoginController::class, 'attempt'])
+    ->name('login.attempt')
+    ->middleware('guest');
 
-Route::post('/logout', function () {
-    // Rute ini untuk MEMPROSES logout (nanti diisi Back-End)
-    // Kita simulasikan logout sukses
-    return redirect()->route('login')->with('success', 'Anda berhasil logout.');
-})->name('logout');
+Route::post('/logout', [LoginController::class, 'logout'])
+    ->name('logout')
+    ->middleware('auth');
 
 /*
 |--------------------------------------------------------------------------
-| ROUTE UNTUK ADMIN
+| ROUTE ADMIN (Proteksi role admin)
 |--------------------------------------------------------------------------
 */
-Route::prefix('admin')->name('admin.')->group(function () {
 
-    // Dashboard Admin
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth', 'role:admin'])
+    ->group(function () {
+
+    /* DASHBOARD */
     Route::get('/dashboard', function () {
         $dashboardData = [
-            'total_murid' => 57, 'total_guru' => 12, 'total_kelas' => 3,
+            'total_murid' => 57,
+            'total_guru' => 12,
+            'total_kelas' => 3,
             'jadwal' => [
-                'Senin' => ['Mandiri - A' => 'Galar Widodo', 'Ceria - B' => 'Xanana Megantara', 'Kreatif - A' => 'Gaman Maras Saputra'],
-                'Selasa' => ['Mandiri - A' => 'Qori Usada M.Pd', 'Ceria - B' => 'Zalindra Rahayu', 'Kreatif - A' => 'Bakti Jarwadi S. M.T.'],
-                'Rabu' => ['Mandiri - A' => 'Caraka Sabar Waskita S.E.I', 'Ceria - B' => 'Sari Kuswandari', 'Kreatif - A' => 'Pardi Prasetya S.Kom'],
-                'Kamis' => ['Mandiri - A' => 'Yulia Andriani S.Ked', 'Ceria - B' => 'Dipa Cakra Buana', 'Kreatif - A' => 'Taufan Habibi M.T.I.'],
-                'Jumat' => ['Mandiri - A' => 'Galar Widodo', 'Ceria - B' => 'Sari Kuswandari', 'Kreatif - A' => 'Cahyadi Bahuraksa D.'],
-            ]
+                'Senin' => [
+                    'Mandiri - A' => 'Galar Widodo',
+                    'Ceria - B' => 'Xanana Megantara',
+                    'Kreatif - A' => 'Gaman Maras Saputra',
+                ],
+                'Selasa' => [
+                    'Mandiri - A' => 'Qori Usada M.Pd',
+                    'Ceria - B' => 'Zalindra Rahayu',
+                    'Kreatif - A' => 'Bakti Jarwadi S. M.T.',
+                ],
+            ],
         ];
+
         return view('admin.dashboard', ['data' => $dashboardData]);
     })->name('dashboard');
 
@@ -122,21 +116,21 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| ROUTE UNTUK GURU
+| ROUTE GURU (Proteksi role guru)
 |--------------------------------------------------------------------------
 */
-Route::prefix('guru')->name('guru.')->group(function () {
+
+Route::prefix('guru')
+    ->name('guru.')
+    ->middleware(['auth', 'role:guru'])
+    ->group(function () {
+
     Route::get('/dashboard', [GuruController::class, 'dashboard'])->name('dashboard');
     Route::get('/data-siswa', [GuruController::class, 'dataSiswa'])->name('data_siswa');
 
-    // Pilih Kelas sebelum input nilai & absensi
     Route::get('/nilai-absensi/pilih-kelas', [GuruController::class, 'pilihKelas'])->name('nilai_absensi.pilih_kelas');
 
-    // Nilai & Absensi
     Route::get('/nilai-absensi', [GuruController::class, 'pilihKelas'])->name('nilai_absensi');
     Route::get('/nilai-absensi/{kelas}', [GuruController::class, 'nilaiAbsensi'])->name('nilai_absensi.kelas');
     Route::post('/nilai-absensi/{kelas}/simpan', [GuruController::class, 'simpanNilaiAbsensi'])->name('nilai_absensi.simpan');
 });
-
-
-
