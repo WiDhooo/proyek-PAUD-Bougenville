@@ -43,7 +43,7 @@ class SiswaController extends Controller
             'nis' => 'required|string|max:100|unique:siswa,nis',
             'nama' => 'required|string|max:100',
             'jenis_kelamin' => 'required|string|max:15',
-            'tanggal_lahir' => 'required|date',
+            'tanggal_lahir' => 'required|date|before:-2 year',
         ]);
 
         Siswa::create($data);

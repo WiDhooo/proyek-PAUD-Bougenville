@@ -97,7 +97,7 @@
                     </ul>
                 </li>
                  <li class="nav-item">
-                 <a class="nav-link d-flex align-items-center {{ request()->is('admin/profil-sekolah*') ? 'active' : '' }}" href="{{ route('admin.profil.index') }}">
+                 <a class="nav-link d-flex align-items-center {{ request()->is('admin/profil*') || request()->is('admin/galeri*')  ? 'active' : '' }}" href="{{ route('admin.profil.index') }}">
                     <i class="bi bi-person-vcard"></i>
                     Profil Sekolah
                 </a>

@@ -11,7 +11,7 @@
 
     <div class="row">
         <div class="col-md-6 mb-4">
-            <a href="{{ route('admin.profil.edit') }}" class="card h-100 border-0 shadow-sm text-decoration-none text-dark">
+            <a href="{{ route('admin.profil.edit', $profil->id) }}" class="card h-100 border-0 shadow-sm text-decoration-none text-dark">
                 <div class="card-body text-center p-4">
                     <i class="bi bi-person-vcard fs-1 text-primary mb-3"></i>
                     <h4 class="card-title">Kelola Profil Sekolah</h4>

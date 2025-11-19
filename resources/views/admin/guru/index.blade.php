@@ -28,12 +28,14 @@
                                 Nama Guru
                                 <span x-show="sortColumn === 'nama'"><i :class="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i></span>
                             </th>
+                            <th>Tempat/Tanggal Lahir</th>
+                            <!-- <th>Tanggal Lahir</th> -->
+                            <th>No HP</th>
+                            <th>Alamat</th>
                             <th @click="sortBy('jabatan')" style="cursor: pointer;">
                                 Jabatan
                                 <span x-show="sortColumn === 'jabatan'"><i :class="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i></span>
                             </th>
-                            <th>Alamat</th>
-                            <th>Pendidikan</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -41,18 +43,20 @@
                         <template x-for="item in paginatedItems" :key="item.id">
                             <tr>
                                 <td x-text="item.nama"></td>
-                                <td x-text="item.jabatan"></td>
+                                <td x-text="item.ttl"></td>
+                                <!-- <td x-text="item.tanggal_lahir"></td> -->
+                                <td x-text="item.no_hp"></td>
                                 <td x-text="item.alamat"></td>
-                                <td x-text="item.pendidikan"></td>
+                                <td x-text="item.jabatan"></td>
                                 <td>
                                     <button type="button" class="btn btn-warning btn-sm"
                                         data-bs-toggle="modal" data-bs-target="#modalEditGuru"
-                                        @click="editData = item; editUrl = `/admin/guru/${item.id}`">
+                                        @click="$dispatch('open-edit-modal', { item: item })">
                                         <i class="bi bi-pencil-fill"></i>
                                     </button>
                                     <button type="button" class="btn btn-danger btn-sm"
                                         data-bs-toggle="modal" data-bs-target="#modalHapusGuru"
-                                        @click="deleteName = item.nama_guru; deleteUrl = `/admin/guru/${item.id}`">
+                                        @click="$dispatch('open-hapus-modal', { item: item })">
                                         <i class="bi bi-trash-fill"></i>
                                     </button>
                                 </td>
@@ -92,9 +96,14 @@
                 <form action="{{ route('admin.guru.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="mb-3"><label class="form-label fw-bold">Nama Guru</label><input type="text" class="form-control" name="nama" required></div>
-                    <div class="mb-3"><label class="form-label fw-bold">Jabatan</label><input type="text" class="form-control" name="jabatan" required></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Tempat Lahir</label><input type="text" class="form-control" name="tempat_lahir" required></div>
+                    <div class="mb-3"><label class="form-label">Tanggal Lahir</label><input type="date" class="form-control" name="tanggal_lahir" required></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Nomor HP</label><input type="text" class="form-control" name="no_hp" required></div>
                     <div class="mb-3"><label class="form-label fw-bold">Alamat</label><textarea class="form-control" name="alamat" rows="3"></textarea></div>
-                    <div class="mb-3"><label class="form-label fw-bold">Pendidikan</label><input type="text" class="form-control" name="pendidikan"></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Jabatan</label><select name="jabatan" class="form-control" required><option value="" disabled selected>Pilih jabatan</option><option value="Kepala Sekolah">Kepala Sekolah</option><option value="Sekretaris">Sekretaris</option><option value="Bendahara">Bendahara</option><option value="Pendidik">Pendidik</option></select></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Username</label><input type="text" class="form-control" name="username" required></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Password</label><input type="password" class="form-control" name="password" required></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Konfirmasi Password</label><input type="password" class="form-control" name="password_confirmation" required></div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                         <button type="submit" class="btn btn-primary">Simpan</button>
@@ -105,7 +114,21 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalEditGuru" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+<div class="modal fade" id="modalEditGuru" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    x-data="{ editUrl: '', editData: { id: null, nama: '', tempat_lahir: '', tanggal_lahir: '', no_hp: '', alamat: '', jabatan: '', username: '', password: '' } }"
+     @open-edit-modal.window="
+        let item = event.detail.item;
+        editData.id = item.id;
+        editData.nama = item.nama;
+        editData.tempat_lahir = item.tempat_lahir;
+        editData.tanggal_lahir = item.tanggal_lahir ? String(item.tanggal_lahir).substring(0, 10) : '';
+        editData.no_hp = item.no_hp;
+        editData.alamat = item.alamat;
+        editData.jabatan = item.jabatan;
+        editData.username = item.username;
+        editData.password = '';
+        editUrl = `/admin/guru/${item.id}`;
+     ">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header"><h1 class="modal-title fs-5">Edit Data Guru</h1><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
@@ -114,10 +137,23 @@
                     @csrf
                     @method('PUT')
                     <div class="mb-3"><label class="form-label fw-bold">Nama Guru</label><input type="text" class="form-control" name="nama" x-model="editData.nama" required></div>
-                    <div class="mb-3"><label class="form-label fw-bold">Jabatan</label><input type="text" class="form-control" name="jabatan" x-model="editData.jabatan" required></div>
-                    <div class="mb-3"><label class="form-label fw-bold">Alamat</label><textarea class="form-control" name="alamat" rows="3" x-model="editData.alamat"></textarea></div>
-                    <div class="mb-3"><label class="form-label fw-bold">Pendidikan</label><input type="text" class="form-control" name="pendidikan" x-model="editData.pendidikan"></div>
-                    <div class="modal-footer">
+                    <div class="mb-3"><label class="form-label fw-bold">Tempat Lahir</label><input type="text" class="form-control" name="tempat_lahir" x-model="editData.tempat_lahir" required></div>
+                    <div class="mb-3"><label class="form-label">Tanggal Lahir</label><input type="date" class="form-control" name="tanggal_lahir" x-model="editData.tanggal_lahir" required></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Nomor HP</label><input type="text" class="form-control" name="no_hp" x-model="editData.no_hp" required></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Alamat</label><textarea class="form-control" name="alamat" x-model="editData.alamat" rows="3"></textarea></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Jabatan</label><select name="jabatan" class="form-control" x-model="editData.jabatan" required><option value="Kepala Sekolah">Kepala Sekolah</option><option value="Sekretaris">Sekretaris</option><option value="Bendahara">Bendahara</option><option value="Pendidik">Pendidik</option></select></div>
+                    <div class="mb-3"><label class="form-label fw-bold">Username</label><input type="text" class="form-control" name="username" x-model="editData.username" required></div>
+                    <div class="mb-3">
+                    <label class="form-label fw-bold">Password</label>
+                    <input type="password" class="form-control" name="password" 
+                           placeholder="Kosongkan jika tidak ingin diubah"> 
+                           </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Konfirmasi Password</label>
+                    <input type="password" class="form-control" name="password_confirmation" 
+                           placeholder="Kosongkan jika tidak ingin diubah">
+                           </div>                    <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                         <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
                     </div>
@@ -127,13 +163,27 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalHapusGuru" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+<div class="modal fade" id="modalHapusGuru" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    x-data="{ hapusUrl: '', hapusData: { id: null, nama: '', tempat_lahir: '', tanggal_lahir: '', no_hp: '', alamat: '', jabatan: '', username: '', password: '' } }"
+     @open-hapus-modal.window="
+        let item = event.detail.item;
+        hapusData.id = item.id;
+        hapusData.nama = item.nama;
+        hapusData.tempat_lahir = item.tempat_lahir;
+        hapusData.tanggal_lahir = item.tanggal_lahir ? String(item.tanggal_lahir).substring(0, 10) : '';
+        hapusData.no_hp = item.no_hp;
+        hapusData.alamat = item.alamat;
+        hapusData.jabatan = item.jabatan;
+        hapusData.username = item.username;
+        hapusData.password = '';
+        hapusUrl = `/admin/guru/${item.id}`;
+     ">
 <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header"><h5 class="modal-title">Konfirmasi Hapus</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body"><p>Apakah Anda yakin ingin menghapus murid bernama <strong x-text="deleteName"></strong>?</p></div>
+            <div class="modal-body"><p>Apakah Anda yakin ingin menghapus guru bernama <strong x-text="hapusData.nama"></strong>?</p></div>
             <div class="modal-footer">
-                <form x-bind:action="deleteUrl" method="POST">
+                <form x-bind:action="hapusUrl" method="POST">
                     @csrf
                     @method('DELETE')
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -153,7 +203,7 @@
             deleteUrl: '',
             editUrl: '',
             editData: {},
-            items: @json($guru),
+            items: @json($gurus),
             sortColumn: '',
             sortDirection: 'asc',
             currentPage: 1, // <-- DITAMBAHKAN

@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\GuruController;
 use App\Http\Controllers\KelasController;
 use App\Http\Controllers\SiswaController;
+use App\Http\Controllers\GaleriController;
+use App\Http\Controllers\ProfilController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -75,67 +78,45 @@ Route::prefix('admin')->name('admin.')->group(function () {
     })->name('dashboard');
 
     // CRUD Guru
-    Route::get('/guru', function () {
-        $data_guru_palsu = [
-            ['id' => 1, 'nama' => 'Devi Hariyah', 'jabatan' => 'Guru', 'alamat' => 'Jl. Pendidikan No. 1', 'pendidikan' => 'S1'],
-            ['id' => 2, 'nama' => 'Jayeng Wawan Pradipta S.E.I', 'jabatan' => 'Guru', 'alamat' => 'Jr. Cut Nyak Dien No. 956', 'pendidikan' => 'D3'],
-            ['id' => 3, 'nama' => 'Victoria Pertiwi', 'jabatan' => 'Staff', 'alamat' => 'KI. Panjaitan No. 78', 'pendidikan' => 'D3'],
-        ];
-        return view('admin.guru.index', ['guru' => $data_guru_palsu]);
-    })->name('guru.index');
-    Route::post('/guru', function () { return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil ditambahkan!'); })->name('guru.store');
-    Route::put('/guru/{id}', function ($id) { return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil diperbarui!'); })->name('guru.update');
-    Route::delete('/guru/{id}', function ($id) { return redirect()->route('admin.guru.index')->with('success', 'Data guru berhasil dihapus!'); })->name('guru.destroy');
+    Route::get('/guru', [GuruController::class, 'index'])->name('guru.index');
+    Route::post('/guru', [GuruController::class, 'store'])->name('guru.store');
+    Route::put('/guru/{id}', [GuruController::class, 'update'])->name('guru.update');
+    Route::delete('/guru/{id}', [GuruController::class, 'destroy'])->name('guru.destroy');
 
     // CRUD Murid
     Route::get('/murid', [SiswaController::class, 'index'])->name('murid.index');
-    //     $data_murid_palsu = [
-    //         ['id' => 1, 'nik' => '25190527237', 'nama' => 'Rogelio Torphy', 'usia' => '6 tahun', 'jenis_kelamin' => 'Laki-laki'],
-    //         ['id' => 2, 'nik' => '25130909649', 'nama' => 'Marguerite McKenzie', 'usia' => '5 tahun', 'jenis_kelamin' => 'Perempuan'],
-    //     ];
-    //     return view('admin.murid.index', ['murid' => $data_murid_palsu]);
-    // })->name('murid.index');
     Route::post('/murid', [SiswaController::class, 'store'])->name('murid.store');
     Route::put('/murid/{id}', [SiswaController::class, 'update'])->name('murid.update');
-    Route::delete('/kelas/{id}', [SiswaController::class, 'destroy'])->name('murid.destroy');
+    Route::delete('/murid/{id}', [SiswaController::class, 'destroy'])->name('murid.destroy');
 
     // CRUD Kelas
     Route::get('/kelas', [KelasController::class, 'index'])->name('kelas.index');
-    //     $data_kelas_palsu = [
-    //         ['id' => 1, 'nama_kelas' => 'Mandiri', 'kelas' => 'A', 'wali' => 'Jayeng Wawan Pradipta S.E.I'],
-    //         ['id' => 2, 'nama_kelas' => 'Ceria', 'kelas' => 'B', 'wali' => 'Victoria Pertiwi'],
-    //     ];
-    //     return view('admin.kelas.index', ['kelas' => $data_kelas_palsu]);
-    // })->name('kelas.index');
     Route::post('/kelas', [KelasController::class, 'store'])->name('kelas.store');
     Route::put('/kelas/{id}', [KelasController::class, 'update'])->name('kelas.update');
     Route::delete('/kelas/{id}', [KelasController::class, 'destroy'])->name('kelas.destroy');
     Route::get('/kelas/{id}', [KelasController::class, 'show'])->name('kelas.show');
-    //     $kelas_detail = ['id' => $id, 'nama_kelas' => 'Mandiri', 'kelas' => 'A'];
-    //     $murid_di_kelas = [['id' => 1, 'nis' => '2526530970', 'nama' => 'Zelda Maheswara', 'jenis_kelamin' => 'Perempuan']];
-    //     $semua_murid = [['id' => 3, 'nik' => '25190910658', 'nama' => 'Prof. Reynold Trantow III']];
-    //     return view('admin.kelas.show', ['kelas' => $kelas_detail, 'murid_di_kelas' => $murid_di_kelas, 'semua_murid' => $semua_murid]);
-    // })->name('kelas.show');
     Route::post('/kelas/{id}/assign-murid', [KelasController::class, 'assignMurid'])->name('kelas.assign');
     Route::delete('/kelas/{id}/unassign-murid/{muridId}', [KelasController::class, 'unassignMurid'])->name('kelas.unassign');
 
     // Manajemen Konten
-    Route::get('/profil-sekolah', function () { return view('admin.profil.index'); })->name('profil.index');
-    Route::get('/profil-sekolah/edit', function () {
-        $profil_sekolah = [
-            'visi' => 'Menjadi lembaga pendidikan usia dini yang unggul.',
-            'misi' => '1. Menyelenggarakan pembelajaran yang aktif. 2. Mengembangkan potensi anak.',
-            'sejarah' => 'Didirikan pada tahun 2010.',
-        ];
-        return view('admin.profil.edit', ['profil' => $profil_sekolah]);
-    })->name('profil.edit');
-    Route::post('/profil-sekolah/update', function () { return redirect()->route('admin.profil.edit')->with('success', 'Profil sekolah berhasil diperbarui!'); })->name('profil.update');
+    // GET /admin/profil
+    // Menampilkan daftar/ringkasan profil (digunakan di tombol "Kembali")
+    // Nama rute: admin.profil.index
+    Route::get('/profil', [ProfilController::class, 'index'])->name('profil.index');
+
+    // GET /admin/profil/{id}/edit
+    // Menampilkan form untuk mengedit profil tertentu.
+    // Nama rute: admin.profil.edit
+    Route::get('/profil/{id}/edit', [ProfilController::class, 'edit'])->name('profil.edit');
+
+    // PUT/PATCH /admin/profil/{id}
+    // Mengirim data form untuk memperbarui profil.
+    // Nama rute: admin.profil.update (Action form di blade)
+    Route::put('/profil/{id}', [ProfilController::class, 'update'])->name('profil.update');
     
-    Route::get('/galeri', function () {
-        $foto = [['id' => 1, 'url' => 'https://via.placeholder.com/300x200.png/0077ff/FFFFFF?text=Kegiatan+1', 'judul' => 'Lomba 17 Agustus']];
-        return view('admin.profil.galeri', ['foto' => $foto]);
-    })->name('galeri.index');
-    Route::post('/galeri', function () { return redirect()->route('admin.galeri.index')->with('success', 'Foto baru berhasil ditambahkan!'); })->name('galeri.store');
+    Route::get('/galeri', [GaleriController::class, 'index'])->name('galeri.index');
+    Route::post('/galeri', [GaleriController::class, 'store'])->name('galeri.store');
+    Route::delete('/galeri/{id}', [GaleriController::class, 'destroy'])->name('galeri.destroy');
 });
 
 

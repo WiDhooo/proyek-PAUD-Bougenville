@@ -16,6 +16,16 @@ return new class extends Migration
             $table->string('nama');
             $table->string('username')->unique();
             $table->string('password');
+            $table->string('tempat_lahir');
+            $table->date('tanggal_lahir');
+            $table->string('no_hp');
+            $table->string('alamat');
+            $table->enum('jabatan', [
+                'Kepala Sekolah',
+                'Sekretaris',
+                'Bendahara',
+                'Pendidik'
+            ]);
             $table->timestamps();
         });
     }

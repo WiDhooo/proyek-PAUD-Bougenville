@@ -52,7 +52,7 @@
                                     </button>
                                     <button type="button" class="btn btn-danger btn-sm"
                                         data-bs-toggle="modal" data-bs-target="#modalHapusMurid"
-                                        @click="deleteName = item.nama; deleteUrl = `/admin/murid/${item.id}`">
+                                        @click="$dispatch('open-hapus-modal', { item: item })">
                                         <i class="bi bi-trash-fill"></i>
                                     </button>
                                 </td>
@@ -149,13 +149,23 @@
 </div>
 
 {{-- Modal Hapus Murid (Tidak Berubah) --}}
-<div class="modal fade" id="modalHapusMurid" tabindex="-1">
+<div class="modal fade" id="modalHapusMurid" tabindex="-1" aria-labelledby="modalHapusKelasLabel" aria-hidden="true"
+     x-data="{ hapusUrl: '', hapusData: { id: null, nis: '', nama: '', tanggal_lahir: '', jenis_kelamin: '' } }"
+     @open-hapus-modal.window="
+        let item = event.detail.item;
+        hapusData.id = item.id;
+        hapusData.nis = item.nis;
+        hapusData.nama = item.nama;
+        hapusData.tanggal_lahir = item.tanggal_lahir ? String(item.tanggal_lahir).substring(0, 10) : '';
+        hapusData.jenis_kelamin = item.jenis_kelamin;
+        hapusUrl = `/admin/murid/${item.id}`;
+     ">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header"><h5 class="modal-title">Konfirmasi Hapus</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <div class="modal-body"><p>Apakah Anda yakin ingin menghapus murid bernama <strong x-text="deleteName"></strong>?</p></div>
+            <div class="modal-body"><p>Apakah Anda yakin ingin menghapus murid bernama <strong x-text="hapusData.nama"></strong>?</p></div>
             <div class="modal-footer">
-                <form :action="deleteUrl" method="POST">
+                <form :action="hapusUrl" method="POST">
                     @csrf
                     @method('DELETE')
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
