@@ -7,6 +7,7 @@ use App\Models\Siswa;
 use App\Models\Jadwal;
 use App\Models\Kelas;
 use App\Models\NilaiAbsensi;
+use Illuminate\Http\Request;
 
 class GuruController extends Controller
 {
