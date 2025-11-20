@@ -58,8 +58,8 @@
             </ul>
 
             <!-- Tombol -->
-            <a href="#" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
-                Daftar Sekarang
+            <a href="{{ route('login') }}" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
+                Portal Admin
             </a>
 
             <!-- Hamburger -->
@@ -76,8 +76,9 @@
             <a href="{{ url('/tentang') }}" class="text-blue-600">Tentang Kami</a>
             <a href="{{ url('/kegiatan') }}" class="text-gray-700 hover:text-blue-500">Kegiatan</a>
             <a href="{{ url('/kontak') }}" class="text-gray-700 hover:text-blue-500">Kontak</a>
-            <a href="#" class="px-4 py-2 border-2 border-blue-500 text-blue-500 rounded-full hover:bg-blue-500 hover:text-white transition">
-                Daftar Sekarang
+            <!-- Tombol -->
+            <a href="{{ route('login') }}" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
+                Portal Admin
             </a>
         </div>
     </nav>

@@ -58,8 +58,8 @@
             </ul>
 
             <!-- Tombol -->
-            <a href="#" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
-                Daftar Sekarang
+            <a href="{{ route('login') }}" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
+                Portal Admin
             </a>
 
             <!-- Hamburger -->
@@ -76,8 +76,9 @@
             <a href="{{ url('/tentang') }}" class="text-gray-700 hover:text-blue-500">Tentang Kami</a>
             <a href="{{ url('/kegiatan') }}" class="text-gray-700 hover:text-blue-500">Kegiatan</a>
             <a href="{{ url('/kontak') }}" class="text-blue-600">Kontak</a>
-            <a href="#" class="px-4 py-2 border-2 border-blue-500 text-blue-500 rounded-full hover:bg-blue-500 hover:text-white transition">
-                Daftar Sekarang
+            <!-- Tombol -->
+            <a href="{{ route('login') }}" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
+                Portal Admin
             </a>
         </div>
     </nav>
@@ -141,41 +142,10 @@
         </div>
     </section>
 
-    <!-- Form Kontak & Map -->
+    <!-- Lokasi & Map -->
     <section class="py-16 bg-[#FFFDF5] fade-in">
         <div class="container mx-auto px-8 md:px-32">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <!-- Form Kontak -->
-                <div>
-                    <h2 class="text-2xl font-bold mb-3 text-blue-500">
-                        Kirim <span class="text-[#FF9900]">Pesan</span>
-                    </h2>
-                    <p class="text-gray-600 mb-6">Isi form berikut untuk mengirim pesan kepada kami</p>
-                    
-                    <form class="space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label class="block text-gray-700 text-sm font-medium mb-2">Nama Lengkap</label>
-                                <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300" placeholder="Masukkan nama lengkap">
-                            </div>
-                            <div>
-                                <label class="block text-gray-700 text-sm font-medium mb-2">Email</label>
-                                <input type="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300" placeholder="Masukkan email">
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 text-sm font-medium mb-2">Subjek</label>
-                            <input type="text" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300" placeholder="Subjek pesan">
-                        </div>
-                        <div>
-                            <label class="block text-gray-700 text-sm font-medium mb-2">Pesan</label>
-                            <textarea rows="5" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300" placeholder="Tulis pesan Anda di sini..."></textarea>
-                        </div>
-                        <button type="submit" class="w-full bg-blue-500 text-white py-3 px-6 rounded-lg font-semibold hover:bg-blue-600 transition duration-300 transform hover:-translate-y-1">
-                            Kirim Pesan
-                        </button>
-                    </form>
-                </div>
+            <div class="grid grid-cols-1 gap-12">
 
                 <!-- Google Maps -->
                 <div>
@@ -187,11 +157,12 @@
                     <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
                         <div class="aspect-w-16 aspect-h-9 rounded-lg overflow-hidden">
                             <iframe 
-                                src="https://www.google.com/maps/embed?pb=!1m12!1m8!1m3!1d63462.634054902526!2d106.8676109!3d-6.2089159!3m2!1i1024!2i768!4f13.1!2m1!1ssekretariat%20rw%2010%20utan%20kayu%20selatan!5e0!3m2!1sen!2sid!4v1761732823672!5m2!1sen!2sid" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+                                src="https://www.google.com/maps/embed?pb=!1m12!1m8!1m3!1d63462.634054902526!2d106.8676109!3d-6.2089159!3m2!1i1024!2i768!4f13.1!2m1!1ssekretariat%20rw%2010%20utan%20kayu%20selatan!5e0!3m2!1sen!2sid!4v1761732823672!5m2!1sen!2sid"
                                 width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy"
                                 referrerpolicy="no-referrer-when-downgrade" class="rounded-lg">
                             </iframe>
                         </div>
+
                         <div class="mt-4 p-4 bg-blue-50 rounded-lg">
                             <div class="flex items-start">
                                 <i class="fas fa-map-marker-alt text-blue-500 mt-1 mr-3"></i>
@@ -205,11 +176,14 @@
                                 </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
+
 
     <!-- Footer -->
     <footer class="bg-blue-600 text-white py-12 fade-in">
