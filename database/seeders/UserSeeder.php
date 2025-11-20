@@ -19,8 +19,19 @@ class UserSeeder extends Seeder
         $now = Carbon::now();
 
         $users = [
-            // --- 1. AKUN GURU (Dari Data PPT) ---
-            // Email dummy
+            // --- 1. AKUN ADMIN ---
+            [
+                'name'              => 'Administrator',
+                'email'             => 'admin@sekolah.com',
+                'password'          => $defaultPassword,
+                'role'              => 'admin', // Sesuai ENUM di migration
+                'email_verified_at' => $now,
+                'created_at'        => $now,
+                'updated_at'        => $now,
+            ],
+
+            // --- 2. AKUN GURU (Dari Data PPT) ---
+            // Saya buatkan email dummy menggunakan nama depan mereka
             [
                 'name'              => 'Endang Sulistiawati',
                 'email'             => 'endang@sekolah.com',
@@ -71,17 +82,6 @@ class UserSeeder extends Seeder
                 'email'             => 'yeany@sekolah.com',
                 'password'          => $defaultPassword,
                 'role'              => 'guru',
-                'email_verified_at' => $now,
-                'created_at'        => $now,
-                'updated_at'        => $now,
-            ],
-
-            // --- 2. AKUN ADMIN ---
-            [
-                'name'              => 'Administrator',
-                'email'             => 'admin@sekolah.com',
-                'password'          => $defaultPassword,
-                'role'              => 'admin', 
                 'email_verified_at' => $now,
                 'created_at'        => $now,
                 'updated_at'        => $now,

@@ -23,10 +23,10 @@ class DatabaseSeeder extends Seeder
         // Panggil seeder yang baru dibuat
         $this->call([
             // Tambahkan seeder lain di sini jika ada
+            UserSeeder::class,
             ProfilSeeder::class, // PENTING: Memastikan data profil dibuat
             GuruSeeder::class,
             GaleriSeeder::class,
-            UserSeeder::class,
             // MuridSeeder::class,
             // KelasSeeder::class,
         ]);

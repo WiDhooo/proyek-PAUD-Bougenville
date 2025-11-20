@@ -7,7 +7,7 @@
 
     <!-- Judul dan deskripsi -->
     <div class="mb-4">
-        <h3>Selamat Datang, {{ Auth::user()->nama ?? 'Guru' }}! 👋</h3>
+        <h3>Selamat Datang, {{ Auth::user()->name ?? 'Guru' }}! 👋</h3>
         <p class="text-muted">Berikut adalah jadwal mengajar keseluruhan pekan ini.</p>
     </div>
 

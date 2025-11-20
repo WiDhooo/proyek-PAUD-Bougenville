@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Guru;
+use App\Models\User;
 use App\Models\Siswa;
 use App\Models\Jadwal;
 use App\Models\Kelas;
@@ -13,14 +14,14 @@ use Illuminate\Http\Request;
 
 class GuruController extends Controller
 {
+    // ==================== DASHBOARD GURU ====================
+    
     public function dashboard()
     {
-        // Ambil guru yang sedang login
-        $guruId = Auth::id(); // atau Auth::user()->id
+        $guruId = Auth::id();
         
-        // Ambil jadwal guru yang login beserta relasi kelas
         $jadwal = Jadwal::with('kelas')
-                       ->where('guru_id', $guruId)
+                       ->where('guru_id', Auth::user()->guru->id ?? 0)
                        ->orderByRaw("FIELD(hari, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat')")
                        ->get();
 
@@ -29,15 +30,12 @@ class GuruController extends Controller
 
     public function dataSiswa()
     {
-        // Ambil guru yang sedang login
-        $guruId = Auth::id();
+        $guruId = Auth::user()->guru->id ?? 0;
         
-        // Ambil kelas yang diajar oleh guru ini
         $kelasIds = Jadwal::where('guru_id', $guruId)
                           ->pluck('kelas_id')
                           ->unique();
         
-        // Ambil siswa dari kelas-kelas tersebut
         $siswa = Siswa::whereIn('kelas_id', $kelasIds)->get();
         
         return view('guru.data_siswa', compact('siswa'));
@@ -45,10 +43,8 @@ class GuruController extends Controller
 
     public function pilihKelas()
     {
-        // Ambil guru yang sedang login
-        $guruId = Auth::id();
+        $guruId = Auth::user()->guru->id ?? 0;
         
-        // Ambil kelas yang diajar oleh guru ini (dari jadwal)
         $kelasIds = Jadwal::where('guru_id', $guruId)
                           ->pluck('kelas_id')
                           ->unique();
@@ -61,7 +57,7 @@ class GuruController extends Controller
     public function nilaiAbsensi($kelasId)
     {
         $kelas = Kelas::findOrFail($kelasId);
-        $murid = $kelas->siswa; // Ambil siswa dari kelas
+        $murid = $kelas->siswa;
         
         return view('guru.nilai_absensi', compact('murid', 'kelas'));
     }
@@ -85,11 +81,25 @@ class GuruController extends Controller
                         ->with('success', 'Data absensi dan nilai berhasil disimpan!');
     }
 
-    // ... method admin tetap sama ...
+    // ==================== ADMIN CRUD GURU ====================
     
     public function index()
     {
-        $gurus = Guru::all();
+        $gurus = Guru::with('user')->get()->map(function($guru) {
+            return [
+                'id' => $guru->id,
+                'user_id' => $guru->user_id,
+                'nama' => $guru->nama, // Dari accessor
+                'email' => $guru->user->email ?? '-',
+                'tempat_lahir' => $guru->tempat_lahir,
+                'tanggal_lahir' => $guru->tanggal_lahir,
+                'ttl' => $guru->ttl,
+                'no_hp' => $guru->no_hp,
+                'alamat' => $guru->alamat,
+                'jabatan' => $guru->jabatan,
+            ];
+        });
+        
         return view('admin.guru.index', compact('gurus'));
     }
 
@@ -97,32 +107,49 @@ class GuruController extends Controller
     {
         $data = $request->validate([
             'nama' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'max:255', 'alpha_dash', 'unique:guru'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
             'tempat_lahir' => ['nullable', 'string', 'max:255'],
             'tanggal_lahir' => ['nullable', 'date'],
             'no_hp' => ['required', 'string', 'max:20'],
-            'alamat' => ['required', 'string', 'max:255'],
-            'jabatan' => ['required', 'string', 'max:20']
+            'alamat' => ['required', 'string'],
+            'jabatan' => ['required', 'string', Rule::in(['Kepala Sekolah', 'Sekretaris', 'Bendahara', 'Pendidik'])]
         ]);
 
-        Guru::create($data);
+        // 1. Buat User terlebih dahulu
+        $user = User::create([
+            'name' => $data['nama'],
+            'email' => $data['email'],
+            'password' => bcrypt($data['password']), // Tambahkan bcrypt()
+            'role' => 'guru',
+        ]);
+
+        // 2. Buat Guru dengan user_id
+        Guru::create([
+            'user_id' => $user->id,
+            'tempat_lahir' => $data['tempat_lahir'],
+            'tanggal_lahir' => $data['tanggal_lahir'],
+            'no_hp' => $data['no_hp'],
+            'alamat' => $data['alamat'],
+            'jabatan' => $data['jabatan'],
+        ]);
+
         return redirect()->route('admin.guru.index')
                          ->with('success', 'Data Guru berhasil disimpan!');
     }
 
     public function update(Request $request, $id)
     {
-        $gurus = Guru::findOrFail($id);
+        $guru = Guru::with('user')->findOrFail($id);
 
         $data = $request->validate([
             'nama' => ['required', 'string', 'max:255'],
-            'username' => [
+            'email' => [
                 'required',
                 'string',
+                'email',
                 'max:255',
-                'alpha_dash',
-                Rule::unique('guru')->ignore($gurus->id)
+                Rule::unique('users')->ignore($guru->user_id)
             ],
             'password' => ['nullable', 'string', 'min:8', 'confirmed'],
             'tempat_lahir' => ['nullable', 'string', 'max:255'],
@@ -136,11 +163,27 @@ class GuruController extends Controller
             ]
         ]);
 
+        // 1. Update User
+        $guru->user->update([
+            'name' => $data['nama'],
+            'email' => $data['email'],
+        ]);
+
+        // Update password jika diisi
         if (!empty($data['password'])) {
-            $gurus->password = $data['password'];
+            $guru->user->update([
+                'password' => bcrypt($data['password']) // Tambahkan bcrypt()
+            ]);
         }
 
-        $gurus->update($request->except('password'));
+        // 2. Update Guru
+        $guru->update([
+            'tempat_lahir' => $data['tempat_lahir'],
+            'tanggal_lahir' => $data['tanggal_lahir'],
+            'no_hp' => $data['no_hp'],
+            'alamat' => $data['alamat'],
+            'jabatan' => $data['jabatan'],
+        ]);
 
         return redirect()->route('admin.guru.index')
                         ->with('success', 'Data Guru berhasil diperbarui!');
@@ -148,8 +191,10 @@ class GuruController extends Controller
 
     public function destroy(string $id)
     {
-        $gurus = Guru::findOrFail($id);
-        $gurus->delete();
+        $guru = Guru::with('user')->findOrFail($id);
+        
+        // Hapus user (akan cascade delete guru)
+        $guru->user->delete();
         
         return redirect()->route('admin.guru.index')
                          ->with('success', 'Data guru berhasil dihapus!');
