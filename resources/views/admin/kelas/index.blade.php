@@ -74,31 +74,51 @@
                 </ul>
             </nav>
 
+            <!-- Modal Tambah Kelas dengan Validasi -->
             <div class="modal fade" id="modalTambahKelas" tabindex="-1" aria-labelledby="modalTambahKelasLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalTambahKelasLabel">Buat Kelas Baru</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
                         
-                        {{-- Form ini akan dikirim ke route 'admin.kelas.store' --}}
-                        <form action="{{ route('admin.kelas.store') }}" method="POST">
-                            @csrf
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modalTambahKelasLabel">Buat Kelas Baru</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
+                        {{-- Menambahkan x-data="classFormValidator()" untuk scope validasi --}}
+                        <div class="modal-body" x-data="classFormValidator()">
+                            <form action="{{ route('admin.kelas.store') }}" method="POST" @submit="submitForm($event)">
+                                @csrf
+                                
+                                {{-- Validasi Nama Kelas --}}
                                 <div class="mb-3">
                                     <label for="add-nama_kelas" class="form-label">Nama Kelas</label>
-                                    <input type="text" class="form-control" id="add-nama_kelas" name="nama_kelas" placeholder="Contoh: Mandiri, Kreatif, Ceria" required>
+                                    <input type="text" class="form-control" id="add-nama_kelas" name="nama_kelas" 
+                                           placeholder="Contoh: Mandiri, Kreatif, Ceria" 
+                                           x-model="fields.nama_kelas" 
+                                           @input="validate('nama_kelas')"
+                                           :class="{'is-invalid': errors.nama_kelas}">
+                                    <div class="invalid-feedback" x-text="errors.nama_kelas"></div>
                                 </div>
+
+                                {{-- Validasi Kelas (Tingkat) --}}
                                 <div class="mb-3">
                                     <label for="add-kelas" class="form-label">Tingkat/Kelompok</label>
-                                    <input type="text" class="form-control" id="add-kelas" name="kelas" placeholder="Contoh: A, B, Kelompok Bermain" required>
+                                    <input type="text" class="form-control" id="add-kelas" name="kelas" 
+                                           placeholder="Contoh: A, B (Max 1 Karakter)" 
+                                           x-model="fields.kelas" 
+                                           @input="validate('kelas')"
+                                           :class="{'is-invalid': errors.kelas}">
+                                    <div class="invalid-feedback" x-text="errors.kelas"></div>
+                                    <small class="text-muted" x-show="!errors.kelas">Maksimal 1 karakter (misal: A atau B)</small>
                                 </div>
+
+                                {{-- Validasi Wali Kelas --}}
                                 <div class="mb-3">
                                     <label for="add-wali_id" class="form-label">Wali Kelas</label>
-                                    <select class="form-select" id="add-wali_id" name="guru_id" required>
+                                    <select class="form-select" id="add-wali_id" name="guru_id" 
+                                            x-model="fields.guru_id" 
+                                            @change="validate('guru_id')"
+                                            :class="{'is-invalid': errors.guru_id}">
                                         <option value="" disabled selected>Pilih seorang guru</option>
-                                        
                                         @isset($gurus)
                                             @foreach($gurus as $guru)
                                                 <option value="{{ $guru->id }}">{{ $guru->nama }}</option>
@@ -107,15 +127,16 @@
                                             <option disabled>Data guru tidak ditemukan</option>
                                         @endisset
                                     </select>
+                                    <div class="invalid-feedback" x-text="errors.guru_id"></div>
                                 </div>
 
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                <button type="submit" class="btn btn-success">Simpan</button>
-                            </div>
-                        </form>
-
+                                <div class="modal-footer px-0 pb-0">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                    {{-- Tombol disable jika ada error atau data kosong (opsional, tapi bagus untuk UX) --}}
+                                    <button type="submit" class="btn btn-success">Simpan</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -123,7 +144,7 @@
             <div class="modal fade" id="modalEditKelas" tabindex="-1" aria-labelledby="modalEditKelasLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">     
-                        <form :action="editUrl" method="POST">
+                        <form :action="editUrl" method="POST" @submit="submitEdit($event)">
                             @csrf
                             @method('PUT')
                             <div class="modal-header">
@@ -136,24 +157,34 @@
                                 <div class="mb-3">
                                     <label for="upd-nama_kelas" class="form-label">Nama Kelas</label>
                                     <input type="text" class="form-control" id="upd-nama_kelas" name="nama_kelas" 
-                                        x-model="editData.nama_kelas" required>
+                                        x-model="editData.nama_kelas"
+                                        @input="validateEdit('nama_kelas')"
+                                        :class="{'is-invalid': editErrors.nama_kelas}"
+                                        required>
+                                    <div class="invalid-feedback" x-text="editErrors.nama_kelas"></div>
                                 </div>
                                 
                                 {{-- Input 2: Tingkat/Kelompok (A/B) --}}
                                 <div class="mb-3">
                                     <label for="upd-kelas" class="form-label">Tingkat/Kelompok</label>
                                     <input type="text" class="form-control" id="upd-kelas" name="kelas" 
-                                        x-model="editData.kelas" required>
+                                        x-model="editData.kelas"
+                                        @input="validateEdit('kelas')"
+                                        :class="{'is-invalid': editErrors.kelas}" 
+                                        placeholder="Maksimal 1 Karakter (misal: A)"
+                                        required>
+                                    <div class="invalid-feedback" x-text="editErrors.kelas"></div>
+                                    <small class="text-muted" x-show="!editErrors.kelas">Maksimal 1 karakter (misal: A atau B)</small>
                                 </div>
                                 
                                 {{-- Input 3: Wali Kelas (Dropdown) --}}
                                 <div class="mb-3">
                                     <label for="upd-wali_id" class="form-label">Wali Kelas</label>
                                     <select class="form-select" id="upd-wali_id" name="guru_id" 
-                                            x-model="editData.guru_id" required>
-                                        
-                                        {{-- Catatan: editData.guru_id akan otomatis memilih guru yang benar --}}
-                                        
+                                            x-model="editData.guru_id"
+                                            @change="validateEdit('guru_id')"
+                                            :class="{'is-invalid': editErrors.guru_id}" 
+                                            required>
                                         @isset($gurus)
                                             @foreach($gurus as $guru)
                                                 <option value="{{ $guru->id }}">{{ $guru->nama }}</option>
@@ -162,7 +193,19 @@
                                             <option disabled>Data guru tidak ditemukan</option>
                                         @endisset
                                     </select>
+                                    <div class="invalid-feedback" x-text="editErrors.guru_id"></div>
                                 </div>
+
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                <button type="submit" class="btn btn-success">Simpan Perubahan</button>
+                            </div>
+                        </form>
+
+                    </div>
+                </div>
+            </div>
 
                             </div>
                             <div class="modal-footer">
@@ -207,21 +250,156 @@
     </div>
 </div>
 
-
-
 <script>
+    // Fungsi untuk Validasi Form Tambah Kelas
+    function classFormValidator() {
+        return {
+            fields: {
+                nama_kelas: '',
+                kelas: '',
+                guru_id: ''
+            },
+            errors: {
+                nama_kelas: '',
+                kelas: '',
+                guru_id: ''
+            },
+            validate(field) {
+                // Validasi Nama Kelas
+                if (field === 'nama_kelas') {
+                    if (!this.fields.nama_kelas) {
+                        this.errors.nama_kelas = 'Nama Kelas wajib diisi.';
+                    } else if (this.fields.nama_kelas.length > 100) {
+                        this.errors.nama_kelas = 'Maksimal 100 karakter.';
+                    } else {
+                        this.errors.nama_kelas = '';
+                    }
+                }
+                
+                // Validasi Tingkat Kelas (Sesuai Controller max:1)
+                if (field === 'kelas') {
+                    if (!this.fields.kelas) {
+                        this.errors.kelas = 'Tingkat/Kelompok wajib diisi.';
+                    } else if (this.fields.kelas.length > 1) {
+                        this.errors.kelas = 'Maksimal 1 karakter (Contoh: A).';
+                    } else {
+                        this.errors.kelas = '';
+                    }
+                }
+
+                // Validasi Wali Kelas
+                if (field === 'guru_id') {
+                    if (!this.fields.guru_id) {
+                        this.errors.guru_id = 'Wali Kelas wajib dipilih.';
+                    } else {
+                        this.errors.guru_id = '';
+                    }
+                }
+            },
+            submitForm(e) {
+                // Jalankan validasi semua field sebelum submit
+                this.validate('nama_kelas');
+                this.validate('kelas');
+                this.validate('guru_id');
+
+                // Jika ada error, batalkan submit
+                if (this.errors.nama_kelas || this.errors.kelas || this.errors.guru_id) {
+                    e.preventDefault();
+                }
+                // Jika input masih kosong, batalkan juga dan munculkan error
+                if (!this.fields.nama_kelas || !this.fields.kelas || !this.fields.guru_id) {
+                    this.validate('nama_kelas');
+                    this.validate('kelas');
+                    this.validate('guru_id');
+                    e.preventDefault();
+                }
+            }
+        }
+    }
+
+    // Fungsi Manager Utama (Tabel, Search, Sort, Pagination)
     function manager() {
         return {
             searchQuery: '',
             deleteName: '',
             deleteUrl: '',
             editUrl: '',
-            editData: {},
+            
+            // Inisialisasi editData agar tidak error saat x-model membaca propertinya
+            editData: {
+                nama_kelas: '',
+                kelas: '',
+                guru_id: ''
+            },
+            
+            // Penampung Error untuk Edit
+            editErrors: {
+                nama_kelas: '',
+                kelas: '',
+                guru_id: ''
+            },
+
             items: @json($kelas),
             sortColumn: '',
             sortDirection: 'asc',
             currentPage: 1,
             itemsPerPage: 5,
+
+            // --- Logika Validasi Edit ---
+            validateEdit(field) {
+                // Validasi Nama Kelas
+                if (field === 'nama_kelas') {
+                    if (!this.editData.nama_kelas) {
+                        this.editErrors.nama_kelas = 'Nama Kelas wajib diisi.';
+                    } else if (this.editData.nama_kelas.length > 100) {
+                        this.editErrors.nama_kelas = 'Maksimal 100 karakter.';
+                    } else {
+                        this.editErrors.nama_kelas = '';
+                    }
+                }
+                
+                // Validasi Tingkat Kelas
+                if (field === 'kelas') {
+                    if (!this.editData.kelas) {
+                        this.editErrors.kelas = 'Tingkat/Kelompok wajib diisi.';
+                    } else if (this.editData.kelas.length > 1) {
+                        this.editErrors.kelas = 'Maksimal 1 karakter (Contoh: A).';
+                    } else {
+                        this.editErrors.kelas = '';
+                    }
+                }
+
+                // Validasi Wali Kelas
+                if (field === 'guru_id') {
+                    if (!this.editData.guru_id) {
+                        this.editErrors.guru_id = 'Wali Kelas wajib dipilih.';
+                    } else {
+                        this.editErrors.guru_id = '';
+                    }
+                }
+            },
+
+            submitEdit(e) {
+                // Jalankan validasi semua field sebelum submit
+                this.validateEdit('nama_kelas');
+                this.validateEdit('kelas');
+                this.validateEdit('guru_id');
+
+                // Cek apakah ada error
+                if (this.editErrors.nama_kelas || this.editErrors.kelas || this.editErrors.guru_id) {
+                    e.preventDefault(); // Batalkan submit jika ada error
+                    return;
+                }
+
+                // Cek jika field kosong (double check)
+                if (!this.editData.nama_kelas || !this.editData.kelas || !this.editData.guru_id) {
+                    this.validateEdit('nama_kelas');
+                    this.validateEdit('kelas');
+                    this.validateEdit('guru_id');
+                    e.preventDefault();
+                }
+            },
+            // --- End Logika Validasi Edit ---
 
             sortBy(column) {
                 if (this.sortColumn === column) {

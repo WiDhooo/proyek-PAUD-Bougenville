@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Siswa;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class SiswaController extends Controller
 {
@@ -36,14 +37,17 @@ class SiswaController extends Controller
      */
     public function store(Request $request)
     {
-        // PERBAIKAN VALIDASI:
-        // 1. Tambahkan 'unique:siswa' untuk NIS
-        // 2. Gunakan 'date' untuk tanggal_lahir
         $data = $request->validate([
-            'nis' => 'required|string|max:100|unique:siswa,nis',
+            // Tambahkan 'numeric' dan 'unique:siswa,nis'
+            'nis' => 'required|numeric|unique:siswa,nis', 
             'nama' => 'required|string|max:100',
             'jenis_kelamin' => 'required|string|max:15',
-            'tanggal_lahir' => 'required|date|before:-2 year',
+            // Tambahkan 'before:-2 years'
+            'tanggal_lahir' => 'required|date|before:-2 years', 
+        ], [
+            'nis.numeric' => 'NIS harus berupa angka.',
+            'nis.unique' => 'NIS sudah terdaftar.',
+            'tanggal_lahir.before' => 'Usia siswa minimal harus 2 tahun.',
         ]);
 
         Siswa::create($data);
@@ -74,14 +78,16 @@ class SiswaController extends Controller
     {
         $siswa = Siswa::findOrFail($id);
 
-        // PERBAIKAN VALIDASI:
-        // 1. Tambahkan 'unique' tapi abaikan ID saat ini
-        // 2. Gunakan 'date'
         $data = $request->validate([
-            'nis' => 'required|string|max:100|unique:siswa,nis,' . $siswa->id,
+            // Unique tapi abaikan ID siswa yang sedang diedit
+            'nis' => ['required', 'numeric', Rule::unique('siswa', 'nis')->ignore($siswa->id)],
             'nama' => 'required|string|max:100',
             'jenis_kelamin' => 'required|string|max:15',
-            'tanggal_lahir' => 'required|date',
+            'tanggal_lahir' => 'required|date|before:-2 years',
+        ], [
+            'nis.numeric' => 'NIS harus berupa angka.',
+            'nis.unique' => 'NIS sudah digunakan siswa lain.',
+            'tanggal_lahir.before' => 'Usia siswa minimal harus 2 tahun.',
         ]);
 
         $siswa->update($data);
