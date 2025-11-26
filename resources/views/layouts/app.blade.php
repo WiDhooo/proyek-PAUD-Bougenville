@@ -107,7 +107,6 @@
 
         {{-- Logo --}}
         <div class="d-flex align-items-center mb-4">
-            <img src="{{ asset('images/melaju-01.png') }}" style="width:40px;height:40px;border-radius:8px;">
             <span class="sidebar-logo ms-2">PAUD Bougenville</span>
         </div>
 
