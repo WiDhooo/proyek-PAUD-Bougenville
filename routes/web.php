@@ -122,5 +122,19 @@ Route::prefix('guru')
 
     Route::get('/nilai-absensi', [GuruController::class, 'pilihKelas'])->name('nilai_absensi');
     Route::get('/nilai-absensi/{kelas}', [GuruController::class, 'nilaiAbsensi'])->name('nilai_absensi.kelas');
-    Route::post('/nilai-absensi/{kelas}/simpan', [GuruController::class, 'simpanNilaiAbsensi'])->name('nilai_absensi.simpan');
+    Route::get('/nilai-absensi/{kelas}/simpan', [GuruController::class, 'simpanNilaiAbsensi'])->name('nilai_absensi.simpan');
+
+    // Rapor Digital Routes
+    Route::get('/rapor/pilih-kelas', [\App\Http\Controllers\RaporController::class, 'pilihKelas'])->name('rapor.pilih_kelas');
+    Route::get('/rapor/kelas/{id}', [\App\Http\Controllers\RaporController::class, 'daftarSiswa'])->name('rapor.daftar_siswa');
+    Route::get('/rapor/siswa/{id}', [\App\Http\Controllers\RaporController::class, 'detailRapor'])->name('rapor.detail');
+    Route::get('/rapor/siswa/{id}/pdf', [\App\Http\Controllers\RaporController::class, 'exportPdf'])->name('rapor.pdf');
+    Route::get('/rapor/input', [\App\Http\Controllers\RaporController::class, 'input'])->name('rapor.input');
+    Route::post('/rapor/store', [\App\Http\Controllers\RaporController::class, 'store'])->name('rapor.store');
+    Route::post('/rapor/analisis', [\App\Http\Controllers\RaporController::class, 'generateAnalisis'])->name('rapor.analisis');
+
+    // CRUD Nilai Rapor
+    Route::get('/rapor/siswa/{id}/edit', [\App\Http\Controllers\RaporController::class, 'editNilai'])->name('rapor.edit_nilai');
+    Route::put('/rapor/siswa/{id}/update', [\App\Http\Controllers\RaporController::class, 'updateNilai'])->name('rapor.update_nilai');
+    Route::delete('/rapor/siswa/{id}/delete', [\App\Http\Controllers\RaporController::class, 'destroyNilai'])->name('rapor.destroy_nilai');
 });

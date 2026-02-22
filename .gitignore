@@ -22,3 +22,10 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# --- TAMBAHAN UNTUK PYTHON & MACHINE LEARNING ---
+.venv/
+venv/
+__pycache__/
+*.pyc
+.env.python
