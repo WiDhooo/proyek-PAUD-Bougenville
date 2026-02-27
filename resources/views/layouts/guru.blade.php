@@ -98,15 +98,7 @@
                 <i class="bi bi-people-fill"></i> Data Siswa
             </a>
 
-            <a class="nav-link {{ request()->is('guru/nilai-absensi*') ? 'active' : '' }}"
-                href="{{ route('guru.nilai_absensi') }}">
-                <i class="bi bi-journal-check"></i> Nilai & Absensi
-            </a>
-
-            <a class="nav-link {{ request()->is('guru/rapor*') ? 'active' : '' }}"
-                href="{{ route('guru.rapor.pilih_kelas') }}">
-                <i class="bi bi-file-earmark-bar-graph"></i> Rapor Digital
-            </a>
+            
         </nav>
 
     </aside>
