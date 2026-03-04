@@ -6,7 +6,7 @@
 <div class="container-fluid">
 
     <div class="mb-4">
-        <h3>📊 Rapor Digital Cerdas</h3>
+        <h3>Rapor Digital Cerdas</h3>
         <p class="text-muted">Pilih kelas untuk melihat rapor siswa dan menjalankan analisis AI.</p>
     </div>
 

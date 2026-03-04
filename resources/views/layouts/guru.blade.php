@@ -98,6 +98,17 @@
                 <i class="bi bi-people-fill"></i> Data Siswa
             </a>
 
+            <a class="nav-link {{ request()->is('guru/absensi*') ? 'active' : '' }}"
+                href="{{ route('guru.absensi.index') }}">
+                <i class="bi bi-clipboard-check"></i> Absensi
+            </a>
+
+            <a class="nav-link {{ request()->is('guru/rapor*') ? 'active' : '' }}"
+                href="{{ route('guru.rapor.pilih_kelas') }}">
+                <i class="bi bi-file-earmark-bar-graph"></i> Rapor Digital
+            </a>
+
+
             
         </nav>
 

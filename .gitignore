@@ -29,3 +29,6 @@ venv/
 __pycache__/
 *.pyc
 .env.python
+
+# Folder Referensi PDF & Script Pembacanya
+referensi/
