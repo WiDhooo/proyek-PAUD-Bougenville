@@ -31,7 +31,7 @@
 <body class="bg-[#FFFDF5] text-gray-800">
 
     <!-- Navbar -->
-    <nav class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50 transition-all duration-300">
+    <nav class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md shadow-xl z-50 transition-all duration-300">
         <div class="container mx-auto px-6 md:px-24 flex justify-between items-center py-4">
             <a href="{{ url('/') }}" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition">
                 PAUD Bougenville

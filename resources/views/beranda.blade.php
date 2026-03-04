@@ -31,7 +31,7 @@
 <body class="bg-[#FFFDF5] text-gray-800">
 
     <!-- Navbar -->
-    <nav class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md shadow-sm z-50 transition-all duration-300">
+    <nav class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md shadow-xl z-50 transition-all duration-300">
         <div class="container mx-auto px-6 md:px-24 flex justify-between items-center py-4">
             <a href="{{ url('/') }}" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition">
                 PAUD Bougenville
@@ -134,29 +134,33 @@
         </div>
     </section>
 
-    <!-- Sambutan -->
+       <!-- Sambutan -->
     <section class="py-16 px-8 md:px-32 fade-in bg-[#FFFDF5]">
-        <h2 class="text-2xl font-bold mb-8 text-blue-500 text-center">
-            Sambutan <span class="text-[#FF9900]">Kepala Sekolah</span>
-        </h2>
+        <div class="max-w-6xl mx-auto">
+            <h2 class="text-2xl font-bold mb-8 text-blue-500 text-left">
+                Sambutan <span class="text-[#FF9900]">Kepala Sekolah</span>
+            </h2>
 
-        <div class="flex flex-col md:flex-row gap-10 items-start max-w-6xl mx-auto">
-            <div class="flex-shrink-0 mx-auto md:mx-0">
-                <img 
-                    src="{{ asset('images/1.png') }}" 
-                    alt="Foto Kepala Sekolah" 
-                    class="w-64 h-80 object-cover rounded-lg shadow-lg"
-                >
-            </div>
+            <div class="flex flex-col md:flex-row gap-8 items-start">
+                <!-- Foto -->
+                <div class="flex-shrink-0">
+                    <img 
+                        src="{{ asset('images/1.png') }}" 
+                        alt="Foto Kepala Sekolah" 
+                        class="w-64 h-80 object-cover rounded-lg shadow-lg"
+                    >
+                </div>
 
-            <div class="bg-blue-500 text-white p-8 rounded-lg shadow-md text-justify leading-relaxed flex-1">
-                <p class="font-semibold text-lg mb-4">Assalamu'alaikum warahmatullahi wabarakatuh</p>
-                <p class="mb-4">
-                    Puji syukur kehadirat Allah SWT atas rahmat dan karunia-Nya sehingga kita semua masih diberi kesempatan untuk berperan dalam mendidik generasi penerus bangsa. Selamat datang di website resmi PAUD Bougenville.
-                </p>
-                <p>
-                    Website ini kami hadirkan sebagai sarana informasi dan komunikasi antara pihak sekolah, orang tua, dan masyarakat. PAUD Bougenville berkomitmen untuk menciptakan lingkungan belajar yang menyenangkan, penuh kasih sayang, serta menumbuhkan karakter, kreativitas, dan kemandirian anak sejak dini.
-                </p>
+                <!-- Teks Sambutan -->
+                <div class="bg-blue-500 text-white p-8 rounded-lg shadow-md text-justify leading-relaxed flex-1">
+                    <p class="font-semibold text-lg mb-4">Assalamu'alaikum warahmatullahi wabarakatuh</p>
+                    <p class="mb-4">
+                        Puji syukur kehadirat Allah SWT atas rahmat dan karunia-Nya sehingga kita semua masih diberi kesempatan untuk berperan dalam mendidik generasi penerus bangsa. Selamat datang di website resmi PAUD Bougenville.
+                    </p>
+                    <p>
+                        Website ini kami hadirkan sebagai sarana informasi dan komunikasi antara pihak sekolah, orang tua, dan masyarakat. PAUD Bougenville berkomitmen untuk menciptakan lingkungan belajar yang menyenangkan, penuh kasih sayang, serta menumbuhkan karakter, kreativitas, dan kemandirian anak sejak dini.
+                    </p>
+                </div>
             </div>
         </div>
     </section>
@@ -197,7 +201,7 @@
         </div>
     </section>
 
-    <!-- Ruang Belajar -->
+            <!-- Ruang Belajar -->
     <section class="py-16 px-8 md:px-32 text-center bg-[#FFFDF5] fade-in">
         <h2 class="text-2xl font-bold mb-3 text-blue-500">
             Ruang<span class="text-[#FF9900]"> Belajar</span>
@@ -210,15 +214,15 @@
                 ['title' => 'Rak Buku Warna-Warni', 'image' => 'rak.jpeg', 'color' => 'green', 'icon' => 'fa-book'],
                 ['title' => 'Pojok Literasi', 'image' => 'literasi.jpeg', 'color' => 'orange', 'icon' => 'fa-readme']
             ] as $item)
-                <div class="bg-white border-l-4 border-{{ $item['color'] }}-400 shadow-lg rounded-lg overflow-hidden w-80 transform hover:scale-105 hover:shadow-xl transition-all duration-300 group cursor-pointer">
-                    <div class="relative">
-                        <img src="{{ asset('images/' . $item['image']) }}" alt="{{ $item['title'] }}" class="w-full h-48 object-cover group-hover:scale-110 transition duration-500">
-                        <div class="absolute top-4 left-4 w-10 h-10 bg-{{ $item['color'] }}-500 rounded-full flex items-center justify-center">
+                <div class="bg-white border-l-4 border-{{ $item['color'] }}-400 rounded-lg shadow-md overflow-hidden w-80 transform hover:scale-105 hover:shadow-xl transition-all duration-300 group cursor-pointer">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="{{ asset('images/' . $item['image']) }}" alt="{{ $item['title'] }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        <div class="absolute top-3 left-3 w-10 h-10 bg-{{ $item['color'] }}-500 rounded-full flex items-center justify-center shadow-md">
                             <i class="fas {{ $item['icon'] }} text-white text-sm"></i>
                         </div>
                     </div>
-                    <div class="p-6">
-                        <h3 class="text-lg font-semibold text-gray-800 mb-3 group-hover:text-{{ $item['color'] }}-600 transition">{{ $item['title'] }}</h3>
+                    <div class="p-5">
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2 group-hover:text-{{ $item['color'] }}-600 transition">{{ $item['title'] }}</h3>
                         <p class="text-sm text-gray-600 leading-relaxed">
                             @if($item['title'] == 'Ruang Belajar Edukatif')
                                 Area belajar edukatif untuk mengembangkan motorik dan kreativitas anak.
@@ -232,6 +236,106 @@
                 </div>
             @endforeach
         </div>
+    </section>
+
+        <!-- Ebook Interaktif -->
+    <section class="py-16 bg-white fade-in">
+        <div class="container mx-auto px-8 md:px-32">
+            <div class="text-center mb-12">
+                <h2 class="text-2xl font-bold mb-3">
+                    <span class="text-blue-500">Ebook</span> <span class="text-[#FF9900]">Interaktif</span>
+                </h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Koleksi ebook interaktif untuk mendukung proses belajar anak dengan cara yang menyenangkan dan mudah dipahami</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Ebook 1 - Mengenal Hewan Lebih Dekat -->
+                <div class="group bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-all duration-300 hover:shadow-2xl">
+                    <div class="relative overflow-hidden h-56">
+                        <img src="{{ asset('images/ebook1.png') }}" alt="Mengenal Hewan Lebih Dekat" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        <div class="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            <i class="fas fa-star text-yellow-300 mr-1"></i>New
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-paw text-blue-500 text-lg"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 group-hover:text-blue-500 transition">Mengenal Hewan Lebih Dekat</h3>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">Jelajahi dunia hewan melalui ebook interaktif yang penuh warna dan suara menarik. Cocok untuk mengenalkan anak pada berbagai jenis hewan.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fas fa-book-open mr-2"></i>
+                                <span>12 Halaman</span>
+                            </div>
+                            <a href="#" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-sm font-medium rounded-full hover:from-blue-600 hover:to-blue-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-x-1">
+                                Lihat Selengkapnya
+                                <i class="fas fa-arrow-right ml-2 text-xs group-hover:translate-x-1 transition-transform"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ebook 2 - Panduan Bacaan Gerakan Shalat -->
+                <div class="group bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-all duration-300 hover:shadow-2xl">
+                    <div class="relative overflow-hidden h-56">
+                        <img src="{{ asset('images/ebook2.png') }}" alt="Panduan Bacaan Gerakan Shalat" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        <div class="absolute top-4 right-4 bg-orange-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            <i class="fas fa-star text-yellow-300 mr-1"></i>New
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-pray text-orange-500 text-lg"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 group-hover:text-orange-500 transition">Panduan Bacaan Gerakan Shalat</h3>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">Belajar shalat dengan mudah melalui panduan interaktif dilengkapi bacaan, gerakan, dan ilustrasi yang menarik untuk anak-anak.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fas fa-book-open mr-2"></i>
+                                <span>12 Halaman</span>
+                            </div>
+                            <a href="#" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-medium rounded-full hover:from-orange-600 hover:to-orange-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-x-1">
+                                Lihat Selengkapnya
+                                <i class="fas fa-arrow-right ml-2 text-xs group-hover:translate-x-1 transition-transform"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ebook 3 - Belajar Berhitung -->
+                <div class="group bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-all duration-300 hover:shadow-2xl">
+                    <div class="relative overflow-hidden h-56">
+                        <img src="{{ asset('images/ebook3.png') }}" alt="Belajar Berhitung" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+                        <div class="absolute top-4 right-4 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                            <i class="fas fa-star text-yellow-300 mr-1"></i>New
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center mb-3">
+                            <div class="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                                <i class="fas fa-calculator text-green-500 text-lg"></i>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-800 group-hover:text-green-500 transition">Belajar Berhitung</h3>
+                        </div>
+                        <p class="text-gray-600 text-sm mb-4 line-clamp-2">Belajar angka dan berhitung dasar dengan metode menyenangkan melalui gambar, animasi, dan aktivitas interaktif untuk anak.</p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center text-sm text-gray-500">
+                                <i class="fas fa-book-open mr-2"></i>
+                                <span>12 Halaman</span>
+                            </div>
+                            <a href="#" class="inline-flex items-center px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-medium rounded-full hover:from-green-600 hover:to-green-700 transition-all duration-300 shadow-md hover:shadow-lg transform hover:-translate-x-1">
+                                Lihat Selengkapnya
+                                <i class="fas fa-arrow-right ml-2 text-xs group-hover:translate-x-1 transition-transform"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </section>
 
 <!-- Footer -->
