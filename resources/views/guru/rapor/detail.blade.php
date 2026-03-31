@@ -1,6 +1,6 @@
 @extends('layouts.guru')
 
-@section('title', 'Rapor Digital — ' . $siswa->nama)
+@section('title', 'Analisis dan Rekomendasi Minat Bakat — ' . $siswa->nama)
 
 @section('content')
 <div class="container-fluid">
@@ -8,7 +8,7 @@
     {{-- Breadcrumb --}}
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('guru.rapor.pilih_kelas') }}">Rapor Digital</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('guru.rapor.pilih_kelas') }}">Analisis dan Rekomendasi Minat Bakat</a></li>
             <li class="breadcrumb-item"><a href="{{ route('guru.rapor.daftar_siswa', $siswa->kelas_id) }}">{{ $siswa->kelas->nama_kelas ?? '-' }}</a></li>
             <li class="breadcrumb-item active">{{ $siswa->nama }}</li>
         </ol>

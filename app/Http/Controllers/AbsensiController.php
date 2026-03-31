@@ -258,10 +258,8 @@ class AbsensiController extends Controller
         $tahun       = (int) $request->query('tahun', now()->year);
 
         $ctx = $this->getSemesterContext($periode, $tahunAjaran, $bulan, $tahun);
-        [$bulan, $tahun] = [$ctx['bulan'], $ctx['tahun']];
-
-        $startDate = Carbon::create($tahun, $bulan, 1)->startOfMonth();
-        $endDate   = $startDate->copy()->endOfMonth();
+        // [M-3] DRY — abstraksi resolusi rentang bulan
+        [$bulan, $tahun, $startDate, $endDate] = $this->resolveMonthRange($ctx);
 
         // [MAIN-1] Gunakan shared helper — tidak duplikat kode
         $rekap = $this->buildMonthlyRekap($jadwal, $startDate, $endDate);
@@ -299,10 +297,8 @@ class AbsensiController extends Controller
         $tahun       = (int) $request->query('tahun', now()->year);
 
         $ctx = $this->getSemesterContext($periode, $tahunAjaran, $bulan, $tahun);
-        [$bulan, $tahun] = [$ctx['bulan'], $ctx['tahun']];
-
-        $startDate = Carbon::create($tahun, $bulan, 1)->startOfMonth();
-        $endDate   = $startDate->copy()->endOfMonth();
+        // [M-3] DRY
+        [$bulan, $tahun, $startDate, $endDate] = $this->resolveMonthRange($ctx);
         $namaBulan = Carbon::create($tahun, $bulan, 1)->locale('id')->translatedFormat('F Y');
 
         // [MAIN-1] Gunakan shared helper
@@ -354,10 +350,8 @@ class AbsensiController extends Controller
         $tahun       = (int) $request->query('tahun', now()->year);
 
         $ctx = $this->getSemesterContext($periode, $tahunAjaran, $bulan, $tahun);
-        [$bulan, $tahun] = [$ctx['bulan'], $ctx['tahun']];
-
-        $startDate = Carbon::create($tahun, $bulan, 1)->startOfMonth();
-        $endDate   = $startDate->copy()->endOfMonth();
+        // [M-3] DRY
+        [$bulan, $tahun, $startDate, $endDate] = $this->resolveMonthRange($ctx);
         $namaBulan = Carbon::create($tahun, $bulan, 1)->locale('id')->translatedFormat('F Y');
 
         // [MAIN-1] Gunakan shared helper
@@ -714,6 +708,21 @@ class AbsensiController extends Controller
     private function dayMatch(int $dayOfWeekIso, string $hari): bool
     {
         return (self::DAY_MAP[$dayOfWeekIso] ?? '') === $hari;
+    }
+
+    /**
+     * [M-3] DRY — Extract bulan/tahun + startDate/endDate dari semester context.
+     * Dipakai oleh rekap(), exportPdf(), exportExcel().
+     *
+     * @return array [int $bulan, int $tahun, Carbon $startDate, Carbon $endDate]
+     */
+    private function resolveMonthRange(array $ctx): array
+    {
+        $bulan = $ctx['bulan'];
+        $tahun = $ctx['tahun'];
+        $startDate = Carbon::create($tahun, $bulan, 1)->startOfMonth();
+        $endDate   = $startDate->copy()->endOfMonth();
+        return [$bulan, $tahun, $startDate, $endDate];
     }
 
     /**

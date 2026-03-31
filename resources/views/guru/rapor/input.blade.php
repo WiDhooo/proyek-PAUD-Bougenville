@@ -1,6 +1,6 @@
 @extends('layouts.guru')
 
-@section('title', 'Input Nilai Rapor Digital')
+@section('title', 'Input Nilai Analisis dan Rekomendasi Minat Bakat')
 
 @section('content')
 <div class="container-fluid">
@@ -8,7 +8,7 @@
     {{-- Breadcrumb --}}
     <nav aria-label="breadcrumb" class="mb-3">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('guru.rapor.pilih_kelas') }}">Rapor Digital</a></li>
+            <li class="breadcrumb-item"><a href="{{ route('guru.rapor.pilih_kelas') }}">Analisis dan Rekomendasi Minat Bakat</a></li>
             @if(isset($kelasId) && $kelasId)
                 <li class="breadcrumb-item"><a href="{{ route('guru.rapor.daftar_siswa', ['id' => $kelasId, 'periode' => $periode, 'tahun_ajaran' => $tahunAjaran]) }}">Daftar Siswa</a></li>
             @endif
@@ -123,20 +123,7 @@
                 </div>
             </form>
 
-            <hr class="my-4">
 
-            <h5 class="fw-bold mb-3">🤖 Aksi Lanjutan</h5>
-            <form action="{{ route('guru.rapor.analisis') }}" method="POST">
-                @csrf
-                <input type="hidden" name="kelas_id" value="{{ $kelasId }}">
-                <input type="hidden" name="periode" value="{{ $periode }}">
-                <input type="hidden" name="tahun_ajaran" value="{{ $tahunAjaran }}">
-                
-                <button type="submit" class="btn btn-primary rounded-3">
-                    🤖 Generate Analisis AI untuk Kelas Ini
-                </button>
-                <p class="text-muted small mt-2">*Pastikan semua siswa telah dinilai sebelum menjalankan analisis.</p>
-            </form>
         </div>
     </div>
     @endif

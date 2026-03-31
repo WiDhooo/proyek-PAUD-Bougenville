@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Rapor Digital — {{ $siswa->nama }}</title>
+    <title>Analisis dan Rekomendasi Minat Bakat — {{ $siswa->nama }}</title>
     <style>
         @page { margin: 1.5cm; }
         body {
@@ -274,7 +274,7 @@
     </table>
 
     <div class="footer">
-        Rapor ini digenerate secara otomatis oleh Sistem Rapor Digital Cerdas PAUD Bougenville
+        Rapor ini digenerate secara otomatis oleh Sistem Analisis dan Rekomendasi Minat Bakat PAUD Bougenville
     </div>
 
 </body>

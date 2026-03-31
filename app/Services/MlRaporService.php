@@ -8,10 +8,12 @@ use Illuminate\Support\Facades\Log;
 class MlRaporService
 {
     protected string $baseUrl;
+    protected string $apiKey;
 
     public function __construct()
     {
         $this->baseUrl = config('services.ml.url', 'http://127.0.0.1:5001');
+        $this->apiKey = config('services.ml.api_key', '');
     }
 
     /**
@@ -25,9 +27,14 @@ class MlRaporService
         $url = $this->baseUrl . '/analyze';
 
         try {
-            $response = Http::timeout(15)
-                ->retry(2, 500)
-                ->post($url, ['data' => $data]);
+            $request = Http::timeout(15)->retry(2, 500);
+
+            // [S-7] Kirim API key jika dikonfigurasi
+            if (!empty($this->apiKey)) {
+                $request = $request->withHeaders(['X-API-Key' => $this->apiKey]);
+            }
+
+            $response = $request->post($url, ['data' => $data]);
 
             if ($response->successful()) {
                 return $response->json();

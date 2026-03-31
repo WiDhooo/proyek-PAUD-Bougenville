@@ -3,11 +3,24 @@ app.py — HTTP Routing & Strict Validation ONLY.
 Semua logika ML ada di ml_service.py.
 """
 
+import os
+import logging
 from flask import Flask, request, jsonify
 from ml_service import run_clustering
-import traceback
+
+# [R-3] Gunakan logging module — bukan print/traceback ke stdout
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
+
+# [S-7] API Key authentication — cegah akses tanpa otorisasi
+API_KEY = os.environ.get('ML_API_KEY', '')
+
 
 # ============================================================
 # GUARD RAILS: Strict Input Validation
@@ -75,6 +88,29 @@ def validate_payload(data: list) -> str | None:
 
 
 # ============================================================
+# MIDDLEWARE
+# ============================================================
+
+@app.before_request
+def check_api_key():
+    """[S-7] Validasi API key untuk semua endpoint kecuali /health."""
+    if request.endpoint == 'health':
+        return None
+
+    # Jika API_KEY tidak di-set (development), skip auth
+    if not API_KEY:
+        return None
+
+    provided_key = request.headers.get('X-API-Key', '')
+    if provided_key != API_KEY:
+        logger.warning('Unauthorized access attempt from %s', request.remote_addr)
+        return jsonify({
+            "status": "error",
+            "message": "Unauthorized. API key tidak valid."
+        }), 401
+
+
+# ============================================================
 # ROUTES
 # ============================================================
 
@@ -103,16 +139,24 @@ def analyze():
         # Proses clustering (delegasikan ke ml_service.py)
         result = run_clustering(data)
 
+        logger.info(
+            'Clustering berhasil: K=%d, silhouette=%.4f, siswa=%d',
+            result.get('optimal_k', 0),
+            result.get('silhouette_score', 0),
+            len(result.get('clusters', {}))
+        )
+
         return jsonify({
             "status": "success",
             **result
         }), 200
 
     except Exception as e:
-        traceback.print_exc()
+        # [S-5] Pesan generik ke client — detail hanya di server log
+        logger.exception('Internal server error saat analisis clustering')
         return jsonify({
             "status": "error",
-            "message": f"Internal server error: {str(e)}"
+            "message": "Terjadi kesalahan internal pada layanan analisis."
         }), 500
 
 
@@ -123,6 +167,5 @@ def health():
 
 
 if __name__ == '__main__':
-    import os
     debug_mode = os.environ.get('FLASK_DEBUG', 'false').lower() == 'true'
     app.run(host='0.0.0.0', port=5001, debug=debug_mode)

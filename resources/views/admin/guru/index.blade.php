@@ -7,78 +7,94 @@
 <div class="container-fluid" x-data="guruManager()">
     
     @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
+        <div class="alert alert-success alert-dismissible fade show" style="border-radius: var(--paud-radius-sm); border:none;" role="alert">
+            <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
     
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">Data Guru</h5>
-            <div class="d-flex align-items-center">
-                <div class="input-group me-2">
-                     <input type="search" class="form-control" placeholder="Cari Nama Guru..." x-model.debounce.300ms="searchQuery">
+    <div class="paud-card">
+        <div class="p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <h5 class="fw-bold mb-0" style="color: var(--paud-text);">
+                    <span style="border-left: 3px solid var(--paud-teal); padding-left: 12px;">
+                        <i class="bi bi-person-badge-fill me-2" style="color: var(--paud-teal);"></i>Data Guru
+                    </span>
+                </h5>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="input-group" style="max-width: 240px;">
+                        <span class="input-group-text" style="border-color: var(--paud-border); background: var(--paud-teal-light); border-radius: var(--paud-radius-sm) 0 0 var(--paud-radius-sm);">
+                            <i class="bi bi-search" style="color: var(--paud-muted);"></i>
+                        </span>
+                        <input type="search" class="form-control" placeholder="Cari nama atau email..." x-model.debounce.300ms="searchQuery"
+                               style="border-radius: 0 var(--paud-radius-sm) var(--paud-radius-sm) 0;">
+                    </div>
+                    <button type="button" class="btn paud-btn-primary btn-sm flex-shrink-0"
+                            data-bs-toggle="modal" data-bs-target="#modalTambahGuru">
+                        <i class="bi bi-plus-lg me-1"></i> Tambah Guru
+                    </button>
                 </div>
-                <button type="button" class="btn btn-outline-success flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalTambahGuru">
-                    <i class="bi bi-plus-lg"></i> Tambah Guru
-                </button>
             </div>
-        </div>
-        <div class="card-body">
+
             <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="table-light">
+                <table class="table align-middle mb-0">
+                    <thead class="paud-thead">
                         <tr>
-                            <th>No</th>
-                            <th @click="sortBy('nama')" style="cursor: pointer;">
+                            <th style="width: 50px;">#</th>
+                            <th @click="sortBy('nama')" style="cursor:pointer; user-select:none;">
                                 Nama Guru
-                                <span x-show="sortColumn === 'nama'"><i :class="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i></span>
+                                <i class="bi" :class="sortColumn==='nama' ? (sortDirection==='asc' ? 'bi-arrow-up' : 'bi-arrow-down') : 'bi-arrow-down-up'"></i>
                             </th>
                             <th>Email</th>
                             <th>No HP</th>
-                            <th @click="sortBy('jabatan')" style="cursor: pointer;">
+                            <th @click="sortBy('jabatan')" style="cursor:pointer; user-select:none;">
                                 Jabatan
-                                <span x-show="sortColumn === 'jabatan'"><i :class="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i></span>
+                                <i class="bi" :class="sortColumn==='jabatan' ? (sortDirection==='asc' ? 'bi-arrow-up' : 'bi-arrow-down') : 'bi-arrow-down-up'"></i>
                             </th>
-                            <th>Aksi</th>
+                            <th style="text-align:center;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         <template x-for="(item, index) in paginatedItems" :key="item.id">
-                            <tr>
-                                <td x-text="(currentPage - 1) * itemsPerPage + index + 1"></td>
-                                <td x-text="item.nama"></td>
-                                <td x-text="item.email"></td>
-                                <td x-text="item.no_hp"></td>
-                                <td x-text="item.jabatan"></td>
+                            <tr class="paud-table-row">
+                                <td class="fw-semibold" style="color: var(--paud-muted); font-size:0.82rem;" x-text="(currentPage - 1) * itemsPerPage + index + 1"></td>
+                                <td class="fw-semibold" style="color: var(--paud-text);" x-text="item.nama"></td>
+                                <td style="color: var(--paud-muted); font-size:0.88rem;" x-text="item.email"></td>
+                                <td style="color: var(--paud-muted); font-size:0.88rem;" x-text="item.no_hp"></td>
                                 <td>
-                                    {{-- TOMBOL EDIT --}}
-                                    <button type="button" class="btn btn-warning btn-sm"
+                                    <span class="paud-badge bg-paud-teal-light text-paud-teal" x-text="item.jabatan"></span>
+                                </td>
+                                <td style="text-align:center;">
+                                    <button type="button"
+                                        class="btn btn-sm me-1"
+                                        style="border: 1.5px solid var(--paud-amber); color: var(--paud-amber); border-radius: 6px;"
                                         data-bs-toggle="modal" data-bs-target="#modalEditGuru"
-                                        @click="prepareEdit(item)">
-                                        <i class="bi bi-pencil-fill"></i>
+                                        @click="prepareEdit(item)" title="Edit">
+                                        <i class="bi bi-pencil"></i>
                                     </button>
-                                    {{-- TOMBOL HAPUS --}}
-                                    <button type="button" class="btn btn-danger btn-sm"
+                                    <button type="button"
+                                        class="btn btn-sm"
+                                        style="border: 1.5px solid var(--paud-coral); color: var(--paud-coral); border-radius: 6px;"
                                         data-bs-toggle="modal" data-bs-target="#modalHapusGuru"
-                                        @click="prepareDelete(item)">
-                                        <i class="bi bi-trash-fill"></i>
+                                        @click="prepareDelete(item)" title="Hapus">
+                                        <i class="bi bi-trash"></i>
                                     </button>
                                 </td>
                             </tr>
                         </template>
                         <tr x-show="filteredItems.length === 0">
-                            <td colspan="6" class="text-center">Data tidak ditemukan.</td>
+                            <td colspan="6" class="text-center py-4" style="color: var(--paud-muted);">
+                                <i class="bi bi-inbox fs-4 d-block mb-2"></i> Data tidak ditemukan.
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <nav x-show="totalPages > 1" class="d-flex justify-content-end mt-3">
-                <ul class="pagination">
+                <ul class="pagination" style="--bs-pagination-active-bg: var(--paud-teal); --bs-pagination-active-border-color: var(--paud-teal);">
                     <li class="page-item" :class="{ 'disabled': currentPage === 1 }">
-                        <a class="page-link" href="#" @click.prevent="currentPage--">Previous</a>
+                        <a class="page-link" href="#" @click.prevent="currentPage--">‹</a>
                     </li>
                     <template x-for="page in totalPages" :key="page">
                         <li class="page-item" :class="{ 'active': currentPage === page }">
@@ -86,7 +102,7 @@
                         </li>
                     </template>
                     <li class="page-item" :class="{ 'disabled': currentPage === totalPages }">
-                        <a class="page-link" href="#" @click.prevent="currentPage++">Next</a>
+                        <a class="page-link" href="#" @click.prevent="currentPage++">›</a>
                     </li>
                 </ul>
             </nav>
@@ -102,7 +118,7 @@
                 <form action="{{ route('admin.guru.store') }}" method="POST" @submit="submitAdd($event)">
                     @csrf
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5">Tambah Guru Baru</h1>
+                        <h5 class="modal-title"><i class="bi bi-plus-circle me-2" style="color:var(--paud-teal);"></i>Tambah Guru Baru</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
@@ -180,8 +196,8 @@
                             <div class="invalid-feedback" x-text="addErrors.alamat"></div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan</button>
+                            <button type="button" class="btn paud-btn-outline btn-sm" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn paud-btn-primary btn-sm"><i class="bi bi-check-lg me-1"></i> Simpan</button>
                         </div>
                     </div>
                 </form>
@@ -199,7 +215,7 @@
                     @csrf
                     @method('PUT')
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5">Edit Data Guru</h1>
+                        <h5 class="modal-title"><i class="bi bi-pencil-square me-2" style="color:var(--paud-amber);"></i>Edit Data Guru</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
@@ -275,8 +291,8 @@
                             <div class="invalid-feedback" x-text="editErrors.alamat"></div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                            <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+                            <button type="button" class="btn paud-btn-outline btn-sm" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn paud-btn-primary btn-sm"><i class="bi bi-check-lg me-1"></i> Simpan Perubahan</button>
                         </div>
                     </div>
                 </form>
@@ -302,8 +318,8 @@
                     <form :action="deleteUrl" method="POST">
                         @csrf
                         @method('DELETE')
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+                        <button type="button" class="btn paud-btn-outline btn-sm" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn paud-btn-danger btn-sm"><i class="bi bi-trash me-1"></i> Ya, Hapus</button>
                     </form>
                 </div>
             </div>

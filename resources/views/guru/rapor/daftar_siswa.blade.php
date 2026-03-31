@@ -1,70 +1,89 @@
 @extends('layouts.guru')
 
-@section('title', 'Rapor Digital — ' . $kelas->nama_kelas)
+@section('title', 'Analisis dan Rekomendasi Minat Bakat — ' . $kelas->nama_kelas)
 
 @section('content')
-<div class="container-fluid">
+<div class="container-fluid" x-data="{
+    searchQuery: '',
+    get filteredRows() {
+        if (!this.searchQuery) return null;
+        const q = this.searchQuery.toLowerCase();
+        document.querySelectorAll('tbody tr[data-name]').forEach(row => {
+            const name = row.dataset.name.toLowerCase();
+            const nis  = row.dataset.nis.toLowerCase();
+            row.style.display = (name.includes(q) || nis.includes(q)) ? '' : 'none';
+        });
+        return true;
+    }
+}" @keyup.window="filteredRows">
 
     {{-- Breadcrumb --}}
     <nav aria-label="breadcrumb" class="mb-3">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('guru.rapor.pilih_kelas') }}">Rapor Digital</a></li>
-            <li class="breadcrumb-item active">{{ $kelas->nama_kelas }}</li>
+        <ol class="breadcrumb" style="font-size:0.88rem;">
+            <li class="breadcrumb-item"><a href="{{ route('guru.rapor.pilih_kelas') }}" style="color: var(--paud-teal); text-decoration:none;">Analisis dan Rekomendasi Minat Bakat</a></li>
+            <li class="breadcrumb-item active" style="color: var(--paud-muted);">{{ $kelas->nama_kelas }}</li>
         </ol>
     </nav>
 
     {{-- Flash Messages --}}
     @if(session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <div class="alert alert-success alert-dismissible fade show" style="border-radius: var(--paud-radius-sm); border: none;" role="alert">
             <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
     @if(session('error'))
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <div class="alert alert-danger alert-dismissible fade show" style="border-radius: var(--paud-radius-sm); border: none;" role="alert">
             <i class="bi bi-exclamation-triangle me-2"></i> {{ session('error') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
     {{-- Filter Periode & Tahun Ajaran --}}
-    <div class="card border-0 shadow-sm rounded-4 mb-4">
-        <div class="card-body p-3">
-            <form action="{{ route('guru.rapor.daftar_siswa', $kelas->id) }}" method="GET" class="row g-2 align-items-end">
-                <div class="col-md-3">
-                    <label class="form-label small fw-semibold mb-1">Periode</label>
-                    <select name="periode" class="form-select form-select-sm">
-                        <option value="Ganjil" {{ $periode == 'Ganjil' ? 'selected' : '' }}>Ganjil</option>
-                        <option value="Genap" {{ $periode == 'Genap' ? 'selected' : '' }}>Genap</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label small fw-semibold mb-1">Tahun Ajaran</label>
-                    <select name="tahun_ajaran" class="form-select form-select-sm">
-                        @for($y = 2026; $y <= (int)date('Y') + 5; $y++)
-                            @php $ta = $y . '/' . ($y + 1); @endphp
-                            <option value="{{ $ta }}" {{ $tahunAjaran == $ta ? 'selected' : '' }}>{{ $ta }}</option>
-                        @endfor
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-sm btn-primary rounded-3 w-100">
-                        <i class="bi bi-filter me-1"></i> Filter
-                    </button>
-                </div>
+    <div class="paud-card mb-4">
+        <div class="card-body py-3 px-4">
+            <form action="{{ route('guru.rapor.daftar_siswa', $kelas->id) }}" method="GET" id="filter-rapor-form" class="d-flex align-items-center gap-3 flex-wrap">
+                <span style="font-size:0.85rem; font-weight:600; color: var(--paud-muted);">
+                    <i class="bi bi-funnel me-1"></i> Filter:
+                </span>
+                <select name="periode" class="form-select form-select-sm" style="width:120px; border-radius:20px; border-color: var(--paud-border); font-size:0.85rem;" onchange="this.form.submit()">
+                    <option value="Ganjil" {{ $periode == 'Ganjil' ? 'selected' : '' }}>Ganjil</option>
+                    <option value="Genap" {{ $periode == 'Genap' ? 'selected' : '' }}>Genap</option>
+                </select>
+                <select name="tahun_ajaran" class="form-select form-select-sm" style="width:140px; border-radius:20px; border-color: var(--paud-border); font-size:0.85rem;" onchange="this.form.submit()">
+                    @for($y = 2026; $y <= (int)date('Y') + 5; $y++)
+                        @php $ta = $y . '/' . ($y + 1); @endphp
+                        <option value="{{ $ta }}" {{ $tahunAjaran == $ta ? 'selected' : '' }}>{{ $ta }}</option>
+                    @endfor
+                </select>
             </form>
         </div>
     </div>
 
-    {{-- Header --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    {{-- Header + Search --}}
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
         <div>
-            <h4 class="fw-bold mb-1">{{ $kelas->nama_kelas }}</h4>
-            <p class="text-muted mb-0">{{ $siswas->count() }} siswa | Periode: <strong>{{ $periode }}</strong> | TA: <strong>{{ $tahunAjaran }}</strong></p>
+            <h4 class="fw-bold mb-1" style="color: var(--paud-text);">
+                <span style="border-left: 3px solid var(--paud-teal); padding-left: 12px;">{{ $kelas->nama_kelas }}</span>
+            </h4>
+            <p style="color: var(--paud-muted); font-size:0.9rem; margin-left:15px;" class="mb-0">
+                {{ $siswas->count() }} siswa | Periode: <strong>{{ $periode }}</strong> | TA: <strong>{{ $tahunAjaran }}</strong>
+            </p>
         </div>
-        <div class="d-flex gap-2">
+        <div class="d-flex align-items-center gap-2">
+            {{-- Search Bar --}}
+            <div class="input-group" style="width: 220px;">
+                <span class="input-group-text border-0" style="background: var(--paud-card); border-radius: var(--paud-radius-sm) 0 0 var(--paud-radius-sm);">
+                    <i class="bi bi-search" style="color: var(--paud-muted);"></i>
+                </span>
+                <input type="search" class="form-control border-0 shadow-none" placeholder="Cari siswa..."
+                    x-model.debounce.300ms="searchQuery"
+                    @input="filteredRows"
+                    style="background: var(--paud-card); border-radius: 0 var(--paud-radius-sm) var(--paud-radius-sm) 0; font-size:0.88rem;">
+            </div>
+            {{-- Action Buttons --}}
             <a href="{{ route('guru.rapor.input', ['kelas_id' => $kelas->id, 'periode' => $periode, 'tahun_ajaran' => $tahunAjaran]) }}"
-               class="btn btn-outline-primary rounded-3">
+               class="btn paud-btn-outline btn-sm">
                 <i class="bi bi-pencil-square me-1"></i> Input Nilai
             </a>
             <form action="{{ route('guru.rapor.analisis') }}" method="POST" class="d-inline">
@@ -72,26 +91,26 @@
                 <input type="hidden" name="kelas_id" value="{{ $kelas->id }}">
                 <input type="hidden" name="periode" value="{{ $periode }}">
                 <input type="hidden" name="tahun_ajaran" value="{{ $tahunAjaran }}">
-                <button type="submit" class="btn btn-primary rounded-3">
-                    🤖 Generate Analisis AI
+                <button type="submit" class="btn paud-btn-primary btn-sm">
+                    <i class="bi bi-stars me-1"></i> Generate Analisis AI
                 </button>
             </form>
         </div>
     </div>
 
-    {{-- Tabel Siswa --}}
-    <div class="card border-0 shadow-sm rounded-4">
-        <div class="card-body p-4">
+    {{-- Table Siswa --}}
+    <div class="paud-card">
+        <div class="p-4">
             <div class="table-responsive">
                 <table class="table align-middle mb-0">
-                    <thead style="background: linear-gradient(90deg, #0d6efd, #5ab2ff); color: white;">
+                    <thead class="paud-thead">
                         <tr>
-                            <th class="py-3 px-3">#</th>
+                            <th class="py-3 px-3" style="border-radius: var(--paud-radius-sm) 0 0 0; width:50px;">#</th>
                             <th class="py-3 px-3">Nama Siswa</th>
                             <th class="py-3 px-3">NIS</th>
                             <th class="py-3 px-3">L/P</th>
                             <th class="py-3 px-3 text-center">Status Analisis</th>
-                            <th class="py-3 px-3 text-center">Aksi</th>
+                            <th class="py-3 px-3 text-center" style="border-radius: 0 var(--paud-radius-sm) 0 0;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -99,35 +118,37 @@
                         @php
                             $analisis = $siswa->hasilAnalises->first();
                         @endphp
-                        <tr class="table-row">
-                            <td class="px-3 py-3">{{ $i + 1 }}</td>
-                            <td class="px-3 py-3 fw-semibold">{{ $siswa->nama }}</td>
-                            <td class="px-3 py-3 text-muted">{{ $siswa->nis }}</td>
+                        <tr class="paud-table-row" data-name="{{ $siswa->nama }}" data-nis="{{ $siswa->nis }}">
+                            <td class="px-3 py-3" style="color: var(--paud-muted);">{{ $i + 1 }}</td>
+                            <td class="px-3 py-3 fw-semibold" style="color: var(--paud-text);">{{ $siswa->nama }}</td>
+                            <td class="px-3 py-3" style="color: var(--paud-muted);">{{ $siswa->nis }}</td>
                             <td class="px-3 py-3">
-                                <span class="badge {{ $siswa->jenis_kelamin == 'Laki-Laki' ? 'bg-info' : 'bg-pink' }} bg-opacity-10 {{ $siswa->jenis_kelamin == 'Laki-Laki' ? 'text-info' : 'text-danger' }} border rounded-pill px-2">
-                                    {{ $siswa->jenis_kelamin == 'Laki-Laki' ? 'L' : 'P' }}
-                                </span>
+                                @if($siswa->jenis_kelamin == 'Laki-Laki')
+                                    <span class="paud-badge" style="background: #E3F2FD; color: #1565C0;">L</span>
+                                @else
+                                    <span class="paud-badge" style="background: #FCE4EC; color: #C62828;">P</span>
+                                @endif
                             </td>
                             <td class="px-3 py-3 text-center">
                                 @if($analisis)
-                                    <span class="badge bg-success bg-opacity-10 text-success border border-success rounded-pill px-3">
-                                        <i class="bi bi-check-circle me-1"></i> Cluster {{ $analisis->cluster_group }}
+                                    <span class="paud-badge bg-paud-green-light" style="color: var(--paud-green);">
+                                        <i class="bi bi-check-circle-fill me-1" style="font-size:0.7rem;"></i> Cluster {{ $analisis->cluster_group }}
                                     </span>
                                 @else
-                                    <span class="badge bg-warning bg-opacity-10 text-warning border border-warning rounded-pill px-3">
-                                        <i class="bi bi-hourglass-split me-1"></i> Belum
+                                    <span class="paud-badge bg-paud-amber-light text-paud-amber">
+                                        <i class="bi bi-hourglass-split me-1" style="font-size:0.7rem;"></i> Belum
                                     </span>
                                 @endif
                             </td>
                             <td class="px-3 py-3 text-center">
                                 <div class="d-flex justify-content-center gap-1">
                                     <a href="{{ route('guru.rapor.detail', ['id' => $siswa->id, 'periode' => $periode, 'tahun_ajaran' => $tahunAjaran]) }}"
-                                    class="btn btn-sm btn-outline-primary rounded-3" title="Lihat Rapor">
+                                       class="btn btn-sm paud-btn-outline" style="padding:5px 10px;" title="Lihat Rapor">
                                         <i class="bi bi-eye"></i>
                                     </a>
-                                    
+
                                     <a href="{{ route('guru.rapor.edit_nilai', ['id' => $siswa->id, 'periode' => $periode, 'tahun_ajaran' => $tahunAjaran]) }}"
-                                    class="btn btn-sm btn-outline-warning rounded-3" title="Edit Nilai">
+                                       class="btn btn-sm" style="padding:5px 10px; border:1.5px solid var(--paud-amber); color: var(--paud-amber); border-radius: var(--paud-radius-sm);" title="Edit Nilai">
                                         <i class="bi bi-pencil"></i>
                                     </a>
 
@@ -137,7 +158,7 @@
                                         @method('DELETE')
                                         <input type="hidden" name="periode" value="{{ $periode }}">
                                         <input type="hidden" name="tahun_ajaran" value="{{ $tahunAjaran }}">
-                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-3" title="Hapus Nilai">
+                                        <button type="submit" class="btn btn-sm" style="padding:5px 10px; border:1.5px solid var(--paud-coral); color: var(--paud-coral); border-radius: var(--paud-radius-sm);" title="Hapus Nilai">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </form>
@@ -146,8 +167,9 @@
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
-                                <i class="bi bi-exclamation-circle me-2"></i> Belum ada siswa di kelas ini.
+                            <td colspan="6" class="text-center py-5" style="color: var(--paud-muted);">
+                                <i class="bi bi-people" style="font-size:2.5rem; color: var(--paud-border);"></i>
+                                <p class="mt-2 mb-0">Belum ada siswa di kelas ini.</p>
                             </td>
                         </tr>
                         @endforelse
@@ -158,10 +180,4 @@
     </div>
 
 </div>
-
-<style>
-    .table thead th { font-size: 14px; font-weight: 600; border: none; }
-    .table-row { transition: all 0.2s ease-in-out; }
-    .table-row:hover { background-color: #f5f9ff; }
-</style>
 @endsection

@@ -5,11 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Siswa;
 use App\Models\Kelas;
+use App\Models\Jadwal;
 use App\Models\AspekPenilaian;
 use App\Models\NilaiRapor;
 use App\Models\HasilAnalisis;
 use App\Services\MlRaporService;
 use App\Services\SmartAnalysisService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -34,7 +37,17 @@ class RaporController extends Controller
 
     public function pilihKelas()
     {
-        $kelasList = Kelas::withCount('siswa')->get();
+        $guru = Auth::user()->guru;
+
+        // [P-5][S-1] Hanya tampilkan kelas yang ada di jadwal guru yg login
+        $kelasIds = $guru
+            ? Jadwal::where('guru_id', $guru->id)->pluck('kelas_id')->unique()
+            : collect();
+
+        $kelasList = Kelas::withCount('siswa')
+            ->whereIn('id', $kelasIds)
+            ->get();
+
         return view('guru.rapor.pilih_kelas', compact('kelasList'));
     }
 
@@ -42,7 +55,21 @@ class RaporController extends Controller
     {
         $kelas = Kelas::findOrFail($kelasId);
 
-        $periode = $request->query('periode', self::DEFAULT_PERIODE);
+        // [S-1] Guard: pastikan kelas ini memang milik guru yang login
+        $guru = Auth::user()->guru;
+        if ($guru) {
+            $kelasGuruIds = Jadwal::where('guru_id', $guru->id)->pluck('kelas_id');
+            if (!$kelasGuruIds->contains($kelasId)) {
+                Log::warning('Unauthorized kelas access attempt', [
+                    'user_id'  => Auth::id(),
+                    'kelas_id' => $kelasId,
+                    'ip'       => request()->ip(),
+                ]);
+                abort(403, 'Anda tidak memiliki akses ke kelas ini.');
+            }
+        }
+
+        $periode     = $request->query('periode', self::DEFAULT_PERIODE);
         $tahunAjaran = $request->query('tahun_ajaran', self::DEFAULT_TAHUN_AJARAN);
 
         $siswas = Siswa::where('kelas_id', $kelasId)
@@ -62,6 +89,7 @@ class RaporController extends Controller
     public function detailRapor($siswaId, Request $request)
     {
         $siswa = Siswa::with('kelas')->findOrFail($siswaId);
+        $this->authorizeSiswa($siswa); // [S-1] IDOR protection
 
         $periode = $request->query('periode', self::DEFAULT_PERIODE);
         $tahunAjaran = $request->query('tahun_ajaran', self::DEFAULT_TAHUN_AJARAN);
@@ -90,10 +118,15 @@ class RaporController extends Controller
         $tahunAjaran = $request->query('tahun_ajaran', self::DEFAULT_TAHUN_AJARAN);
 
         $siswas = Siswa::where('kelas_id', $kelasId)->get();
-        // [P1] TODO: Cache aspek penilaian jika data sudah stabil
-        $aspekPenilaians = AspekPenilaian::all()->groupBy('lingkup');
-        // [P4] Kelas list untuk dropdown — dipindah dari Blade ke controller
-        $kelasList = Kelas::all();
+        // [P-1] Cache aspek penilaian — data statis, jarang berubah
+        $aspekPenilaians = Cache::remember('aspek_penilaians_grouped', 86400, fn() =>
+            AspekPenilaian::all()->groupBy('lingkup')
+        );
+        // [P-5] Hanya tampilkan kelas yang di-assign ke guru yang login
+        $guru = Auth::user()->guru;
+        $kelasList = $guru
+            ? Kelas::whereIn('id', Jadwal::where('guru_id', $guru->id)->pluck('kelas_id'))->get()
+            : Kelas::all();
 
         // Cek siswa mana yang sudah punya nilai di periode ini
         $siswaYangSudahDinilai = NilaiRapor::where('periode', $periode)
@@ -129,6 +162,18 @@ class RaporController extends Controller
             return redirect()->back()->with('error', 'Tahun ajaran harus berurutan (contoh: 2026/2027, bukan 2026/2028).');
         }
 
+        // [S-2] Validasi kepemilikan siswa — cegah IDOR
+        $siswa = Siswa::findOrFail($request->siswa_id);
+        $this->authorizeSiswa($siswa);
+
+        // [S-3] Validasi bahwa semua aspek_penilaian_id dari form benar-benar ada
+        $validAspekIds = AspekPenilaian::pluck('id')->toArray();
+        $submittedAspekIds = array_keys($request->nilai);
+        $invalidIds = array_diff($submittedAspekIds, $validAspekIds);
+        if (!empty($invalidIds)) {
+            return redirect()->back()->with('error', 'Aspek penilaian tidak valid: ' . implode(', ', $invalidIds));
+        }
+
         DB::beginTransaction();
         try {
             foreach ($request->nilai as $aspekId => $skor) {
@@ -155,11 +200,11 @@ class RaporController extends Controller
             return redirect()->back()->with('success', 'Nilai berhasil disimpan');
         } catch (\Exception $e) {
             DB::rollBack();
-            // [O2] Log error detail, tapi user lihat pesan generik
+            // [R-2] Log error tanpa full trace — hemat disk
             Log::error('Gagal menyimpan nilai', [
                 'siswa_id' => $request->siswa_id,
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile() . ':' . $e->getLine(),
             ]);
             return redirect()->back()->with('error', 'Gagal menyimpan nilai. Silakan coba lagi.');
         }
@@ -171,10 +216,15 @@ class RaporController extends Controller
     public function editNilai($siswaId, Request $request)
     {
         $siswa = Siswa::with('kelas')->findOrFail($siswaId);
+        $this->authorizeSiswa($siswa); // [S-1] IDOR protection
+
         $periode = $request->query('periode', self::DEFAULT_PERIODE);
         $tahunAjaran = $request->query('tahun_ajaran', self::DEFAULT_TAHUN_AJARAN);
 
-        $aspekPenilaians = AspekPenilaian::all()->groupBy('lingkup');
+        // [P-1] Cache aspek penilaian
+        $aspekPenilaians = Cache::remember('aspek_penilaians_grouped', 86400, fn() =>
+            AspekPenilaian::all()->groupBy('lingkup')
+        );
 
         $nilaiExisting = NilaiRapor::where('siswa_id', $siswaId)
             ->where('periode', $periode)
@@ -206,6 +256,7 @@ class RaporController extends Controller
         }
 
         $siswa = Siswa::findOrFail($siswaId);
+        $this->authorizeSiswa($siswa); // [S-1] IDOR protection
 
         DB::beginTransaction();
         try {
@@ -237,9 +288,11 @@ class RaporController extends Controller
             ])->with('success', "Nilai {$siswa->nama} berhasil diperbarui!");
         } catch (\Exception $e) {
             DB::rollBack();
+            // [R-2] Log tanpa full trace
             Log::error('Gagal memperbarui nilai', [
                 'siswa_id' => $siswaId,
                 'error' => $e->getMessage(),
+                'file' => $e->getFile() . ':' . $e->getLine(),
             ]);
             return redirect()->back()->with('error', 'Gagal memperbarui nilai. Silakan coba lagi.');
         }
@@ -257,6 +310,8 @@ class RaporController extends Controller
         ]);
 
         $siswa = Siswa::findOrFail($siswaId);
+        $this->authorizeSiswa($siswa); // [S-1] IDOR protection
+
         $periode = $request->periode;
         $tahunAjaran = $request->tahun_ajaran;
 
@@ -302,6 +357,7 @@ class RaporController extends Controller
     public function exportPdf($siswaId, Request $request)
     {
         $siswa = Siswa::with('kelas')->findOrFail($siswaId);
+        $this->authorizeSiswa($siswa); // [S-1] IDOR protection
 
         $periode = $request->query('periode', self::DEFAULT_PERIODE);
         $tahunAjaran = $request->query('tahun_ajaran', self::DEFAULT_TAHUN_AJARAN);
@@ -310,15 +366,25 @@ class RaporController extends Controller
         [$nilaiRapors, $nilaiPerLingkup, $hasilAnalisis, $smartAnalysis, $clusterProfile] =
             $this->getRaporData($siswaId, $periode, $tahunAjaran);
 
-        $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('guru.rapor.rapor_pdf', compact(
-            'siswa', 'nilaiRapors', 'nilaiPerLingkup', 'hasilAnalisis',
-            'smartAnalysis', 'clusterProfile', 'periode', 'tahunAjaran'
-        ));
-
-        $pdf->setPaper('A4', 'portrait');
         $safeTA = str_replace('/', '-', $tahunAjaran);
-        $safeName = str_replace(['/', '\\'], '', $siswa->nama);
-        return $pdf->download("rapor-{$safeName}-{$periode}-{$safeTA}.pdf");
+        $safeName = preg_replace('/[^A-Za-z0-9\-_ ]/', '', $siswa->nama);
+
+        // [R-1] Try-catch untuk PDF render — konsistensi dengan AbsensiController
+        try {
+            $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('guru.rapor.rapor_pdf', compact(
+                'siswa', 'nilaiRapors', 'nilaiPerLingkup', 'hasilAnalisis',
+                'smartAnalysis', 'clusterProfile', 'periode', 'tahunAjaran'
+            ));
+            $pdf->setPaper('A4', 'portrait');
+            return $pdf->download("rapor-{$safeName}-{$periode}-{$safeTA}.pdf");
+        } catch (\Exception $e) {
+            Log::error('Gagal generate PDF rapor', [
+                'siswa_id' => $siswaId,
+                'exception' => get_class($e),
+                'message' => $e->getMessage(),
+            ]);
+            return redirect()->back()->with('error', 'Gagal membuat PDF. Silakan coba lagi.');
+        }
     }
 
     // ================================================================
@@ -372,6 +438,11 @@ class RaporController extends Controller
                 "Minimal 2 siswa harus memiliki nilai lengkap untuk periode '{$periode}' tahun '{$tahunAjaran}'. " .
                 "Ditemukan: " . count($dataForMl) . " siswa."
             );
+        }
+
+        // [R-4] Health check sebelum kirim data — fail fast jika ML service mati
+        if (!$this->mlService->healthCheck()) {
+            return redirect()->back()->with('error', 'Layanan AI sedang tidak tersedia. Pastikan server Python berjalan.');
         }
 
         // Kirim ke Python ML Service
@@ -485,5 +556,33 @@ class RaporController extends Controller
     {
         $parts = explode('/', $tahunAjaran);
         return count($parts) === 2 && (int) $parts[1] === (int) $parts[0] + 1;
+    }
+
+    /**
+     * [S-1] Authorization guard — cegah guru akses siswa di luar kelasnya.
+     * Guru hanya bisa mengakses siswa yang berada di kelas yang ada di jadwalnya.
+     */
+    private function authorizeSiswa(Siswa $siswa): void
+    {
+        $guru = Auth::user()->guru;
+        if (!$guru) {
+            Log::warning('Rapor access without guru data', ['user_id' => Auth::id()]);
+            abort(403, 'Data guru tidak ditemukan.');
+        }
+
+        $kelasGuruIds = Jadwal::where('guru_id', $guru->id)
+            ->pluck('kelas_id')
+            ->unique();
+
+        if (!$kelasGuruIds->contains($siswa->kelas_id)) {
+            Log::warning('Unauthorized siswa access attempt', [
+                'user_id' => Auth::id(),
+                'siswa_id' => $siswa->id,
+                'siswa_kelas_id' => $siswa->kelas_id,
+                'guru_kelas_ids' => $kelasGuruIds->toArray(),
+                'ip' => request()->ip(),
+            ]);
+            abort(403, 'Anda tidak memiliki akses ke data siswa ini.');
+        }
     }
 }
