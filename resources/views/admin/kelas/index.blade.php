@@ -7,70 +7,87 @@
 <div class="container-fluid" x-data="manager()">
     
     @if (session('success'))
-        <div class="alert alert-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
+        <div class="alert alert-success alert-dismissible fade show" style="border-radius: var(--paud-radius-sm); border:none;" role="alert">
+            <i class="bi bi-check-circle me-2"></i> {{ session('success') }}
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
     @endif
 
-    <div class="card">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="card-title mb-0">Data Kelas</h5>
-            <div class="d-flex align-items-center">
-                <div class="input-group me-2">
-                     <input type="search" class="form-control" placeholder="Cari Nama Kelas..." x-model.debounce.300ms="searchQuery">
+    <div class="paud-card">
+        <div class="p-4">
+            <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <h5 class="fw-bold mb-0" style="color: var(--paud-text);">
+                    <span style="border-left: 3px solid var(--paud-teal); padding-left: 12px;">
+                        <i class="bi bi-grid-3x3-gap-fill me-2" style="color: var(--paud-teal);"></i>Data Kelas
+                    </span>
+                </h5>
+                <div class="d-flex align-items-center gap-2">
+                    <div class="input-group" style="max-width: 240px;">
+                        <span class="input-group-text" style="border-color: var(--paud-border); background: var(--paud-teal-light); border-radius: var(--paud-radius-sm) 0 0 var(--paud-radius-sm);">
+                            <i class="bi bi-search" style="color: var(--paud-muted);"></i>
+                        </span>
+                        <input type="search" class="form-control" placeholder="Cari nama kelas..." x-model.debounce.300ms="searchQuery"
+                               style="border-radius: 0 var(--paud-radius-sm) var(--paud-radius-sm) 0;">
+                    </div>
+                    <button type="button" class="btn paud-btn-primary btn-sm flex-shrink-0"
+                            data-bs-toggle="modal" data-bs-target="#modalTambahKelas">
+                        <i class="bi bi-plus-lg me-1"></i> Buat Kelas
+                    </button>
                 </div>
-                <button type="button" class="btn btn-outline-success flex-shrink-0" data-bs-toggle="modal" data-bs-target="#modalTambahKelas">
-                    <i class="bi bi-plus-lg"></i> Buat Kelas
-                </button>
             </div>
-        </div>
-        <div class="card-body">
+
             <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead class="table-light">
+                <table class="table align-middle mb-0">
+                    <thead class="paud-thead">
                         <tr>
-                            <th @click="sortBy('nama_kelas')" style="cursor: pointer;">
+                            <th @click="sortBy('nama_kelas')" style="cursor:pointer; user-select:none;">
                                 Nama Kelas
-                                <span x-show="sortColumn === 'nama_kelas'"><i :class="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i></span>
+                                <i class="bi" :class="sortColumn==='nama_kelas' ? (sortDirection==='asc' ? 'bi-arrow-up' : 'bi-arrow-down') : 'bi-arrow-down-up'"></i>
                             </th>
-                            <th>Kelas</th>
-                            <th @click="sortBy('wali')" style="cursor: pointer;">
-                                Wali
-                                <span x-show="sortColumn === 'wali'"><i :class="sortDirection === 'asc' ? 'bi-arrow-up' : 'bi-arrow-down'"></i></span>
+                            <th>Tingkat</th>
+                            <th @click="sortBy('wali')" style="cursor:pointer; user-select:none;">
+                                Wali Kelas
+                                <i class="bi" :class="sortColumn==='wali' ? (sortDirection==='asc' ? 'bi-arrow-up' : 'bi-arrow-down') : 'bi-arrow-down-up'"></i>
                             </th>
-                            <th>Aksi</th>
+                            <th style="text-align:center;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                          <template x-for="item in paginatedItems" :key="item.id">
-                            <tr>
-                                <td x-text="item.nama_kelas"></td>
-                                <td x-text="item.kelas"></td>
-                                <td x-text="item.wali"></td>
+                            <tr class="paud-table-row">
+                                <td class="fw-semibold" style="color: var(--paud-text);" x-text="item.nama_kelas"></td>
                                 <td>
-                                    <a :href="`/admin/kelas/${item.id}`" class="btn btn-info btn-sm text-white">
-                                        <i class="bi bi-info-circle-fill"></i> Detail
+                                    <span class="paud-badge bg-paud-teal-light text-paud-teal" x-text="`Kelompok ${item.kelas}`"></span>
+                                </td>
+                                <td style="color: var(--paud-muted); font-size:0.88rem;" x-text="item.wali"></td>
+                                <td style="text-align:center;">
+                                    <a :href="`/admin/kelas/${item.id}`"
+                                        class="btn btn-sm me-1"
+                                        style="border: 1.5px solid var(--paud-teal); color: var(--paud-teal); border-radius: 6px;"
+                                        title="Detail">
+                                        <i class="bi bi-info-circle"></i>
                                     </a>
-                                    
-                                    {{-- TOMBOL EDIT --}}
-                                    <button type="button" class="btn btn-warning btn-sm"
+                                    <button type="button"
+                                        class="btn btn-sm me-1"
+                                        style="border: 1.5px solid var(--paud-amber); color: var(--paud-amber); border-radius: 6px;"
                                         data-bs-toggle="modal" data-bs-target="#modalEditKelas"
-                                        @click="prepareEdit(item)">
-                                        <i class="bi bi-pencil-fill"></i>
+                                        @click="prepareEdit(item)" title="Edit">
+                                        <i class="bi bi-pencil"></i>
                                     </button>
-                                    
-                                    {{-- TOMBOL HAPUS --}}
-                                    <button type="button" class="btn btn-danger btn-sm"
+                                    <button type="button"
+                                        class="btn btn-sm"
+                                        style="border: 1.5px solid var(--paud-coral); color: var(--paud-coral); border-radius: 6px;"
                                         data-bs-toggle="modal" data-bs-target="#modalHapusKelas"
-                                        @click="prepareDelete(item)">
-                                        <i class="bi bi-trash-fill"></i>
+                                        @click="prepareDelete(item)" title="Hapus">
+                                        <i class="bi bi-trash"></i>
                                     </button>
                                 </td>
                             </tr>
                         </template>
                          <tr x-show="filteredItems.length === 0">
-                            <td colspan="4" class="text-center">Data tidak ditemukan.</td>
+                            <td colspan="4" class="text-center py-4" style="color: var(--paud-muted);">
+                                <i class="bi bi-inbox fs-4 d-block mb-2"></i> Data tidak ditemukan.
+                            </td>
                         </tr>
                     </tbody>
                 </table>
@@ -78,12 +95,18 @@
 
             {{-- PAGINATION --}}
             <nav x-show="totalPages > 1" class="d-flex justify-content-end mt-3">
-                <ul class="pagination">
-                    <li class="page-item" :class="{ 'disabled': currentPage === 1 }"><a class="page-link" href="#" @click.prevent="currentPage--">Previous</a></li>
+                <ul class="pagination" style="--bs-pagination-active-bg: var(--paud-teal); --bs-pagination-active-border-color: var(--paud-teal);">
+                    <li class="page-item" :class="{ 'disabled': currentPage === 1 }">
+                        <a class="page-link" href="#" @click.prevent="currentPage--">‹</a>
+                    </li>
                     <template x-for="page in totalPages" :key="page">
-                        <li class="page-item" :class="{ 'active': currentPage === page }"><a class="page-link" href="#" @click.prevent="currentPage = page" x-text="page"></a></li>
+                        <li class="page-item" :class="{ 'active': currentPage === page }">
+                            <a class="page-link" href="#" @click.prevent="currentPage = page" x-text="page"></a>
+                        </li>
                     </template>
-                    <li class="page-item" :class="{ 'disabled': currentPage === totalPages }"><a class="page-link" href="#" @click.prevent="currentPage++">Next</a></li>
+                    <li class="page-item" :class="{ 'disabled': currentPage === totalPages }">
+                        <a class="page-link" href="#" @click.prevent="currentPage++">›</a>
+                    </li>
                 </ul>
             </nav>
         </div>
@@ -98,7 +121,7 @@
                 <form action="{{ route('admin.kelas.store') }}" method="POST" @submit="submitAdd($event)">
                     @csrf
                     <div class="modal-header">
-                        <h5 class="modal-title">Buat Kelas Baru</h5>
+                        <h5 class="modal-title"><i class="bi bi-plus-circle me-2" style="color:var(--paud-teal);"></i>Buat Kelas Baru</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
                     <div class="modal-body">
@@ -140,8 +163,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-success">Simpan</button>
+                        <button type="button" class="btn paud-btn-outline btn-sm" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn paud-btn-primary btn-sm"><i class="bi bi-check-lg me-1"></i> Simpan</button>
                     </div>
                 </form>
             </div>
@@ -158,7 +181,7 @@
                     @csrf
                     @method('PUT')
                     <div class="modal-header">
-                        <h5 class="modal-title">Edit Kelas</h5>
+                        <h5 class="modal-title"><i class="bi bi-pencil-square me-2" style="color:var(--paud-amber);"></i>Edit Data Kelas</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
@@ -195,8 +218,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-success">Simpan Perubahan</button>
+                        <button type="button" class="btn paud-btn-outline btn-sm" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn paud-btn-primary btn-sm"><i class="bi bi-check-lg me-1"></i> Simpan Perubahan</button>
                     </div>
                 </form>
             </div>
@@ -214,7 +237,7 @@
                     @method('DELETE')
 
                     <div class="modal-header">
-                        <h5 class="modal-title">Konfirmasi Hapus</h5>
+                        <h5 class="modal-title"><i class="bi bi-exclamation-triangle me-2" style="color:var(--paud-coral);"></i>Konfirmasi Hapus</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
 
@@ -226,8 +249,8 @@
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-danger">Ya, Hapus</button>
+                        <button type="button" class="btn paud-btn-outline btn-sm" data-bs-dismiss="modal">Batal</button>
+                        <button type="submit" class="btn paud-btn-danger btn-sm"><i class="bi bi-trash me-1"></i> Ya, Hapus</button>
                     </div>
                 </form>
             </div>

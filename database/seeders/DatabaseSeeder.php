@@ -22,13 +22,17 @@ class DatabaseSeeder extends Seeder
 
         // Panggil seeder yang baru dibuat
         $this->call([
-            // Tambahkan seeder lain di sini jika ada
-            UserSeeder::class,
-            ProfilSeeder::class, // PENTING: Memastikan data profil dibuat
-            GuruSeeder::class,
-            GaleriSeeder::class,
-            // MuridSeeder::class,
-            // KelasSeeder::class,
+            // Urutan PENTING karena ada relasi (Foreign Keys)
+            UserSeeder::class,           // 1. User dulu
+            ProfilSeeder::class,         // 2. Profil
+            GuruSeeder::class,           // 3. Guru (butuh User)
+            AspekPenilaianSeeder::class, // 4. Master Data Penilaian
+            MasterRekomendasiSeeder::class, // 5. Master Data Rekomendasi
+            KelasSeeder::class,          // 6. Kelas (butuh Guru)
+            SiswaSeeder::class,          // 7. Siswa (butuh Kelas)
+            JadwalSeeder::class,         // 8. Jadwal (butuh Kelas & Guru)
+            GaleriSeeder::class,         // 9. Galeri
+            NilaiRaporSeeder::class,     // 10. Nilai (butuh Siswa & Aspek)
         ]);
     }
 }
