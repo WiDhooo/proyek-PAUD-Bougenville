@@ -7,6 +7,9 @@ use App\Http\Controllers\KelasController;
 use App\Http\Controllers\SiswaController;
 use App\Http\Controllers\GaleriController;
 use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\KeuanganController;
+use App\Http\Controllers\EbookController;
+use App\Http\Controllers\LandingPageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,10 +17,14 @@ use App\Http\Controllers\ProfilController;
 |--------------------------------------------------------------------------
 */
 
-Route::view('/', 'beranda');
+Route::get('/', [LandingPageController::class, 'index'])->name('beranda');
+Route::view('/copy', 'berandacopy');
 Route::get('/tentang', [ProfilController::class, 'tentang'])->name('tentang');
 Route::get('/kegiatan', [GaleriController::class, 'kegiatan'])->name('kegiatan');
 Route::view('/kontak', 'kontak');
+Route::get('/ebook/{id}', [EbookController::class, 'show'])->name('ebook.show');
+Route::get('/ebook/{id}/baca', [EbookController::class, 'read'])->name('ebook.read');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -81,6 +88,17 @@ Route::prefix('admin')
     Route::get('/kelas/{id}', [KelasController::class, 'show'])->name('kelas.show');
     Route::post('/kelas/{id}/assign-siswa', [KelasController::class, 'assignSiswa'])->name('kelas.assign');
     Route::delete('/kelas/{id}/unassign-siswa/{siswaId}', [KelasController::class, 'unassignSiswa'])->name('kelas.unassign');
+
+    // CRUD Keuangan
+    Route::resource('/keuangan', KeuanganController::class)->only(['index','store','destroy'])
+        ->names('keuangan');
+    
+    // CRUD Ebook
+    // Rute Manajemen E-Book
+    Route::get('/ebook', [EbookController::class, 'index'])->name('ebook.index');
+    Route::post('/ebook', [EbookController::class, 'store'])->name('ebook.store');
+    Route::post('/ebook/{id}/update', [EbookController::class, 'update'])->name('ebook.update');
+    Route::delete('/ebook/{id}', [EbookController::class, 'destroy'])->name('ebook.destroy');
 
     // Manajemen Konten
     // GET /admin/profil
