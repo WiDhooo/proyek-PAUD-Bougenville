@@ -52,6 +52,16 @@
     @else
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body p-4">
+            <div class="alert alert-info rounded-3 mb-4 border-0" style="background-color: #f8fbff; border-left: 4px solid #0d6efd !important;">
+                <h6 class="fw-bold mb-2 text-primary" style="font-size: 0.9rem;"><i class="bi bi-info-circle me-1"></i> Keterangan Skala Penilaian:</h6>
+                <div class="row g-2 small text-dark">
+                    <div class="col-md-3"><strong>BB</strong>: Belum Berkembang (Skor 1)</div>
+                    <div class="col-md-3"><strong>MB</strong>: Mulai Berkembang (Skor 2)</div>
+                    <div class="col-md-3"><strong>BSH</strong>: Berkembang Sesuai Harapan (Skor 3)</div>
+                    <div class="col-md-3"><strong>BSB</strong>: Berkembang Sangat Baik (Skor 4)</div>
+                </div>
+            </div>
+
             <form action="{{ route('guru.rapor.update_nilai', $siswa->id) }}" method="POST">
                 @csrf
                 @method('PUT')

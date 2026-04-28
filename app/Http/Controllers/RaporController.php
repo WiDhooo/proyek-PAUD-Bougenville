@@ -534,19 +534,60 @@ class RaporController extends Controller
             ->latest()
             ->first();
 
-        $smartAnalysis = null;
+        // Ambil nilai semester sebelumnya untuk tracking tren
+        $previousSemester = $this->getPreviousSemesterNilai($siswaId, $periode, $tahunAjaran);
+
+        $smartAnalysis  = null;
         $clusterProfile = null;
         if ($hasilAnalisis && $nilaiPerLingkup->isNotEmpty()) {
-            $rawResponse = $hasilAnalisis->raw_response;
-            $clusterGroup = $hasilAnalisis->cluster_group;
+            $rawResponse    = $hasilAnalisis->raw_response;
+            $clusterGroup   = $hasilAnalisis->cluster_group;
             $clusterProfile = $rawResponse['profiles'][$clusterGroup] ?? null;
 
             $smartAnalysis = $this->smartAnalysisService->analyze(
-                $nilaiPerLingkup, $nilaiRapors, $clusterProfile
+                $nilaiPerLingkup,
+                $nilaiRapors,
+                $clusterProfile,
+                $previousSemester
             );
         }
 
         return [$nilaiRapors, $nilaiPerLingkup, $hasilAnalisis, $smartAnalysis, $clusterProfile];
+    }
+
+    /**
+     * Ambil rata-rata nilai per lingkup dari semester sebelumnya untuk analisis tren.
+     */
+    private function getPreviousSemesterNilai(int $siswaId, string $periode, string $tahunAjaran): ?array
+    {
+        // Tentukan semester & tahun sebelumnya
+        if ($periode === 'Genap') {
+            $prevPeriode     = 'Ganjil';
+            $prevTahunAjaran = $tahunAjaran; // Ganjil & Genap dalam satu tahun ajaran
+        } else {
+            // Ganjil sekarang → semester sebelumnya = Genap tahun ajaran lalu
+            $prevPeriode = 'Genap';
+            $parts       = explode('/', $tahunAjaran);
+            if (count($parts) === 2) {
+                $prevTahunAjaran = ($parts[0] - 1) . '/' . ($parts[1] - 1);
+            } else {
+                return null;
+            }
+        }
+
+        $prevNilai = NilaiRapor::where('siswa_id', $siswaId)
+            ->where('periode', $prevPeriode)
+            ->where('tahun_ajaran', $prevTahunAjaran)
+            ->with('aspekPenilaian')
+            ->get();
+
+        if ($prevNilai->isEmpty()) {
+            return null;
+        }
+
+        return $prevNilai->groupBy(fn ($nr) => $nr->aspekPenilaian->lingkup ?? 'Lainnya')
+            ->map(fn ($g) => round($g->avg('nilai'), 2))
+            ->toArray();
     }
 
     /**
