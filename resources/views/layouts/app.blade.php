@@ -416,6 +416,18 @@
                 </a>
             </div>
 
+            {{-- E-Book --}}
+            <a class="nav-link {{ request()->is('admin/ebook*') ? 'active' : '' }}" 
+            href="{{ route('admin.ebook.index') }}">
+                <i class="bi bi-journal-text"></i> Manajemen E-Book
+            </a>
+
+            {{-- Keuangan --}}
+            <a class="nav-link {{ request()->is('admin/keuangan*') ? 'active' : '' }}" 
+            href="{{ route('admin.keuangan.index') }}">
+                <i class="bi bi-wallet2"></i> Keuangan
+            </a>
+
 
             {{-- Profil Sekolah --}}
             <a class="nav-link {{ request()->is(['admin/profil*', 'admin/galeri*']) ? 'active' : '' }}"
