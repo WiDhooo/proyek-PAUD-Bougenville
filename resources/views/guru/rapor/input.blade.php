@@ -80,12 +80,25 @@
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Nama Siswa</label>
                         <select name="siswa_id" class="form-select" required id="selectSiswa">
-                            @foreach($siswas as $siswa)
-                                @php $sudahDinilai = in_array($siswa->id, $siswaYangSudahDinilai ?? []); @endphp
-                                <option value="{{ $siswa->id }}" data-sudah-dinilai="{{ $sudahDinilai ? '1' : '0' }}">
-                                    {{ $siswa->nama }} {{ $sudahDinilai ? '(Selesai)' : '' }}
-                                </option>
-                            @endforeach
+                            <option value="">-- Pilih Siswa --</option>
+                            <optgroup label="Belum Dinilai">
+                                @foreach($siswas as $siswa)
+                                    @if(!in_array($siswa->id, $siswaYangSudahDinilai ?? []))
+                                        <option value="{{ $siswa->id }}" data-sudah-dinilai="0">
+                                            {{ $siswa->nama }}
+                                        </option>
+                                    @endif
+                                @endforeach
+                            </optgroup>
+                            <optgroup label="Sudah Dinilai (Selesai)">
+                                @foreach($siswas as $siswa)
+                                    @if(in_array($siswa->id, $siswaYangSudahDinilai ?? []))
+                                        <option value="{{ $siswa->id }}" data-sudah-dinilai="1">
+                                            {{ $siswa->nama }}
+                                        </option>
+                                    @endif
+                                @endforeach
+                            </optgroup>
                         </select>
                         <div id="warningOverwrite" class="text-warning small mt-1 d-none">
                             <i class="bi bi-exclamation-triangle me-1"></i> Siswa ini sudah memiliki nilai. Data lama akan <strong>ditimpa</strong> jika disimpan.
@@ -163,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', function(e) {
         const selected = selectSiswa.selectedOptions[0];
         if (selected && selected.dataset.sudahDinilai === '1') {
-            const nama = selected.textContent.replace('✅ (Sudah Dinilai)', '').trim();
+            const nama = selected.textContent.trim();
             if (!confirm('⚠️ ' + nama + ' sudah memiliki nilai di periode ini.\n\nNilai LAMA akan DITIMPA dengan nilai baru.\nApakah Anda yakin ingin melanjutkan?')) {
                 e.preventDefault();
             }

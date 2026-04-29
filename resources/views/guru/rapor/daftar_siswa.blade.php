@@ -116,7 +116,7 @@
                     <tbody>
                         @forelse ($siswas as $i => $siswa)
                         @php
-                            $analisis = $siswa->hasilAnalises->first();
+                            $analisis = $latestAnalisisMap->get($siswa->id);
                         @endphp
                         <tr class="paud-table-row" data-name="{{ $siswa->nama }}" data-nis="{{ $siswa->nis }}">
                             <td class="px-3 py-3" style="color: var(--paud-muted);">{{ $i + 1 }}</td>

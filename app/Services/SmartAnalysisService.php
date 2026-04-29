@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Log;
+
 /**
  * SmartAnalysisService — Personalized Recommendation Engine untuk Rapor Digital PAUD.
  *
@@ -63,15 +65,39 @@ class SmartAnalysisService
             }
         }
 
-        // 3. LABEL UTAMA
-        $aspekTertinggi = !empty($aspekKuat) ? array_key_first($aspekKuat) : null;
-        $labelUtama     = $aspekTertinggi
-            ? ($aspekDb[$aspekTertinggi]['label'] ?? 'Berkembang Merata')
+        // 3. LABEL UTAMA (mewakili karakter KELOMPOK/cluster — konsisten untuk semua anggota cluster)
+        // Prioritaskan aspek_dominan dari profil CLUSTER agar semua siswa
+        // dalam cluster yang sama memiliki label yang identik dan konsisten.
+        // Fallback ke aspek tertinggi individu jika analisis cluster belum ada.
+        if ($clusterProfile && !empty($clusterProfile['aspek_dominan'])) {
+            $aspekTertinggiKluster = $clusterProfile['aspek_dominan'];
+        } else {
+            $aspekTertinggiKluster = !empty($aspekKuat) ? array_key_first($aspekKuat) : null;
+        }
+        $labelUtama = $aspekTertinggiKluster
+            ? ($aspekDb[$aspekTertinggiKluster]['label'] ?? 'Berkembang Merata')
             : 'Berkembang Merata (Generalis)';
+
+        // LABEL INDIVIDU (mewakili kekuatan terkuat PRIBADI siswa — bisa beda antar anggota cluster)
+        $aspekTertinggiIndividu = !empty($aspekKuat) ? array_key_first($aspekKuat) : null;
+        $labelIndividu = $aspekTertinggiIndividu
+            ? ($aspekDb[$aspekTertinggiIndividu]['label'] ?? null)
+            : null;
+        // Hanya tampilkan label individu jika berbeda dari label cluster
+        if ($labelIndividu === $labelUtama) {
+            $labelIndividu = null;
+        }
 
         // 4. SARAN PERSONAL (score-aware)
         $saranKekuatan  = $this->buildPersonalizedSaranKekuatan($aspekKuat, $aspekDb);
         $saranKelemahan = $this->buildPersonalizedSaranKelemahan($aspekLemah, $aspekDb);
+
+        // 4b. SARAN GENERALIS — khusus anak yang semua aspeknya di 2.0-3.0
+        // (tidak ada yang kuat, tidak ada yang lemah), berikan saran konkret
+        // berdasarkan aspek dengan skor terendah.
+        $saranGeneralis = (empty($aspekKuat) && empty($aspekLemah))
+            ? $this->buildGeneralisSaran($nilaiPerLingkup, $aspekDb)
+            : [];
 
         // 5. CLUSTER PEER COMPARISON
         $peerComparison = $this->buildPeerComparison($nilaiPerLingkup, $clusterProfile);
@@ -81,11 +107,13 @@ class SmartAnalysisService
 
         return [
             'label_utama'      => $labelUtama,
+            'label_individu'   => $labelIndividu, // null jika sama dengan label cluster
             'aspek_kuat'       => $aspekKuat,
             'aspek_lemah'      => $aspekLemah,
             'deskripsi'        => $this->buildSmartDescription($nilaiPerLingkup, $aspekKuat, $aspekLemah, $aspekDb),
             'saran_kekuatan'   => $saranKekuatan,
             'saran_kelemahan'  => $saranKelemahan,
+            'saran_generalis'  => $saranGeneralis, // ← BARU: aktif saat tidak ada aspek kuat/lemah
             'saran_integratif' => $this->buildIntegrativeSuggestion($aspekKuat, $aspekLemah),
             'red_flags'        => $redFlags,
             'cluster_profile'  => $clusterProfile,
@@ -177,14 +205,19 @@ class SmartAnalysisService
         foreach ($aspekKuat as $lingkup => $avg) {
             $level       = $this->getScoreLevel($avg);
             $levelSaran  = $aspekDb[$lingkup]['level_saran'][$level] ?? null;
-            if ($levelSaran) {
-                $saran[] = [
+            if ($levelSaran === null) {
+                Log::warning('SmartAnalysisService: aspek tidak dikenal di knowledge base', [
                     'lingkup' => $lingkup,
-                    'skor'    => $avg,
                     'level'   => $level,
-                    'teks'    => $levelSaran,
-                ];
+                ]);
+                continue;
             }
+            $saran[] = [
+                'lingkup' => $lingkup,
+                'skor'    => $avg,
+                'level'   => $level,
+                'teks'    => $levelSaran,
+            ];
         }
         return $saran;
     }
@@ -198,15 +231,20 @@ class SmartAnalysisService
         foreach ($aspekLemah as $lingkup => $avg) {
             $level      = $this->getScoreLevel($avg);
             $levelSaran = $aspekDb[$lingkup]['level_saran'][$level] ?? null;
-            if ($levelSaran) {
-                $saran[] = [
+            if ($levelSaran === null) {
+                Log::warning('SmartAnalysisService: aspek tidak dikenal di knowledge base', [
                     'lingkup' => $lingkup,
-                    'skor'    => $avg,
                     'level'   => $level,
-                    'urgent'  => $avg <= 1.5,
-                    'teks'    => $levelSaran,
-                ];
+                ]);
+                continue;
             }
+            $saran[] = [
+                'lingkup' => $lingkup,
+                'skor'    => $avg,
+                'level'   => $level,
+                'urgent'  => $avg <= 1.5,
+                'teks'    => $levelSaran,
+            ];
         }
         return $saran;
     }
@@ -233,25 +271,21 @@ class SmartAnalysisService
 
             if ($selisih > 0.3) {
                 $status = 'above';
-                $icon   = '↑';
-                $label  = "Di atas rata-rata kelompok (+{$selisih})";
+                $label  = 'Di atas';
             } elseif ($selisih < -0.3) {
                 $status = 'below';
-                $icon   = '↓';
-                $label  = "Di bawah rata-rata kelompok ({$selisih})";
+                $label  = 'Di bawah';
             } else {
                 $status = 'equal';
-                $icon   = '→';
-                $label  = 'Setara rata-rata kelompok';
+                $label  = 'Setara';
             }
 
             $comparison[$lingkup] = [
-                'skor_anak'       => $skorAnak,
-                'rata_kelompok'   => $rataKelompok,
-                'selisih'         => $selisih,
-                'status'          => $status,
-                'icon'            => $icon,
-                'label'           => $label,
+                'skor_anak'     => $skorAnak,
+                'rata_kelompok' => $rataKelompok,
+                'selisih'       => $selisih,
+                'status'        => $status,
+                'label'         => $label,
             ];
         }
 
@@ -281,33 +315,27 @@ class SmartAnalysisService
 
             if ($delta >= 0.5) {
                 $trend = 'up_significant';
-                $icon  = '🚀';
-                $label = "Meningkat Signifikan (+{$delta})";
+                $label = 'Naik signifikan';
             } elseif ($delta > 0) {
                 $trend = 'up';
-                $icon  = '📈';
-                $label = "Meningkat (+{$delta})";
+                $label = 'Naik';
             } elseif ($delta == 0) {
                 $trend = 'stable';
-                $icon  = '➡️';
                 $label = 'Stabil';
             } elseif ($delta > -0.5) {
                 $trend = 'down';
-                $icon  = '📉';
-                $label = "Menurun ({$delta})";
+                $label = 'Turun';
             } else {
                 $trend = 'down_significant';
-                $icon  = '⚠️';
-                $label = "Menurun Signifikan ({$delta})";
+                $label = 'Turun signifikan';
             }
 
             $trends[$lingkup] = [
-                'skor_lalu'    => $skorLalu,
+                'skor_lalu'     => $skorLalu,
                 'skor_sekarang' => $skorSekarang,
-                'delta'        => $delta,
-                'trend'        => $trend,
-                'icon'         => $icon,
-                'label'        => $label,
+                'delta'         => $delta,
+                'trend'         => $trend,
+                'label'         => $label,
             ];
         }
 
@@ -328,12 +356,12 @@ class SmartAnalysisService
         if (!empty($aspekKuat)) {
             $namaKuat = array_keys($aspekKuat);
             if (count($aspekKuat) >= 4) {
-                $parts[] = 'Ananda menunjukkan profil perkembangan yang sangat cemerlang dengan keunggulan di bidang ' . implode(', ', $namaKuat) . '.';
+                $parts[] = 'Murid ini menunjukkan profil perkembangan yang sangat cemerlang dengan keunggulan di bidang ' . implode(', ', $namaKuat) . '.';
             } elseif (count($aspekKuat) > 1) {
-                $parts[] = 'Ananda memiliki keunggulan di beberapa bidang, terutama ' . implode(' dan ', $namaKuat) . '.';
+                $parts[] = 'Murid ini memiliki keunggulan di beberapa bidang, terutama ' . implode(' dan ', $namaKuat) . '.';
             } else {
                 $l = array_key_first($aspekKuat);
-                $parts[] = "Bidang terkuat Ananda saat ini adalah {$l}. Potensi ini dapat terus dikembangkan melalui kegiatan yang lebih menantang.";
+                $parts[] = "Bidang terkuat murid ini saat ini adalah {$l}. Potensi ini dapat terus dikembangkan melalui kegiatan yang lebih menantang.";
             }
         }
 
@@ -343,7 +371,19 @@ class SmartAnalysisService
         }
 
         if (empty($aspekKuat) && empty($aspekLemah)) {
-            $parts[] = 'Ananda menunjukkan perkembangan yang cukup merata di semua aspek. Pertahankan stimulasi di semua bidang secara seimbang agar perkembangan tetap optimal.';
+            // Identifikasi aspek terendah & tertinggi meski semua di zona "tengah"
+            $sorted = $nilaiPerLingkup;
+            asort($sorted);
+            $aspekTerendah   = array_key_first($sorted);
+            $skorTerendah    = round(reset($sorted), 2);
+            arsort($sorted);
+            $aspekTertinggi  = array_key_first($sorted);
+            $skorTertinggi   = round(reset($sorted), 2);
+
+            $parts[] = 'Murid ini menunjukkan perkembangan yang cukup merata di semua aspek (skor 2.0–3.0). '
+                . "Aspek yang paling perlu mendapat perhatian fokus adalah {$aspekTerendah} (skor {$skorTerendah}), "
+                . "sementara aspek terkuat saat ini adalah {$aspekTertinggi} (skor {$skorTertinggi}). "
+                . 'Lanjutkan stimulasi merata dan berikan tantangan ekstra pada aspek yang lebih rendah.';
         }
 
         return implode(' ', $parts);
@@ -408,9 +448,50 @@ class SmartAnalysisService
             ],
         ];
 
-        $base = $map[$k][$l] ?? "Manfaatkan ketertarikan Ananda pada bidang {$k} sebagai jembatan untuk menstimulasi aspek {$l} yang masih perlu dikembangkan.";
+        $base = $map[$k][$l] ?? "Manfaatkan ketertarikan murid pada bidang {$k} sebagai jembatan untuk menstimulasi aspek {$l} yang masih perlu dikembangkan.";
 
         return $base;
+    }
+
+    /**
+     * Saran untuk anak "generalis sedang" — semua aspek di 2.0–3.0.
+     * Ambil 2 aspek dengan skor terendah dan berikan saran level-aware,
+     * agar guru tetap mendapat panduan konkret meski tidak ada aspek yang
+     * menonjol kuat maupun menonjol lemah.
+     *
+     * @param array $nilaiPerLingkup ['Kognitif' => 2.3, ...]
+     * @param array $aspekDb         Knowledge base aspek PAUD
+     * @return array                 [{lingkup, skor, level, teks, prioritas}]
+     */
+    private function buildGeneralisSaran(array $nilaiPerLingkup, array $aspekDb): array
+    {
+        // Urutkan dari skor terendah ke tertinggi
+        $sorted = $nilaiPerLingkup;
+        asort($sorted);
+
+        $saran   = [];
+        $counter = 0;
+
+        foreach ($sorted as $lingkup => $avg) {
+            $level      = $this->getScoreLevel($avg);
+            $levelSaran = $aspekDb[$lingkup]['level_saran'][$level] ?? null;
+
+            if ($levelSaran) {
+                $saran[] = [
+                    'lingkup'   => $lingkup,
+                    'skor'      => $avg,
+                    'level'     => $level,
+                    'teks'      => $levelSaran,
+                    'prioritas' => $counter === 0 ? 'Prioritas Utama' : 'Pendukung',
+                ];
+                $counter++;
+            }
+
+            // Maksimal 2 aspek agar tidak overwhelming bagi guru
+            if ($counter >= 2) break;
+        }
+
+        return $saran;
     }
 
     // ================================================================

@@ -24,12 +24,14 @@ class SiswaSeeder extends Seeder
 
         $siswaData = [];
         
-        // Buat 10 siswa per kelas
+        // Buat 20 siswa per kelas (diperlukan untuk 5 cluster yang distinct)
         foreach ($kelasIds as $kelasId) {
-            for ($i = 0; $i < 10; $i++) {
+            for ($i = 0; $i < 20; $i++) {
                 $gender = $faker->randomElement(['Laki-Laki', 'Perempuan']);
+                $firstName = $faker->firstName($gender == 'Laki-Laki' ? 'male' : 'female');
+                $lastName = $faker->lastName();
                 $siswaData[] = [
-                    'nama' => $faker->name($gender == 'Laki-Laki' ? 'male' : 'female'),
+                    'nama' => $firstName . ' ' . $lastName,
                     'nis' => $faker->unique()->numerify('2025#####'),
                     'jenis_kelamin' => $gender,
                     // 'tempat_lahir' => $faker->city, // Tidak ada di DB

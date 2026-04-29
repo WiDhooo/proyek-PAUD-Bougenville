@@ -1,6 +1,10 @@
 """
 app.py — HTTP Routing & Strict Validation ONLY.
 Semua logika ML ada di ml_service.py.
+
+v2.1 — Improvements:
+- Minimum siswa dinaikkan ke 6 (k_min=3 × 2 minimum per cluster)
+- Validasi 6 aspek PAUD wajib hadir sebelum analisis dimulai
 """
 
 import os
@@ -21,6 +25,23 @@ app = Flask(__name__)
 # [S-7] API Key authentication — cegah akses tanpa otorisasi
 API_KEY = os.environ.get('ML_API_KEY', '')
 
+# ==============================================================
+# KONSTANTA: 6 Aspek Perkembangan PAUD berdasarkan Permendikbud 137
+# Ini adalah aspek WAJIB yang harus hadir sebelum analisis bisa dijalankan.
+# ==============================================================
+REQUIRED_ASPECTS = {
+    'Agama & Moral',
+    'Fisik-Motorik',
+    'Kognitif',
+    'Bahasa',
+    'Sosial-Emosional',
+    'Seni',
+}
+
+# Minimum siswa = k_min × 2 agar setiap cluster minimal berisi 2 siswa
+# k_min = 3, jadi MIN_STUDENTS = 6
+MIN_STUDENTS = 6
+
 
 # ============================================================
 # GUARD RAILS: Strict Input Validation
@@ -38,7 +59,8 @@ def validate_payload(data: list) -> str | None:
     ]
 
     Rules:
-    - Setiap item harus punya 'siswa_id' dan 'nilai' (dict)
+    - Minimal MIN_STUDENTS (6) siswa untuk analisis yang bermakna
+    - Semua 6 aspek PAUD wajib hadir (REQUIRED_ASPECTS)
     - Setiap nilai harus numeric 1.0-4.0 (sudah dirata-ratakan)
     - TIDAK BOLEH null/None
     - Semua siswa harus punya aspek yang sama
@@ -46,8 +68,13 @@ def validate_payload(data: list) -> str | None:
     if not data or not isinstance(data, list):
         return "Payload 'data' harus berupa array yang tidak kosong."
 
-    if len(data) < 2:
-        return "Minimal 2 siswa diperlukan untuk analisis clustering."
+    # [FIX #2] Minimum siswa dinaikkan ke 6
+    if len(data) < MIN_STUDENTS:
+        return (
+            f"Minimal {MIN_STUDENTS} siswa harus memiliki nilai lengkap untuk analisis "
+            f"clustering yang bermakna (k_min=3 cluster, minimal 2 siswa per cluster). "
+            f"Ditemukan: {len(data)} siswa."
+        )
 
     expected_keys = None
 
@@ -61,7 +88,17 @@ def validate_payload(data: list) -> str | None:
         if not isinstance(nilai, dict) or len(nilai) == 0:
             return f"siswa_id={siswa_id}: 'nilai' harus berupa object/dict yang tidak kosong."
 
-        # Cek konsistensi aspek
+        # [FIX #3] Validasi 6 aspek PAUD wajib hadir
+        present_aspects = set(nilai.keys())
+        missing_aspects = REQUIRED_ASPECTS - present_aspects
+        if missing_aspects:
+            return (
+                f"siswa_id={siswa_id}: aspek PAUD berikut belum memiliki nilai: "
+                f"{', '.join(sorted(missing_aspects))}. "
+                f"Pastikan semua 6 aspek pengembangan PAUD sudah diinput sebelum menjalankan analisis."
+            )
+
+        # Cek konsistensi aspek antar siswa
         if expected_keys is None:
             expected_keys = set(nilai.keys())
         elif set(nilai.keys()) != expected_keys:
@@ -163,7 +200,7 @@ def analyze():
 @app.route('/health', methods=['GET'])
 def health():
     """Health check endpoint."""
-    return jsonify({"status": "ok", "service": "PAUD ML Rapor Digital"}), 200
+    return jsonify({"status": "ok", "service": "PAUD ML Rapor Digital", "min_students": MIN_STUDENTS}), 200
 
 
 if __name__ == '__main__':

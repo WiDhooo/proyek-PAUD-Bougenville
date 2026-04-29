@@ -55,10 +55,10 @@
             <div class="alert alert-info rounded-3 mb-4 border-0" style="background-color: #f8fbff; border-left: 4px solid #0d6efd !important;">
                 <h6 class="fw-bold mb-2 text-primary" style="font-size: 0.9rem;"><i class="bi bi-info-circle me-1"></i> Keterangan Skala Penilaian:</h6>
                 <div class="row g-2 small text-dark">
-                    <div class="col-md-3"><strong>BB</strong>: Belum Berkembang (Skor 1)</div>
-                    <div class="col-md-3"><strong>MB</strong>: Mulai Berkembang (Skor 2)</div>
-                    <div class="col-md-3"><strong>BSH</strong>: Berkembang Sesuai Harapan (Skor 3)</div>
-                    <div class="col-md-3"><strong>BSB</strong>: Berkembang Sangat Baik (Skor 4)</div>
+                    <div class="col-md-3"><strong>1</strong>: Belum Berkembang (BB)</div>
+                    <div class="col-md-3"><strong>2</strong>: Mulai Berkembang (MB)</div>
+                    <div class="col-md-3"><strong>3</strong>: Berkembang Sesuai Harapan (BSH)</div>
+                    <div class="col-md-3"><strong>4</strong>: Berkembang Sangat Baik (BSB)</div>
                 </div>
             </div>
 
@@ -79,7 +79,7 @@
                                 <div class="card bg-light border-0 rounded-3 p-3">
                                     <p class="fw-semibold small mb-2">{{ $aspek->sub_lingkup }} — {{ $aspek->indikator }}</p>
                                     <div class="d-flex gap-3">
-                                        @foreach([1 => 'BB', 2 => 'MB', 3 => 'BSH', 4 => 'BSB'] as $skor => $label)
+                                        @foreach([1 => '1', 2 => '2', 3 => '3', 4 => '4'] as $skor => $label)
                                             <div class="form-check">
                                                 <input class="form-check-input" type="radio"
                                                     name="nilai[{{ $aspek->id }}]" value="{{ $skor }}"
