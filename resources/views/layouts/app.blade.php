@@ -362,11 +362,19 @@
     {{-- SIDEBAR --}}
     <aside class="sidebar">
 
-        <div class="sidebar-brand">
+<div class="sidebar-brand">
+    
+        {{-- LOGO --}}
+        <img src="{{ asset('images/logo-paud.png') }}" 
+            alt="Logo PAUD Bougenville"
+            class="sidebar-logo">
+
+            {{-- TEXT --}}
             <div>
                 <div class="sidebar-brand-text">PAUD Bougenville</div>
                 <div class="sidebar-brand-sub">Panel Admin</div>
             </div>
+
         </div>
 
         <nav class="sidebar-nav" x-data="{

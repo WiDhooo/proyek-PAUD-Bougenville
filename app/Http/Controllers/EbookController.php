@@ -9,6 +9,23 @@ use Illuminate\Support\Facades\Storage;
 
 class EbookController extends Controller
 {
+
+    private function parsePages($pages)
+    {
+        if (is_string($pages)) {
+            $decoded = json_decode($pages, true);
+
+            // Handle double JSON
+            if (is_string($decoded)) {
+                $decoded = json_decode($decoded, true);
+            }
+
+            return is_array($decoded) ? $decoded : [];
+        }
+
+        return is_array($pages) ? $pages : [];
+    }
+
     public function index() {
         $data = Ebook::latest()->get();
         return view('admin.ebook.index', compact('data'));
@@ -141,15 +158,34 @@ class EbookController extends Controller
     public function destroy($id)
     {
         $ebook = Ebook::findOrFail($id);
-        if ($ebook->thumbnail) Storage::disk('public')->delete($ebook->thumbnail);
-        
-        $pages = $ebook->file_path;
-        foreach ($pages as $p) {
-            Storage::disk('public')->delete($p['image']);
-            if(!empty($p['audio'])) Storage::disk('public')->delete($p['audio']);
+
+        // 1. Hapus thumbnail jika ada
+        if (!empty($ebook->thumbnail)) {
+            Storage::disk('public')->delete($ebook->thumbnail);
         }
 
+        // 2. Pastikan file_path selalu dalam bentuk array
+        $pages = $this->parsePages($ebook->file_path);
+
+        // 3. Hapus semua file gambar & audio
+        if (!empty($pages)) {
+            foreach ($pages as $p) {
+                // Hapus gambar
+                if (isset($p['image']) && !empty($p['image'])) {
+                    Storage::disk('public')->delete($p['image']);
+                }
+
+                // Hapus audio (jika ada)
+                if (isset($p['audio']) && !empty($p['audio'])) {
+                    Storage::disk('public')->delete($p['audio']);
+                }
+            }
+        }
+
+        // 4. Hapus data dari database
         $ebook->delete();
+
+        // 5. Redirect
         return back()->with('success', 'E-Book berhasil dihapus.');
     }
 
@@ -159,9 +195,12 @@ class EbookController extends Controller
         return view('ebook.show', compact('ebook'));
     }
 
+    # Fungsi untuk membaca E-Book dengan tampilan halaman per halaman
     public function read($id) {
         $ebook = Ebook::findOrFail($id);
-        $pages = $ebook->file_path;
+
+        $pages = $this->parsePages($ebook->file_path);
+
         return view('ebook.read', compact('ebook', 'pages'));
     }
 }
