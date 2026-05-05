@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Siswa;
+use App\Models\Keuangan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 
 class SiswaController extends Controller
@@ -14,13 +16,7 @@ class SiswaController extends Controller
      */
     public function index()
     {
-        // Cukup ambil semua model.
-        // Laravel akan otomatis menerapkan $casts dan accessors ('usia')
-        // saat data ini diubah menjadi JSON di view.
         $siswa = Siswa::all();
-        
-        // Langsung kirim koleksi Model ke view.
-        // HAPUS SEMUA BLOK .map()
         return view('admin.siswa.index', compact('siswa'));
     }
 
@@ -38,11 +34,9 @@ class SiswaController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            // Tambahkan 'numeric' dan 'unique:siswa,nis'
             'nis' => 'required|numeric|unique:siswa,nis', 
             'nama' => 'required|string|max:100',
             'jenis_kelamin' => 'required|string|max:15',
-            // Tambahkan 'before:-2 years'
             'tanggal_lahir' => 'required|date|before:-2 years', 
         ], [
             'nis.numeric' => 'NIS harus berupa angka.',
@@ -50,7 +44,21 @@ class SiswaController extends Controller
             'tanggal_lahir.before' => 'Usia siswa minimal harus 2 tahun.',
         ]);
 
-        Siswa::create($data);
+        DB::transaction(function () use ($data) {
+
+            $siswaBaru = Siswa::create($data);
+            $bulanIndo = now()->locale('id')->translatedFormat('F Y');
+
+            Keuangan::create([
+                    'tanggal' => now()->format('Y-m-d'),
+                    'kategori' => 'Pendaftaran',
+                    'siswa_id' => $siswaBaru->id,
+                    'jumlah' => 200000,
+                    'bulan_pembayaran' => $bulanIndo, 
+                    'status' => 'Sudah Bayar',
+                ]);
+            });
+
         return redirect()->route('admin.siswa.index')
                          ->with('success', 'Data Siswa berhasil disimpan!');
     }

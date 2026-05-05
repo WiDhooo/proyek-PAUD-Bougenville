@@ -14,10 +14,11 @@ return new class extends Migration
         Schema::create('keuangans', function (Blueprint $table) {
             $table->id();
             $table->date('tanggal');
-            $table->string('jenis')->default('pemasukan');
+            $table->enum('kategori', ['Pendaftaran', 'SPP'])->default('SPP');
             $table->foreignId('siswa_id')->constrained('siswa')->onDelete('cascade');
             $table->decimal('jumlah', 15, 2);
             $table->string('bulan_pembayaran');
+            $table->enum('status', ['Sudah Bayar', 'Belum Bayar'])->default('Sudah Bayar');
             $table->timestamps();
         });
     }

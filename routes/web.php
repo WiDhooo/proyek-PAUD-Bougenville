@@ -90,7 +90,7 @@ Route::prefix('admin')
     Route::delete('/kelas/{id}/unassign-siswa/{siswaId}', [KelasController::class, 'unassignSiswa'])->name('kelas.unassign');
 
     // CRUD Keuangan
-    Route::resource('/keuangan', KeuanganController::class)->only(['index','store','destroy'])
+    Route::resource('/keuangan', KeuanganController::class)->only(['index','store','update','destroy'])
         ->names('keuangan');
     
     // CRUD Ebook

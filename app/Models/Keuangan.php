@@ -12,10 +12,11 @@ class Keuangan extends Model
     protected $table = 'keuangans';
     protected $fillable = [
     'tanggal',
-    'jenis',
+    'kategori',
     'siswa_id', // Menggunakan ID
     'jumlah',
     'bulan_pembayaran',
+    'status'
     ];
 
     // Relasi ke model Siswa

@@ -201,7 +201,6 @@
                     if (is_string($pages)) { $pages = json_decode($pages, true); }
                     $pages = is_array($pages) ? $pages : [];
                     
-                    // Logika warna selang-seling: Biru, Oranye, Hijau
                     $colors = [
                         'from-blue-500 to-blue-600',
                         'from-orange-500 to-orange-600',
@@ -209,17 +208,21 @@
                     ];
                     $btnColor = $colors[$index % 3]; 
                     
-                    // Menentukan Thumbnail Path (Object-aware)
-                    $thumbnailPath = asset('images/default-ebook.png');
                     if ($ebook->thumbnail) {
-                        $thumbnailPath = asset('storage/' . $ebook->thumbnail);
-                    } elseif (isset($pages[0]['image'])) {
-                        $thumbnailPath = asset('storage/' . $pages[0]['image']);
+                        $cover = asset('storage/' . $ebook->thumbnail);
+                    } elseif (count($pages) > 0 && isset($pages[0]['image'])) {
+                        $cover = asset('storage/' . $pages[0]['image']); 
+                    } else {
+                        // Menggunakan placeholder online agar tidak error 404
+                        $cover = "https://via.placeholder.com/400x600?text=No+Cover";
                     }
                 @endphp
                 <div class="group bg-white rounded-2xl shadow-lg overflow-hidden transform hover:-translate-y-2 transition-all duration-300 hover:shadow-2xl">
-                    <div class="relative overflow-hidden h-64 bg-gray-100">
-                        <img src="{{ $thumbnailPath }}" alt="{{ $ebook->judul }}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" onerror="this.onerror=null;this.src='{{ asset('images/default-ebook.png') }}';">
+                    <div class="relative overflow-hidden h-64 bg-gray-200 flex items-center justify-center">
+                        <img src="{{ $cover }}" 
+                            alt="{{ $ebook->judul }}" 
+                            class="w-full h-full object-cover group-hover:scale-110 transition duration-500" 
+                            onerror="this.src='https://via.placeholder.com/400x600?text=Image+Error';">
                     </div>
                     <div class="p-6">
                         <h3 class="text-lg font-semibold text-gray-800 mb-2 truncate">{{ $ebook->judul }}</h3>

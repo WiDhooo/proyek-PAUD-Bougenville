@@ -231,7 +231,7 @@
                     </div>
 
                     <div class="modal-footer border-0 p-4 pt-0">
-                        <button type="submit" class="btn paud-btn-primary w-100 py-3 fw-bold rounded-3">Simpan E-Book Ceria ✨</button>
+                        <button type="submit" class="btn paud-btn-primary w-100 py-3 fw-bold rounded-3">Simpan E-Book</button>
                     </div>
                 </form>
             </div>
