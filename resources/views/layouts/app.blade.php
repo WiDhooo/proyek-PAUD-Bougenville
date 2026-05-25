@@ -362,7 +362,7 @@
     {{-- SIDEBAR --}}
     <aside class="sidebar">
 
-<div class="sidebar-brand">
+    <div class="sidebar-brand">
     
         {{-- LOGO --}}
         <img src="{{ asset('images/logo-paud.png') }}" 

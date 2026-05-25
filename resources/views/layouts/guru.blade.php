@@ -91,8 +91,15 @@
 
         .sidebar-brand-text {
             font-weight: 700;
-            font-size: 1.15rem;
+            font-size: 1.05rem;
             color: var(--paud-teal);
+            line-height: 1.2;
+        }
+
+        .sidebar-brand-sub {
+            font-size: 0.72rem;
+            color: var(--paud-muted);
+            font-weight: 500;
         }
 
         .sidebar-nav {
@@ -261,8 +268,19 @@
     {{-- SIDEBAR --}}
     <aside class="sidebar">
 
-        <div class="sidebar-brand">
-            <span class="sidebar-brand-text">PAUD Bougenville</span>
+    <div class="sidebar-brand">
+    
+        {{-- LOGO --}}
+        <img src="{{ asset('images/logo-paud.png') }}" 
+            alt="Logo PAUD Bougenville"
+            class="sidebar-logo">
+
+            {{-- TEXT --}}
+            <div> 
+                <div class="sidebar-brand-text">PAUD Bougenville</div>
+                <div class="sidebar-brand-sub">Panel Guru</div>
+            </div>
+
         </div>
 
         <nav class="sidebar-nav">
