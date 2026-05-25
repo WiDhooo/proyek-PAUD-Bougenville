@@ -35,13 +35,6 @@ class KelasSeeder extends Seeder
                 'guru_id' => $gurus[1]->id ?? $gurus[0]->id, // Guru 2
                 'created_at' => $now,
                 'updated_at' => $now,
-            ],
-            [
-                'nama_kelas' => 'Kelompok Bermain (Bintang)',
-                'kelas' => 'KB',
-                'guru_id' => $gurus[2]->id ?? $gurus[0]->id, // Guru 3
-                'created_at' => $now,
-                'updated_at' => $now,
             ]
         ];
 

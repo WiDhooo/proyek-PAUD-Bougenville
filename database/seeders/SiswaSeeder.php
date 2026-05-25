@@ -27,12 +27,15 @@ class SiswaSeeder extends Seeder
         // Gunakan DB::transaction agar jika salah satu gagal, data tidak berantakan
         DB::transaction(function () use ($faker, $now, $kelasIds) {
             foreach ($kelasIds as $kelasId) {
-                for ($i = 0; $i < 10; $i++) {
+                // Buat 20 siswa per kelas (diperlukan untuk 5 cluster yang distinct)
+                for ($i = 0; $i < 20; $i++) {
                     $gender = $faker->randomElement(['Laki-Laki', 'Perempuan']);
+                    $firstName = $faker->firstName($gender == 'Laki-Laki' ? 'male' : 'female');
+                    $lastName = $faker->lastName();
                     
                     // 1. Buat Data Siswa
                     $siswa = Siswa::create([
-                        'nama' => $faker->name($gender == 'Laki-Laki' ? 'male' : 'female'),
+                        'nama' => $firstName . ' ' . $lastName,
                         'nis' => $faker->unique()->numerify('2025#####'),
                         'jenis_kelamin' => $gender,
                         'tanggal_lahir' => $faker->dateTimeBetween('-6 years', '-4 years')->format('Y-m-d'),

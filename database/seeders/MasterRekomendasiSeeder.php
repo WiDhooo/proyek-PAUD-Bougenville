@@ -37,6 +37,12 @@ class MasterRekomendasiSeeder extends Seeder
                 'deskripsi_gaya_belajar' => 'Anak mengekspresikan diri melalui visual dan gerakan. Imajinatif.',
                 'saran_kegiatan' => 'Fasilitasi dengan alat menggambar lengkap, bermain musik, atau menari.',
             ],
+            [
+                'label_cluster' => '4',
+                'nama_kelompok' => 'Kelompok Generalis (Serba Bisa)',
+                'deskripsi_gaya_belajar' => 'Anak berkembang merata di semua aspek. Tidak ada kelemahan mencolok, potensi di semua bidang.',
+                'saran_kegiatan' => 'Berikan tantangan yang lebih kompleks di semua bidang: proyek sains mini, pertunjukan seni, kepemimpinan kelas, dan eksplorasi lintas bidang.',
+            ],
         ];
 
         foreach ($data as $item) {

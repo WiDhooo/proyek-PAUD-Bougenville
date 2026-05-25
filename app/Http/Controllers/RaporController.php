@@ -18,9 +18,8 @@ use Illuminate\Support\Facades\Log;
 
 class RaporController extends Controller
 {
-    // [M2] Constants — menghilangkan magic strings
-    private const DEFAULT_PERIODE = 'Ganjil';
-    private const DEFAULT_TAHUN_AJARAN = '2026/2027';
+    private $authorizedKelasIds = null;
+    private $prevSemesterCache = [];
 
     protected MlRaporService $mlService;
     protected SmartAnalysisService $smartAnalysisService;
@@ -69,18 +68,23 @@ class RaporController extends Controller
             }
         }
 
-        $periode     = $request->query('periode', self::DEFAULT_PERIODE);
-        $tahunAjaran = $request->query('tahun_ajaran', self::DEFAULT_TAHUN_AJARAN);
+        $periode     = $request->query('periode', config('paud.default_periode', 'Ganjil'));
+        $tahunAjaran = $request->query('tahun_ajaran', config('paud.default_tahun_ajaran', '2026/2027'));
 
-        $siswas = Siswa::where('kelas_id', $kelasId)
-            ->with(['hasilAnalises' => function ($q) use ($periode, $tahunAjaran) {
-                $q->where('periode', $periode)
-                  ->where('tahun_ajaran', $tahunAjaran)
-                  ->latest()->limit(1);
-            }])
-            ->get();
+        // [P-FIX] Eager loading hasMany + limit(1) tidak berfungsi per-record di Laravel.
+        // Gunakan query terpisah yang di-keyBy siswa_id untuk mendapatkan status analisis terbaru.
+        $siswas = Siswa::where('kelas_id', $kelasId)->orderBy('nama')->get();
 
-        return view('guru.rapor.daftar_siswa', compact('kelas', 'siswas', 'periode', 'tahunAjaran'));
+        $latestAnalisisMap = HasilAnalisis::where('periode', $periode)
+            ->where('tahun_ajaran', $tahunAjaran)
+            ->whereIn('siswa_id', $siswas->pluck('id'))
+            ->latest()
+            ->get()
+            ->keyBy('siswa_id');
+
+        return view('guru.rapor.daftar_siswa', compact(
+            'kelas', 'siswas', 'latestAnalisisMap', 'periode', 'tahunAjaran'
+        ));
     }
 
     /**
@@ -91,16 +95,23 @@ class RaporController extends Controller
         $siswa = Siswa::with('kelas')->findOrFail($siswaId);
         $this->authorizeSiswa($siswa); // [S-1] IDOR protection
 
-        $periode = $request->query('periode', self::DEFAULT_PERIODE);
-        $tahunAjaran = $request->query('tahun_ajaran', self::DEFAULT_TAHUN_AJARAN);
+        $periode = $request->query('periode', config('paud.default_periode', 'Ganjil'));
+        $tahunAjaran = $request->query('tahun_ajaran', config('paud.default_tahun_ajaran', '2026/2027'));
 
         // [P2] DRY: gunakan helper method
         [$nilaiRapors, $nilaiPerLingkup, $hasilAnalisis, $smartAnalysis, $clusterProfile] =
             $this->getRaporData($siswaId, $periode, $tahunAjaran);
 
+        // Deteksi apakah analisis kadaluarsa (nilai diedit setelah analisis terakhir)
+        $isStale = false;
+        if ($hasilAnalisis && $nilaiRapors->isNotEmpty()) {
+            $latestNilaiUpdate = $nilaiRapors->max('updated_at');
+            $isStale = $hasilAnalisis->updated_at < $latestNilaiUpdate;
+        }
+
         return view('guru.rapor.detail', compact(
             'siswa', 'nilaiRapors', 'nilaiPerLingkup', 'hasilAnalisis',
-            'smartAnalysis', 'clusterProfile', 'periode', 'tahunAjaran'
+            'smartAnalysis', 'clusterProfile', 'periode', 'tahunAjaran', 'isStale'
         ));
     }
 
@@ -114,8 +125,8 @@ class RaporController extends Controller
     public function input(Request $request)
     {
         $kelasId = $request->query('kelas_id');
-        $periode = $request->query('periode', self::DEFAULT_PERIODE);
-        $tahunAjaran = $request->query('tahun_ajaran', self::DEFAULT_TAHUN_AJARAN);
+        $periode = $request->query('periode', config('paud.default_periode', 'Ganjil'));
+        $tahunAjaran = $request->query('tahun_ajaran', config('paud.default_tahun_ajaran', '2026/2027'));
 
         $siswas = Siswa::where('kelas_id', $kelasId)->get();
         // [P-1] Cache aspek penilaian — data statis, jarang berubah
@@ -218,8 +229,8 @@ class RaporController extends Controller
         $siswa = Siswa::with('kelas')->findOrFail($siswaId);
         $this->authorizeSiswa($siswa); // [S-1] IDOR protection
 
-        $periode = $request->query('periode', self::DEFAULT_PERIODE);
-        $tahunAjaran = $request->query('tahun_ajaran', self::DEFAULT_TAHUN_AJARAN);
+        $periode = $request->query('periode', config('paud.default_periode', 'Ganjil'));
+        $tahunAjaran = $request->query('tahun_ajaran', config('paud.default_tahun_ajaran', '2026/2027'));
 
         // [P-1] Cache aspek penilaian
         $aspekPenilaians = Cache::remember('aspek_penilaians_grouped', 86400, fn() =>
@@ -359,8 +370,8 @@ class RaporController extends Controller
         $siswa = Siswa::with('kelas')->findOrFail($siswaId);
         $this->authorizeSiswa($siswa); // [S-1] IDOR protection
 
-        $periode = $request->query('periode', self::DEFAULT_PERIODE);
-        $tahunAjaran = $request->query('tahun_ajaran', self::DEFAULT_TAHUN_AJARAN);
+        $periode = $request->query('periode', config('paud.default_periode', 'Ganjil'));
+        $tahunAjaran = $request->query('tahun_ajaran', config('paud.default_tahun_ajaran', '2026/2027'));
 
         // [P2] DRY: reuse helper
         [$nilaiRapors, $nilaiPerLingkup, $hasilAnalisis, $smartAnalysis, $clusterProfile] =
@@ -404,6 +415,20 @@ class RaporController extends Controller
         $periode = $request->periode;
         $tahunAjaran = $request->tahun_ajaran;
 
+        // [S-KELAS] IDOR guard: pastikan guru ini memang mengajar di kelas yang diminta
+        $guru = Auth::user()->guru;
+        if ($guru) {
+            $kelasGuruIds = Jadwal::where('guru_id', $guru->id)->pluck('kelas_id');
+            if (!$kelasGuruIds->contains($kelasId)) {
+                Log::warning('Unauthorized generateAnalisis attempt', [
+                    'user_id'  => Auth::id(),
+                    'kelas_id' => $kelasId,
+                    'ip'       => request()->ip(),
+                ]);
+                abort(403, 'Anda tidak memiliki akses ke kelas ini.');
+            }
+        }
+
         // [P3] Hanya ambil siswa yang punya nilai (whereHas)
         $siswas = Siswa::where('kelas_id', $kelasId)
             ->whereHas('nilaiRapors', function ($q) use ($periode, $tahunAjaran) {
@@ -433,10 +458,12 @@ class RaporController extends Controller
             }
         }
 
-        if (count($dataForMl) < 2) {
+        $jumlahSiswa = count($dataForMl);
+        if ($jumlahSiswa < 6) {
             return redirect()->back()->with('error',
-                "Minimal 2 siswa harus memiliki nilai lengkap untuk periode '{$periode}' tahun '{$tahunAjaran}'. " .
-                "Ditemukan: " . count($dataForMl) . " siswa."
+                "Minimal 6 siswa harus sudah memiliki nilai lengkap sebelum analisis dapat dijalankan. " .
+                "Saat ini baru ada {$jumlahSiswa} siswa yang memiliki nilai untuk periode '{$periode}' " .
+                "tahun ajaran '{$tahunAjaran}'. Lengkapi nilai siswa lainnya terlebih dahulu."
             );
         }
 
@@ -464,6 +491,20 @@ class RaporController extends Controller
         DB::beginTransaction();
         try {
             foreach ($response['clusters'] as $siswaId => $clusterId) {
+                $clusterIdStr = (string) $clusterId;
+
+                // [O2] Deduplikasi raw_response: simpan HANYA profil cluster milik siswa ini.
+                // Tidak perlu menyimpan profil semua cluster di setiap baris siswa.
+                // Ini mengurangi storage ~N-kali lipat tanpa perubahan pada read path,
+                // karena getRaporData() mengakses: raw_response['profiles'][$clusterGroup]
+                $studentRawResponse = [
+                    'optimal_k'       => $response['optimal_k'],
+                    'silhouette_score' => $response['silhouette_score'],
+                    'profiles'        => [
+                        $clusterIdStr => $response['profiles'][$clusterIdStr] ?? null,
+                    ],
+                ];
+
                 HasilAnalisis::updateOrCreate(
                     [
                         'siswa_id' => $siswaId,
@@ -471,8 +512,8 @@ class RaporController extends Controller
                         'tahun_ajaran' => $tahunAjaran,
                     ],
                     [
-                        'cluster_group' => (string) $clusterId,
-                        'raw_response' => $response,
+                        'cluster_group' => $clusterIdStr,
+                        'raw_response'  => $studentRawResponse,
                     ]
                 );
             }
@@ -488,9 +529,7 @@ class RaporController extends Controller
                 'jumlah_siswa' => count($response['clusters']),
             ]);
 
-            $msg = "Analisis berhasil! K={$response['optimal_k']}, "
-                 . "Silhouette={$response['silhouette_score']}. "
-                 . count($response['clusters']) . " siswa dianalisis.";
+            $msg = "Analisis berhasil! " . count($response['clusters']) . " siswa telah dianalisis dan dikelompokkan menjadi {$response['optimal_k']} kelompok minat.";
 
             return redirect()->back()->with('success', $msg);
         } catch (\Exception $e) {
@@ -534,19 +573,69 @@ class RaporController extends Controller
             ->latest()
             ->first();
 
-        $smartAnalysis = null;
+        // Ambil nilai semester sebelumnya untuk tracking tren
+        $previousSemester = $this->getPreviousSemesterNilai($siswaId, $periode, $tahunAjaran);
+
+        $smartAnalysis  = null;
         $clusterProfile = null;
         if ($hasilAnalisis && $nilaiPerLingkup->isNotEmpty()) {
-            $rawResponse = $hasilAnalisis->raw_response;
-            $clusterGroup = $hasilAnalisis->cluster_group;
+            $rawResponse    = $hasilAnalisis->raw_response;
+            $clusterGroup   = $hasilAnalisis->cluster_group;
             $clusterProfile = $rawResponse['profiles'][$clusterGroup] ?? null;
 
             $smartAnalysis = $this->smartAnalysisService->analyze(
-                $nilaiPerLingkup, $nilaiRapors, $clusterProfile
+                $nilaiPerLingkup,
+                $nilaiRapors,
+                $clusterProfile,
+                $previousSemester
             );
         }
 
         return [$nilaiRapors, $nilaiPerLingkup, $hasilAnalisis, $smartAnalysis, $clusterProfile];
+    }
+
+    /**
+     * Ambil rata-rata nilai per lingkup dari semester sebelumnya untuk analisis tren.
+     */
+    private function getPreviousSemesterNilai(int $siswaId, string $periode, string $tahunAjaran): ?array
+    {
+        $cacheKey = "{$siswaId}_{$periode}_{$tahunAjaran}";
+        if (array_key_exists($cacheKey, $this->prevSemesterCache)) {
+            return $this->prevSemesterCache[$cacheKey];
+        }
+
+        // Tentukan semester & tahun sebelumnya
+        if ($periode === 'Genap') {
+            $prevPeriode     = 'Ganjil';
+            $prevTahunAjaran = $tahunAjaran; // Ganjil & Genap dalam satu tahun ajaran
+        } else {
+            // Ganjil sekarang → semester sebelumnya = Genap tahun ajaran lalu
+            $prevPeriode = 'Genap';
+            $parts       = explode('/', $tahunAjaran);
+            if (count($parts) === 2) {
+                $prevTahunAjaran = ($parts[0] - 1) . '/' . ($parts[1] - 1);
+            } else {
+                return null;
+            }
+        }
+
+        $prevNilai = NilaiRapor::where('siswa_id', $siswaId)
+            ->where('periode', $prevPeriode)
+            ->where('tahun_ajaran', $prevTahunAjaran)
+            ->with('aspekPenilaian')
+            ->get();
+
+        if ($prevNilai->isEmpty()) {
+            $this->prevSemesterCache[$cacheKey] = null;
+            return null;
+        }
+
+        $result = $prevNilai->groupBy(fn ($nr) => $nr->aspekPenilaian->lingkup ?? 'Lainnya')
+            ->map(fn ($g) => round($g->avg('nilai'), 2))
+            ->toArray();
+            
+        $this->prevSemesterCache[$cacheKey] = $result;
+        return $result;
     }
 
     /**
@@ -570,16 +659,18 @@ class RaporController extends Controller
             abort(403, 'Data guru tidak ditemukan.');
         }
 
-        $kelasGuruIds = Jadwal::where('guru_id', $guru->id)
-            ->pluck('kelas_id')
-            ->unique();
+        if ($this->authorizedKelasIds === null) {
+            $this->authorizedKelasIds = Jadwal::where('guru_id', $guru->id)
+                ->pluck('kelas_id')
+                ->unique();
+        }
 
-        if (!$kelasGuruIds->contains($siswa->kelas_id)) {
+        if (!$this->authorizedKelasIds->contains($siswa->kelas_id)) {
             Log::warning('Unauthorized siswa access attempt', [
                 'user_id' => Auth::id(),
                 'siswa_id' => $siswa->id,
                 'siswa_kelas_id' => $siswa->kelas_id,
-                'guru_kelas_ids' => $kelasGuruIds->toArray(),
+                'guru_kelas_ids' => $this->authorizedKelasIds->toArray(),
                 'ip' => request()->ip(),
             ]);
             abort(403, 'Anda tidak memiliki akses ke data siswa ini.');

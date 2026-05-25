@@ -17,6 +17,19 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \App\Http\Middleware\RoleMiddleware::class,
         ]);
 
+        // Redirect authenticated users to their respective dashboards instead of /home
+        $middleware->redirectUsersTo(function (\Illuminate\Http\Request $request) {
+            if (auth()->check()) {
+                if (auth()->user()->role === 'admin') {
+                    return route('admin.dashboard');
+                }
+                if (auth()->user()->role === 'guru') {
+                    return route('guru.dashboard');
+                }
+            }
+            return '/';
+        });
+
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

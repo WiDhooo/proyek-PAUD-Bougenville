@@ -58,10 +58,15 @@
                 </a></li>
             </ul>
 
-            <!-- Tombol -->
-            <a href="{{ route('login') }}" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
-                Portal Admin
-            </a>
+            @auth
+                <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('guru.dashboard') }}" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
+                    Portal Admin
+                </a>
+            @else
+                <a href="{{ route('login') }}" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
+                    Portal Admin
+                </a>
+            @endauth
 
             <!-- Hamburger -->
             <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
@@ -78,9 +83,11 @@
             <a href="{{ url('/kegiatan') }}" class="text-blue-600">Kegiatan</a>
             <a href="{{ url('/kontak') }}" class="text-gray-700 hover:text-blue-500">Kontak</a>
             <!-- Tombol -->
-            <a href="{{ route('login') }}" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
-                Portal Admin
-            </a>
+            @auth
+                <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('guru.dashboard') }}" class="px-5 py-2 border-2 border-blue-500 text-blue-500 rounded-full">Portal Admin</a>
+            @else
+                <a href="{{ route('login') }}" class="px-5 py-2 border-2 border-blue-500 text-blue-500 rounded-full">Portal Admin</a>
+            @endauth
         </div>
     </nav>
 

@@ -44,9 +44,15 @@
                 </a></li>
             </ul>
 
-            <a href="{{ route('login') }}" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
-                Portal Admin
-            </a>
+            @auth
+                <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('guru.dashboard') }}" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
+                    Portal Admin
+                </a>
+            @else
+                <a href="{{ route('login') }}" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
+                    Portal Admin
+                </a>
+            @endauth
 
             <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
                 <span class="w-6 h-0.5 bg-gray-700"></span>
@@ -60,7 +66,11 @@
             <a href="{{ url('/tentang') }}" class="text-gray-700 hover:text-blue-500">Tentang Kami</a>
             <a href="{{ url('/kegiatan') }}" class="text-gray-700 hover:text-blue-500">Kegiatan</a>
             <a href="{{ url('/kontak') }}" class="text-gray-700 hover:text-blue-500">Kontak</a>
-            <a href="{{ route('login') }}" class="px-5 py-2 border-2 border-blue-500 text-blue-500 rounded-full">Portal Admin</a>
+            @auth
+                <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('guru.dashboard') }}" class="px-5 py-2 border-2 border-blue-500 text-blue-500 rounded-full">Portal Admin</a>
+            @else
+                <a href="{{ route('login') }}" class="px-5 py-2 border-2 border-blue-500 text-blue-500 rounded-full">Portal Admin</a>
+            @endauth
         </div>
     </nav>
 

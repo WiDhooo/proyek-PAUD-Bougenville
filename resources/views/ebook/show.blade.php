@@ -17,7 +17,56 @@
     {{-- NAVBAR --}}
     <nav class="fixed top-0 left-0 w-full bg-white/90 backdrop-blur-md shadow-xl z-50">
         <div class="container mx-auto px-6 md:px-24 flex justify-between items-center py-4">
-            <a href="{{ url('/') }}" class="text-2xl font-bold text-blue-600">PAUD Bougenville</a>
+            <a href="{{ url('/') }}" class="text-2xl font-bold text-blue-600 hover:text-blue-700 transition">
+                PAUD Bougenville
+            </a>
+
+            <ul class="hidden md:flex space-x-8 font-medium">
+                <li><a href="{{ url('/') }}" class="relative text-blue-600 transition duration-300 group">
+                    Beranda
+                    <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 group-hover:w-full transition-all duration-300"></span>
+                </a></li>
+                <li><a href="{{ url('/tentang') }}" class="relative text-gray-700 hover:text-blue-600 transition duration-300 group">
+                    Tentang Kami
+                    <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 group-hover:w-full transition-all duration-300"></span>
+                </a></li>
+                <li><a href="{{ url('/kegiatan') }}" class="relative text-gray-700 hover:text-blue-600 transition duration-300 group">
+                    Kegiatan
+                    <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 group-hover:w-full transition-all duration-300"></span>
+                </a></li>
+                <li><a href="{{ url('/kontak') }}" class="relative text-gray-700 hover:text-blue-600 transition duration-300 group">
+                    Kontak
+                    <span class="absolute left-0 -bottom-1 w-0 h-0.5 bg-blue-500 group-hover:w-full transition-all duration-300"></span>
+                </a></li>
+            </ul>
+
+            @auth
+                <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('guru.dashboard') }}" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
+                    Portal Admin
+                </a>
+            @else
+                <a href="{{ route('login') }}" class="hidden md:inline-block px-5 py-2 border-2 border-blue-500 text-blue-500 font-medium rounded-full hover:bg-blue-500 hover:text-white transition duration-300">
+                    Portal Admin
+                </a>
+            @endauth
+
+            <button id="menu-btn" class="md:hidden flex flex-col space-y-1">
+                <span class="w-6 h-0.5 bg-gray-700"></span>
+                <span class="w-6 h-0.5 bg-gray-700"></span>
+                <span class="w-6 h-0.5 bg-gray-700"></span>
+            </button>
+        </div>
+
+        <div id="mobile-menu" class="hidden flex-col items-center space-y-4 bg-white shadow-md py-6 md:hidden">
+            <a href="{{ url('/') }}" class="text-gray-700 hover:text-blue-500">Beranda</a>
+            <a href="{{ url('/tentang') }}" class="text-gray-700 hover:text-blue-500">Tentang Kami</a>
+            <a href="{{ url('/kegiatan') }}" class="text-gray-700 hover:text-blue-500">Kegiatan</a>
+            <a href="{{ url('/kontak') }}" class="text-gray-700 hover:text-blue-500">Kontak</a>
+            @auth
+                <a href="{{ auth()->user()->role === 'admin' ? route('admin.dashboard') : route('guru.dashboard') }}" class="px-5 py-2 border-2 border-blue-500 text-blue-500 rounded-full">Portal Admin</a>
+            @else
+                <a href="{{ route('login') }}" class="px-5 py-2 border-2 border-blue-500 text-blue-500 rounded-full">Portal Admin</a>
+            @endauth
         </div>
     </nav>
 

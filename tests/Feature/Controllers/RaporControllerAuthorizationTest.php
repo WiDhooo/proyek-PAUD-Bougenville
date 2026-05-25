@@ -238,4 +238,37 @@ class RaporControllerAuthorizationTest extends TestCase
         $response = $this->get(route('guru.rapor.pilih_kelas'));
         $response->assertRedirect(route('login'));
     }
+
+    // ================================================================
+    // Test: generateAnalisis() — IDOR guard kelas
+    // ================================================================
+
+    public function test_generate_analisis_ditolak_jika_kelas_bukan_milik_guru(): void
+    {
+        // [S-KELAS] Guru A tidak boleh trigger analisis untuk kelas B
+        $response = $this->actingAs($this->guruA)
+            ->post(route('guru.rapor.analisis'), [
+                'kelas_id'    => $this->kelasB->id,  // kelas milik Guru B!
+                'periode'     => 'Ganjil',
+                'tahun_ajaran'=> '2026/2027',
+            ]);
+
+        $response->assertStatus(403);
+    }
+
+    public function test_generate_analisis_diterima_jika_kelas_milik_guru(): void
+    {
+        // Guru A boleh trigger analisis untuk kelas A (meski akan gagal karena < 6 siswa)
+        $response = $this->actingAs($this->guruA)
+            ->post(route('guru.rapor.analisis'), [
+                'kelas_id'    => $this->kelasA->id,  // kelas milik Guru A ✓
+                'periode'     => 'Ganjil',
+                'tahun_ajaran'=> '2026/2027',
+            ]);
+
+        // Tidak boleh 403 — bisa redirect dengan error (siswa < 6) tapi bukan Forbidden
+        $response->assertStatus(302);
+        $response->assertRedirect();
+        $response->assertSessionMissing('success');  // gagal karena data kurang, bukan forbidden
+    }
 }

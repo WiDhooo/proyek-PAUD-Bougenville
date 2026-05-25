@@ -57,9 +57,19 @@
     @if(isset($siswas) && $siswas->count() > 0)
     <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body p-4">
-            <h5 class="fw-bold mb-4">
+            <h5 class="fw-bold mb-3">
                 <i class="bi bi-pencil-square text-primary me-2"></i> Form Input Nilai
             </h5>
+
+            <div class="alert alert-info rounded-3 mb-4 border-0" style="background-color: #f8fbff; border-left: 4px solid #0d6efd !important;">
+                <h6 class="fw-bold mb-2 text-primary" style="font-size: 0.9rem;"><i class="bi bi-info-circle me-1"></i> Keterangan Skala Penilaian:</h6>
+                <div class="row g-2 small text-dark">
+                    <div class="col-md-3"><strong>BB</strong>: Belum Berkembang (Skor 1)</div>
+                    <div class="col-md-3"><strong>MB</strong>: Mulai Berkembang (Skor 2)</div>
+                    <div class="col-md-3"><strong>BSH</strong>: Berkembang Sesuai Harapan (Skor 3)</div>
+                    <div class="col-md-3"><strong>BSB</strong>: Berkembang Sangat Baik (Skor 4)</div>
+                </div>
+            </div>
 
             <form action="{{ route('guru.rapor.store') }}" method="POST" id="formInputNilai">
                 @csrf
@@ -70,12 +80,25 @@
                     <div class="col-md-4">
                         <label class="form-label fw-semibold">Nama Siswa</label>
                         <select name="siswa_id" class="form-select" required id="selectSiswa">
-                            @foreach($siswas as $siswa)
-                                @php $sudahDinilai = in_array($siswa->id, $siswaYangSudahDinilai ?? []); @endphp
-                                <option value="{{ $siswa->id }}" data-sudah-dinilai="{{ $sudahDinilai ? '1' : '0' }}">
-                                    {{ $siswa->nama }} {{ $sudahDinilai ? '✅ (Sudah Dinilai)' : '' }}
-                                </option>
-                            @endforeach
+                            <option value="">-- Pilih Siswa --</option>
+                            <optgroup label="Belum Dinilai">
+                                @foreach($siswas as $siswa)
+                                    @if(!in_array($siswa->id, $siswaYangSudahDinilai ?? []))
+                                        <option value="{{ $siswa->id }}" data-sudah-dinilai="0">
+                                            {{ $siswa->nama }}
+                                        </option>
+                                    @endif
+                                @endforeach
+                            </optgroup>
+                            <optgroup label="Sudah Dinilai (Selesai)">
+                                @foreach($siswas as $siswa)
+                                    @if(in_array($siswa->id, $siswaYangSudahDinilai ?? []))
+                                        <option value="{{ $siswa->id }}" data-sudah-dinilai="1">
+                                            {{ $siswa->nama }}
+                                        </option>
+                                    @endif
+                                @endforeach
+                            </optgroup>
                         </select>
                         <div id="warningOverwrite" class="text-warning small mt-1 d-none">
                             <i class="bi bi-exclamation-triangle me-1"></i> Siswa ini sudah memiliki nilai. Data lama akan <strong>ditimpa</strong> jika disimpan.
@@ -103,10 +126,10 @@
                                 <div class="card bg-light border-0 rounded-3 p-3">
                                     <p class="fw-semibold small mb-2">{{ $aspek->sub_lingkup }} — {{ $aspek->indikator }}</p>
                                     <div class="d-flex gap-3">
-                                        @foreach([1 => 'BB', 2 => 'MB', 3 => 'BSH', 4 => 'BSB'] as $skor => $label)
-                                            <div class="form-check">
+                                        @foreach([1, 2, 3, 4] as $skor)
+                                            <div class="form-check form-check-inline">
                                                 <input class="form-check-input" type="radio" name="nilai[{{ $aspek->id }}]" value="{{ $skor }}" id="aspek{{ $aspek->id }}_{{ $skor }}" required>
-                                                <label class="form-check-label small" for="aspek{{ $aspek->id }}_{{ $skor }}">{{ $label }}</label>
+                                                <label class="form-check-label" for="aspek{{ $aspek->id }}_{{ $skor }}">{{ $skor }}</label>
                                             </div>
                                         @endforeach
                                     </div>
@@ -153,7 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
     form.addEventListener('submit', function(e) {
         const selected = selectSiswa.selectedOptions[0];
         if (selected && selected.dataset.sudahDinilai === '1') {
-            const nama = selected.textContent.replace('✅ (Sudah Dinilai)', '').trim();
+            const nama = selected.textContent.trim();
             if (!confirm('⚠️ ' + nama + ' sudah memiliki nilai di periode ini.\n\nNilai LAMA akan DITIMPA dengan nilai baru.\nApakah Anda yakin ingin melanjutkan?')) {
                 e.preventDefault();
             }
